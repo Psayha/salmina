@@ -1,160 +1,179 @@
-'use client'
+'use client';
 
-import { Header } from '@/components/Header'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Header } from '@/components/Header';
+import { CategoryPill } from '@/components/ui/CategoryPill';
+import { ProductCard } from '@/components/ProductCard';
+import { useCartStore } from '@/store/useCartStore';
+import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        setHeaderColor?: (color: string) => void
-        ready: () => void
-        expand: () => void
-      }
-    }
-  }
-}
+// Mock data - TODO: replace with API calls
+const CATEGORIES = [
+  { id: 'all', name: 'Все товары' },
+  { id: 'creams', name: 'Кремы' },
+  { id: 'serums', name: 'Сыворотки' },
+  { id: 'masks', name: 'Маски' },
+  { id: 'toners', name: 'Тонеры' },
+  { id: 'eye', name: 'Для глаз' },
+  { id: 'cleansing', name: 'Очищение' },
+  { id: 'body', name: 'Уход за телом' },
+];
+
+const MOCK_PRODUCTS = [
+  {
+    id: '1',
+    name: 'Крем для лица',
+    description:
+      'Увлажняющий крем для лица с глубоким проникновением, насыщает кожу влагой и создает защитный барьер от внешних воздействий окружающей среды',
+    price: 1500,
+    emoji: '✨',
+  },
+  {
+    id: '2',
+    name: 'Сыворотка',
+    description: 'Омолаживающая',
+    price: 2300,
+    emoji: '🌸',
+  },
+  {
+    id: '3',
+    name: 'Маска для лица',
+    description: 'Очищающая',
+    price: 890,
+    emoji: '💅',
+  },
+  {
+    id: '4',
+    name: 'Тонер',
+    description: 'Очищающий',
+    price: 650,
+    emoji: '🧴',
+  },
+];
 
 export default function Home() {
+  const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Zustand stores
+  const { addToCart, itemsCount } = useCartStore();
+
+  // Telegram SDK
+  const haptic = useTelegramHaptic();
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp
-      
-      const setHeaderColor = tg.setHeaderColor
-      if (setHeaderColor) {
-        const handleScroll = () => {
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-          
-          if (scrollTop > 0) {
-            // При прокрутке - скрываем статус бар
-            setHeaderColor('#00000000') // Прозрачный цвет
-          }
-        }
-        
-        window.addEventListener('scroll', handleScroll, { passive: true })
-        
-        return () => {
-          window.removeEventListener('scroll', handleScroll)
-        }
-      }
+    if (typeof window === 'undefined' || !window.Telegram?.WebApp) {
+      return;
     }
-  }, [])
+
+    const tg = window.Telegram.WebApp;
+    const setHeaderColor = tg.setHeaderColor;
+
+    if (!setHeaderColor) {
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > 0) {
+        // При прокрутке - скрываем статус бар
+        setHeaderColor('#00000000'); // Прозрачный цвет
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      await addToCart(productId, 1);
+      haptic.notificationOccurred('success');
+    } catch (error) {
+      console.error('Add to cart error:', error);
+      haptic.notificationOccurred('error');
+    }
+  };
+
+  const handleProductClick = (productId: string) => {
+    haptic.selectionChanged();
+    router.push(`/product/${productId}`);
+  };
+
+  const handleCartClick = () => {
+    haptic.impactOccurred('light');
+    router.push('/cart');
+  };
+
+  const handleMenuClick = () => {
+    haptic.impactOccurred('light');
+    router.push('/profile');
+  };
+
+  const handleSearchClick = () => {
+    haptic.impactOccurred('light');
+    router.push('/search');
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    haptic.selectionChanged();
+    if (categoryId === 'all') {
+      setSelectedCategory(categoryId);
+    } else {
+      router.push(`/category/${categoryId}`);
+    }
+  };
 
   return (
     <div className="min-h-screen relative z-10">
-      <Header />
-      
+      <Header
+        cartItemsCount={itemsCount}
+        onCartClick={handleCartClick}
+        onMenuClick={handleMenuClick}
+        onSearchClick={handleSearchClick}
+      />
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 pt-8 pb-20 relative z-10">
         {/* Categories Scroll */}
         <div className="mb-8 -mx-4 px-4">
-          <div className="overflow-x-auto scrollbar-hide" style={{ padding: '16px 16px 16px 0', margin: '-16px -16px -16px 0' }}>
+          <div
+            className="overflow-x-auto scrollbar-hide"
+            style={{
+              padding: '16px 16px 16px 0',
+              margin: '-16px -16px -16px 0',
+            }}
+          >
             <div className="flex gap-3 pl-4">
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Все товары
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Кремы
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Сыворотки
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Маски
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Тонеры
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Для глаз
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Очищение
-            </button>
-            <button className="px-5 py-2.5 bg-white/40 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-900 tracking-wide whitespace-nowrap shadow-lg hover:bg-white/50 transition-all duration-300">
-              Уход за телом
-            </button>
+              {CATEGORIES.map((category) => (
+                <CategoryPill
+                  key={category.id}
+                  active={selectedCategory === category.id}
+                  onClick={() => handleCategoryChange(category.id)}
+                >
+                  {category.name}
+                </CategoryPill>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {/* Product 1 */}
-          <div className="group bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-            <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 flex-shrink-0">
-              <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">✨</span>
-            </div>
-            <div className="p-2.5 space-y-1 flex flex-col flex-grow">
-              <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">Крем для лица</h3>
-              <p className="text-xs text-gray-700 font-light line-clamp-2 flex-grow">Увлажняющий крем для лица с глубоким проникновением, насыщает кожу влагой и создает защитный барьер от внешних воздействий окружающей среды</p>
-                <div className="pt-1.5 flex items-center justify-between border-t border-white/30 flex-shrink-0">
-                  <span className="text-sm font-semibold text-gray-900">1 500 ₽</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors" aria-label="Добавить в корзину">
-                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-            </div>
-          </div>
-
-          {/* Product 2 */}
-          <div className="group bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-            <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 flex-shrink-0">
-              <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">🌸</span>
-            </div>
-            <div className="p-2.5 space-y-1 flex flex-col flex-grow">
-              <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">Сыворотка</h3>
-              <p className="text-xs text-gray-700 font-light line-clamp-2 flex-grow">Омолаживающая</p>
-                <div className="pt-1.5 flex items-center justify-between border-t border-white/30 flex-shrink-0">
-                  <span className="text-sm font-semibold text-gray-900">2 300 ₽</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors" aria-label="Добавить в корзину">
-                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-            </div>
-          </div>
-
-          {/* Product 3 */}
-          <div className="group bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-            <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 flex-shrink-0">
-              <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">💅</span>
-            </div>
-            <div className="p-2.5 space-y-1 flex flex-col flex-grow">
-              <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">Маска для лица</h3>
-              <p className="text-xs text-gray-700 font-light line-clamp-2 flex-grow">Очищающая</p>
-                <div className="pt-1.5 flex items-center justify-between border-t border-white/30 flex-shrink-0">
-                  <span className="text-sm font-semibold text-gray-900">890 ₽</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors" aria-label="Добавить в корзину">
-                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-            </div>
-          </div>
-
-          {/* Product 4 */}
-          <div className="group bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-            <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 flex-shrink-0">
-              <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">🧴</span>
-            </div>
-            <div className="p-2.5 space-y-1 flex flex-col flex-grow">
-              <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">Тонер</h3>
-              <p className="text-xs text-gray-700 font-light line-clamp-2 flex-grow">Очищающий</p>
-                <div className="pt-1.5 flex items-center justify-between border-t border-white/30 flex-shrink-0">
-                  <span className="text-sm font-semibold text-gray-900">650 ₽</span>
-                  <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors" aria-label="Добавить в корзину">
-                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-            </div>
-          </div>
+          {MOCK_PRODUCTS.map((product) => (
+            <ProductCard
+              key={product.id}
+              {...product}
+              onAddToCart={handleAddToCart}
+              onClick={handleProductClick}
+            />
+          ))}
         </div>
       </main>
 

@@ -1,10 +1,30 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import { env } from "./config/env";
-import { errorHandler } from "./middleware/errorHandler";
-import { notFoundHandler } from "./middleware/notFound";
-import { logger } from "./utils/logger";
+/**
+ * @file index.ts
+ * @description Main application entry point
+ * @author AI Assistant
+ * @updated 2024-11-13
+ */
+
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import { env } from './config/env';
+import { errorHandler } from './middleware/errorHandler';
+import { notFoundHandler } from './middleware/notFound';
+import { logger } from './utils/logger';
+import { prisma } from './database/prisma.service';
+import { redis } from './database/redis.service';
+
+// Import module routes
+import { authRoutes } from './modules/auth';
+import { userRoutes } from './modules/users';
+import { productsRoutes } from './modules/products';
+import { categoriesRoutes } from './modules/categories';
+import { cartRoutes } from './modules/cart';
+import { ordersRoutes } from './modules/orders';
+import promocodesRoutes from './modules/promocodes';
+import promotionsRoutes from './modules/promotions';
+import legalRoutes from './modules/legal';
 
 const app = express();
 
@@ -14,20 +34,65 @@ app.use(
   cors({
     origin: env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+// Request logging
+app.use((req, _res, next) => {
+  logger.info(`${req.method} ${req.path}`, {
+    query: req.query,
+    ip: req.ip,
+  });
+  next();
 });
 
-// API routes will be added here
-app.get("/api", (req, res) => {
-  res.json({ message: "Telegram Shop API v1.1" });
+// Health check
+app.get('/health', async (_req, res) => {
+  const dbConnected = await checkDatabaseConnection();
+  const redisConnected = redis.isReady();
+
+  res.json({
+    status: dbConnected && redisConnected ? 'ok' : 'degraded',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: dbConnected ? 'connected' : 'disconnected',
+      redis: redisConnected ? 'connected' : 'disconnected',
+    },
+  });
 });
+
+// API root
+app.get('/api', (_req, res) => {
+  res.json({
+    name: 'Telegram Shop API',
+    version: '1.1.0',
+    status: 'running',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      products: '/api/products',
+      categories: '/api/categories',
+      cart: '/api/cart',
+      orders: '/api/orders',
+      promocodes: '/api/promocodes',
+      promotions: '/api/promotions',
+      legal: '/api/legal',
+    },
+  });
+});
+
+// Mount module routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/categories', categoriesRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/promocodes', promocodesRoutes);
+app.use('/api/promotions', promotionsRoutes);
+app.use('/api/legal', legalRoutes);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -35,8 +100,63 @@ app.use(notFoundHandler);
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
-app.listen(env.PORT, () => {
-  logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
-  logger.info(`📝 Environment: ${env.NODE_ENV}`);
-});
+/**
+ * Check database connection
+ */
+async function checkDatabaseConnection(): Promise<boolean> {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Graceful shutdown handler
+ */
+async function gracefulShutdown(signal: string): Promise<void> {
+  logger.info(`${signal} received, starting graceful shutdown...`);
+
+  // Close database connection
+  await prisma.$disconnect();
+  logger.info('Database connection closed');
+
+  // Close Redis connection
+  await redis.disconnect();
+  logger.info('Redis connection closed');
+
+  process.exit(0);
+}
+
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+/**
+ * Start server
+ */
+async function startServer(): Promise<void> {
+  try {
+    // Connect to database
+    await prisma.connect();
+
+    // Connect to Redis
+    await redis.getClient();
+
+    // Start listening
+    app.listen(env.PORT, () => {
+      logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
+      logger.info(`📝 Environment: ${env.NODE_ENV}`);
+      logger.info(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
+      logger.info(`📚 API Documentation: http://localhost:${env.PORT}/api`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();
 

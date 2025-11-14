@@ -32,6 +32,9 @@ export const env = {
 
   // Admin
   ADMIN_TELEGRAM_IDS: process.env.ADMIN_TELEGRAM_IDS?.split(",") || [],
+
+  // Security
+  BCRYPT_ROUNDS: parseInt(process.env.BCRYPT_ROUNDS || "10", 10),
 } as const;
 
 // Validation

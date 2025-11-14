@@ -1,0 +1,185 @@
+/**
+ * API types matching backend responses
+ */
+
+// User types
+export interface User {
+  id: string;
+  telegramId: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  photoUrl?: string;
+  role: 'USER' | 'ADMIN';
+  hasAcceptedTerms: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Product types
+export interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  article: string;
+  price: number;
+  discountPrice?: number;
+  promotionPrice?: number;
+  quantity: number;
+  images: string[];
+  categoryId?: string;
+  isActive: boolean;
+  hasPromotion: boolean;
+  promotionLabel?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Category types
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  parentId?: string;
+  showOnHome: boolean;
+  homeOrder?: number;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Cart types
+export interface CartItem {
+  id: string;
+  productId: string;
+  product: Product;
+  quantity: number;
+  price: number;
+  appliedPrice: number;
+  total: number;
+  hasPromotion: boolean;
+  allowPromocode: boolean;
+}
+
+export interface CartTotals {
+  subtotal: number;
+  itemsDiscount: number;
+  promocodeDiscount: number;
+  discount: number;
+  total: number;
+  itemsCount: number;
+}
+
+export interface Cart {
+  id: string;
+  sessionToken?: string;
+  items: CartItem[];
+  totals: CartTotals;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Order types
+export type OrderStatus =
+  | 'PAID'
+  | 'PROCESSING'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'CANCELLED';
+
+export interface OrderItem {
+  id: string;
+  productName: string;
+  productArticle: string;
+  productImage?: string;
+  quantity: number;
+  price: number;
+  appliedPrice: number;
+  hasPromotion: boolean;
+  promotionLabel?: string;
+}
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  status: OrderStatus;
+  items: OrderItem[];
+  subtotal: number;
+  itemsDiscount: number;
+  promocodeDiscount: number;
+  totalAmount: number;
+  promocodeId?: string;
+  trackingNumber?: string;
+  customerName: string;
+  customerPhone: string;
+  shippingAddress: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Promocode types
+export interface Promocode {
+  id: string;
+  code: string;
+  discountType: 'PERCENT' | 'FIXED';
+  discountValue: number;
+  minOrderAmount?: number;
+  isActive: boolean;
+  validFrom?: string;
+  validTo?: string;
+}
+
+// Promotion types
+export interface Promotion {
+  id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  link?: string;
+  order: number;
+  isActive: boolean;
+  validFrom?: string;
+  validTo?: string;
+}
+
+// Legal document types
+export type LegalDocumentType =
+  | 'TERMS'
+  | 'PRIVACY'
+  | 'OFFER'
+  | 'DELIVERY_PAYMENT';
+
+export interface LegalDocument {
+  id: string;
+  type: LegalDocumentType;
+  title: string;
+  content: string;
+  version: string;
+  isActive: boolean;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Pagination types
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// Auth types
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}

@@ -1,0 +1,120 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: pnpm type-check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          cp -r apps/backend/dist deploy/backend
+          cp -r apps/frontend/.next deploy/frontend
+          cp -r apps/frontend/public deploy/frontend/public
+          cp package.json pnpm-workspace.yaml pnpm-lock.yaml deploy/
+          cp docker-compose.yml deploy/
+          cp .env.example deploy/
+          tar -czf deploy.tar.gz deploy/
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASS }}
+          source: "deploy.tar.gz"
+          target: "/tmp"
+
+      - name: Execute deployment script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASS }}
+          script: |
+            # Create app directory if not exists
+            mkdir -p /var/www/telegram-shop
+
+            # Extract deployment package
+            cd /var/www/telegram-shop
+            tar -xzf /tmp/deploy.tar.gz --strip-components=1
+            rm /tmp/deploy.tar.gz
+
+            # Install dependencies
+            pnpm install --prod --frozen-lockfile
+
+            # Run database migrations
+            cd apps/backend
+            pnpm db:generate
+            pnpm db:migrate
+            cd ../..
+
+            # Restart services with Docker Compose
+            docker-compose down
+            docker-compose up -d
+
+            # Restart application with PM2
+            pm2 restart telegram-shop-backend || pm2 start apps/backend/dist/index.js --name telegram-shop-backend
+            pm2 restart telegram-shop-frontend || pm2 start "cd apps/frontend && pnpm start" --name telegram-shop-frontend
+
+            # Save PM2 configuration
+            pm2 save
+
+            # Clean up old files
+            find /var/www/telegram-shop -type f -name "*.log" -mtime +7 -delete
+
+            echo "Deployment completed successfully!"
+
+      - name: Notify deployment status
+        if: always()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🚀 *Deployment Status*
+
+            Repository: `${{ github.repository }}`
+            Branch: `${{ github.ref_name }}`
+            Commit: `${{ github.sha }}`
+            Status: ${{ job.status }}
+
+            [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+      - name: Cleanup
+        if: always()
+        run: rm -rf deploy deploy.tar.gz

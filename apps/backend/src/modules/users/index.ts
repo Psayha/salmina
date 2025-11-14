@@ -1,0 +1,44 @@
+/**
+ * @file index.ts
+ * @description User module exports
+ * @author AI Assistant
+ * @created 2024-11-13
+ */
+
+// Export routes
+export { userRoutes, createUserRoutes } from './users.routes';
+
+// Export service
+export { userService, UserService } from './users.service';
+
+// Export controller
+export { userController, UserController } from './users.controller';
+
+// Export types
+export type {
+  UserDTO,
+  UpdateUserProfileDTO,
+  UpdateUserRoleDTO,
+  PaginationParams,
+  UserFilters,
+  PaginatedUsersResponse,
+  AcceptTermsResponse,
+} from './users.types';
+
+export { toUserDTO, toUserDTOList } from './users.types';
+
+// Export validation schemas and types
+export {
+  updateUserProfileSchema,
+  acceptTermsSchema,
+  updateUserRoleSchema,
+  getAllUsersQuerySchema,
+  userIdParamSchema,
+} from './users.validation';
+
+export type {
+  UpdateUserProfileInput,
+  UpdateUserRoleInput,
+  GetAllUsersQuery,
+  UserIdParam,
+} from './users.validation';
