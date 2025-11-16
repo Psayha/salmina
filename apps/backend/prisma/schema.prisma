@@ -23,8 +23,9 @@ enum OrderStatus {
 }
 
 enum PaymentMethod {
-  SBP
-  CASH_ON_DELIVERY
+  ONLINE              // Online payment via Prodamus (card, SBP, etc.)
+  SBP                 // Deprecated: use ONLINE instead
+  CASH_ON_DELIVERY    // Pay with cash/card on delivery
 }
 
 enum PaymentStatus {

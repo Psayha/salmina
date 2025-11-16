@@ -7,6 +7,7 @@ import { prisma } from '../../database/prisma.service.js';
 import { NotFoundError, BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
 import { telegramService } from '../../services/telegram.service.js';
+import { prodamusService } from '../../services/prodamus.service.js';
 // import { cartService } from '../cart/cart.service.js'; // unused
 import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus } from './orders.types.js';
 
@@ -101,8 +102,8 @@ class OrdersService {
         data: {
           orderNumber,
           userId,
-          status: OrderStatus.PAID,
-          paymentStatus: data.paymentMethod === 'SBP' ? PaymentStatus.PENDING : PaymentStatus.PAID,
+          status: data.paymentMethod === 'ONLINE' ? OrderStatus.PAID : OrderStatus.PAID,
+          paymentStatus: data.paymentMethod === 'ONLINE' ? PaymentStatus.PENDING : data.paymentMethod === 'SBP' ? PaymentStatus.PENDING : PaymentStatus.PAID,
           customerName: data.customerName,
           customerPhone: data.customerPhone,
           customerEmail: data.customerEmail,
@@ -171,6 +172,33 @@ class OrdersService {
 
     logger.info(`Order created: ${order.orderNumber}`);
 
+    // Generate payment link for ONLINE payment method
+    let paymentUrl: string | undefined;
+
+    if (data.paymentMethod === 'ONLINE') {
+      try {
+        paymentUrl = prodamusService.generatePaymentLink({
+          orderNumber: order.orderNumber,
+          customerName: order.customerName,
+          customerEmail: order.customerEmail || undefined,
+          customerPhone: order.customerPhone || undefined,
+          products: order.items.map((item) => ({
+            name: item.productName,
+            price: Number(item.appliedPrice),
+            quantity: item.quantity,
+          })),
+          successUrl: `${process.env.FRONTEND_URL}/orders/${order.id}?payment=success`,
+          failUrl: `${process.env.FRONTEND_URL}/orders/${order.id}?payment=failed`,
+          callbackUrl: `${process.env.API_URL}/webhooks/prodamus`,
+        });
+
+        logger.info(`Payment link generated for order ${order.orderNumber}: ${paymentUrl}`);
+      } catch (error) {
+        logger.error('Failed to generate payment link:', error);
+        // Don't fail the order creation if payment link generation fails
+      }
+    }
+
     // Send notification to admin
     try {
       await telegramService.notifyNewOrder({
@@ -188,7 +216,14 @@ class OrdersService {
       // Don't fail the order creation if notification fails
     }
 
-    return toOrderDTO(order);
+    const orderDTO = toOrderDTO(order);
+
+    // Add payment URL to response
+    if (paymentUrl) {
+      orderDTO.paymentUrl = paymentUrl;
+    }
+
+    return orderDTO;
   }
 
   /**
@@ -328,6 +363,52 @@ class OrdersService {
       orders: orders.map(toOrderDTO),
       total,
     };
+  }
+
+  /**
+   * Confirm payment (webhook callback)
+   */
+  async confirmPayment(orderNumber: string): Promise<OrderDTO> {
+    const order = await prisma.order.findFirst({
+      where: { orderNumber },
+      include: { items: true, user: true },
+    });
+
+    if (!order) {
+      throw new NotFoundError('Order', orderNumber);
+    }
+
+    // Update payment status if it was pending
+    if (order.paymentStatus === PaymentStatus.PENDING) {
+      const updated = await prisma.order.update({
+        where: { id: order.id },
+        data: {
+          paymentStatus: PaymentStatus.PAID,
+          paidAt: new Date(),
+        },
+        include: { items: true },
+      });
+
+      logger.info(`Payment confirmed for order ${orderNumber}`);
+
+      // Send notification to customer about successful payment
+      try {
+        await telegramService.notifyOrderStatus({
+          telegramId: Number(order.user.telegramId),
+          orderNumber: updated.orderNumber,
+          status: updated.status,
+          trackingNumber: undefined,
+        });
+      } catch (error) {
+        logger.error('Failed to send payment confirmation notification:', error);
+      }
+
+      return toOrderDTO(updated);
+    }
+
+    // Order already paid
+    logger.info(`Order ${orderNumber} already marked as paid`);
+    return toOrderDTO(order);
   }
 }
 

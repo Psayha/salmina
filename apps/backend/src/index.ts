@@ -25,6 +25,7 @@ import { ordersRoutes } from './modules/orders/index.js';
 import promocodesRoutes from './modules/promocodes/index.js';
 import promotionsRoutes from './modules/promotions/index.js';
 import legalRoutes from './modules/legal/index.js';
+import webhooksRoutes from './routes/webhooks.routes.js';
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.get('/api', (_req, res) => {
       promocodes: '/api/promocodes',
       promotions: '/api/promotions',
       legal: '/api/legal',
+      webhooks: '/webhooks',
     },
   });
 });
@@ -93,6 +95,7 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/promocodes', promocodesRoutes);
 app.use('/api/promotions', promotionsRoutes);
 app.use('/api/legal', legalRoutes);
+app.use('/webhooks', webhooksRoutes);
 
 // 404 handler
 app.use(notFoundHandler);

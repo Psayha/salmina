@@ -25,10 +25,9 @@ export const env = {
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || "",
   TELEGRAM_BOT_USERNAME: process.env.TELEGRAM_BOT_USERNAME || "",
 
-  // Prodamus
-  PRODAMUS_API_KEY: process.env.PRODAMUS_API_KEY || "",
-  PRODAMUS_SHOP_ID: process.env.PRODAMUS_SHOP_ID || "",
-  PRODAMUS_WEBHOOK_SECRET: process.env.PRODAMUS_WEBHOOK_SECRET || "",
+  // Prodamus Payment Gateway
+  PRODAMUS_PAYMENT_FORM_URL: process.env.PRODAMUS_PAYMENT_FORM_URL || "",
+  PRODAMUS_SECRET_KEY: process.env.PRODAMUS_SECRET_KEY || "",
 
   // Admin
   ADMIN_TELEGRAM_IDS: process.env.ADMIN_TELEGRAM_IDS?.split(",") || [],

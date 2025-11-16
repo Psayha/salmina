@@ -34,6 +34,7 @@ export interface OrderDTO {
   paidAt: Date | null;
   shippedAt: Date | null;
   items: OrderItemDTO[];
+  paymentUrl?: string; // Payment link for online payment
 }
 
 export interface OrderItemDTO {
