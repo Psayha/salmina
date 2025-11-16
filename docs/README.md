@@ -10,33 +10,23 @@
 docs/
 ├── project/          # Отчеты о разработке
 ├── development/      # Настройка и разработка
-├── deployment/       # Деплой и инфраструктура
+├── deployment/       # Docker setup
 └── modules/          # Документация модулей backend
 ```
 
 ---
 
-## 🚀 Быстрый старт
-
-**Главный файл:** [../QUICK_START.md](../QUICK_START.md)
-
-Запуск проекта за 5 минут:
-1. Установка зависимостей
-2. Настройка .env
-3. Запуск Docker
-4. Миграции БД
-5. Запуск backend/frontend
-
----
-
-## 📋 Основная документация
+## 📋 Главные документы
 
 ### Корневая папка проекта (`/`)
 
 | Файл | Описание |
 |------|----------|
-| [README.md](../README.md) | **Главный файл проекта** - обзор, установка, ссылки |
-| [QUICK_START.md](../QUICK_START.md) | Быстрый старт за 5 минут |
+| [README.md](../README.md) | **Главный файл проекта** - обзор, установка, текущий статус |
+| [DEPLOYMENT.md](../DEPLOYMENT.md) | Полное руководство: от setup до production |
+| [API_INTEGRATION.md](../API_INTEGRATION.md) | Все API endpoints с примерами кода |
+| [PHASE_3_COMPLETE.md](../PHASE_3_COMPLETE.md) | Отчет Phase 3: Backend Complete |
+| [PHASE_4_SUMMARY.md](../PHASE_4_SUMMARY.md) | Отчет Phase 4: Frontend Complete |
 
 ### Техническое задание (`/files/`)
 
@@ -44,10 +34,6 @@ docs/
 |------|----------|
 | [technical-specification-v1.1.md](../files/technical-specification-v1.1.md) | **Полное техническое задание** |
 | [context7-v1.1.md](../files/context7-v1.1.md) | Контекст для AI-ассистентов |
-| [claude-code-prompt.md](../files/claude-code-prompt.md) | Промпты для разработки |
-| [README-v1.1.md](../files/README-v1.1.md) | Обзор проекта v1.1 |
-| [README-USAGE.md](../files/README-USAGE.md) | Инструкции по использованию |
-| [CHANGELOG-v1.1.md](../files/CHANGELOG-v1.1.md) | История изменений |
 
 ---
 
@@ -55,15 +41,12 @@ docs/
 
 | Файл | Описание | Статус |
 |------|----------|--------|
-| [PROGRESS_REPORT.md](project/PROGRESS_REPORT.md) | Отчет Phase 1 (Foundation) | ✅ Complete |
-| [PHASE_2_REPORT.md](project/PHASE_2_REPORT.md) | **Отчет Phase 2 (Backend Core)** | ✅ Complete |
+| [PROGRESS_REPORT.md](project/PROGRESS_REPORT.md) | Phase 1: Foundation | ✅ Complete |
+| [PHASE_2_REPORT.md](project/PHASE_2_REPORT.md) | Phase 2: Backend Core (4 модуля) | ✅ Complete |
 
-### Phase 2 Report - Ключевые достижения:
-- 4 модуля backend (Auth, Users, Products, Categories)
-- 33+ API endpoints
-- 10,000+ строк кода
-- Clean Architecture
-- Полная документация
+**Актуальные отчеты:**
+- [PHASE_3_COMPLETE.md](../PHASE_3_COMPLETE.md) - Backend завершен (9 модулей, 51 endpoint)
+- [PHASE_4_SUMMARY.md](../PHASE_4_SUMMARY.md) - Frontend завершен (11 pages, 15 components)
 
 ---
 
@@ -72,7 +55,7 @@ docs/
 | Файл | Описание |
 |------|----------|
 | [SETUP.md](development/SETUP.md) | Первоначальная настройка проекта |
-| [MIGRATION.md](development/MIGRATION.md) | Инструкции по миграциям |
+| [MIGRATION.md](development/MIGRATION.md) | Инструкции по миграциям БД |
 
 ---
 
@@ -80,163 +63,68 @@ docs/
 
 | Файл | Описание |
 |------|----------|
-| [DOCKER_SETUP.md](deployment/DOCKER_SETUP.md) | **Полная инструкция по Docker** |
+| [DOCKER_SETUP.md](deployment/DOCKER_SETUP.md) | Полная инструкция по Docker setup |
 
-Включает:
-- Установка Docker Desktop
-- Управление контейнерами
-- PostgreSQL и Redis
-- Troubleshooting
-- Production considerations
+**Для production deployment:** см. [DEPLOYMENT.md](../DEPLOYMENT.md)
 
 ---
 
-## 📦 Backend Модули (`/docs/modules/`)
+## 📦 Backend Модули
 
 **Главный файл:** [modules/README.md](modules/README.md)
 
-### ✅ Реализованные модули
+### ✅ Все модули реализованы (Phase 3 Complete)
 
-#### 🔐 Authentication Module
-**Путь:** `/apps/backend/src/modules/auth/`
+| Модуль | Endpoints | Документация |
+|--------|-----------|--------------|
+| **Auth** | 5 | [README](../apps/backend/src/modules/auth/README.md) |
+| **Users** | 8 | [README](../apps/backend/src/modules/users/README.md) |
+| **Products** | 8 | [README](../apps/backend/src/modules/products/README.md) |
+| **Categories** | 6 | В коде |
+| **Cart** | 5 | В коде |
+| **Orders** | 6 | В коде |
+| **Promocodes** | 5 | В коде |
+| **Promotions** | 4 | В коде |
+| **Legal** | 4 | В коде |
 
-Документация:
-- [README.md](../apps/backend/src/modules/auth/README.md) - Полная документация
-- [QUICK_START.md](../apps/backend/src/modules/auth/QUICK_START.md) - Быстрый старт
-- [INTEGRATION.md](../apps/backend/src/modules/auth/INTEGRATION.md) - Интеграция с frontend
-- [SUMMARY.md](../apps/backend/src/modules/auth/SUMMARY.md) - Краткий обзор
-- [FILES.md](../apps/backend/src/modules/auth/FILES.md) - Описание файлов
+**Итого:** 9 модулей, 51 endpoint ✅
 
-**Endpoints:** 5 (Telegram auth, refresh, logout, me, verify)
-
----
-
-#### 👤 Users Module
-**Путь:** `/apps/backend/src/modules/users/`
-
-Документация:
-- [README.md](../apps/backend/src/modules/users/README.md) - Полная документация
-- [QUICKSTART.md](../apps/backend/src/modules/users/QUICKSTART.md) - Быстрый старт
-- [INTEGRATION.md](../apps/backend/src/modules/users/INTEGRATION.md) - Интеграция
-
-**Endpoints:** 8 (Profile, terms, admin CRUD)
+Детали: [modules/README.md](modules/README.md)
 
 ---
 
-#### 📦 Products Module
-**Путь:** `/apps/backend/src/modules/products/`
+## 🔍 Быстрый доступ
 
-Документация:
-- [README.md](../apps/backend/src/modules/products/README.md) - Полная документация
-- [INTEGRATION.md](../apps/backend/src/modules/products/INTEGRATION.md) - Интеграция
-- [SUMMARY.md](../apps/backend/src/modules/products/SUMMARY.md) - Обзор
-
-**Endpoints:** 8 (CRUD, search, filters, related)
-
----
-
-#### 📁 Categories Module
-**Путь:** `/apps/backend/src/modules/categories/`
-
-**Endpoints:** 6 (Tree, home, CRUD)
-
-Документация в коде (types, service, controller)
-
----
-
-### ⏳ В разработке
-
-- **Cart Module** - Корзина покупок
-- **Orders Module** - Управление заказами
-- **Promocodes Module** - Промокоды и скидки
-- **Promotions Module** - Акции и баннеры
-- **Legal Module** - Юридические документы
-
----
-
-## 🎯 Дорожная карта документации
-
-### ✅ Готово:
-- [x] Главный README.md
-- [x] Quick Start Guide
-- [x] Phase 1 & 2 Reports
-- [x] Docker Setup Guide
-- [x] Auth Module (5 docs)
-- [x] Users Module (3 docs)
-- [x] Products Module (3 docs)
-- [x] Module Index
-- [x] Documentation Index (этот файл)
-
-### 📝 В процессе:
-- [ ] Categories Module docs
-- [ ] API Reference (Swagger/OpenAPI)
-- [ ] Architecture Decision Records (ADR)
-
-### 🎯 Планируется:
-- [ ] Frontend documentation
-- [ ] Testing guide
-- [ ] Deployment guide
-- [ ] Contributing guide
-- [ ] Security guide
-- [ ] Performance guide
-
----
-
-## 🔍 Поиск документации
-
-### По типу:
-- **Getting Started:** [QUICK_START.md](../QUICK_START.md)
-- **Technical Spec:** [technical-specification-v1.1.md](../files/technical-specification-v1.1.md)
-- **Backend API:** [modules/README.md](modules/README.md)
-- **Infrastructure:** [deployment/DOCKER_SETUP.md](deployment/DOCKER_SETUP.md)
-- **Progress:** [project/PHASE_2_REPORT.md](project/PHASE_2_REPORT.md)
-
-### По модулю:
-- **Auth:** [apps/backend/src/modules/auth/README.md](../apps/backend/src/modules/auth/README.md)
-- **Users:** [apps/backend/src/modules/users/README.md](../apps/backend/src/modules/users/README.md)
-- **Products:** [apps/backend/src/modules/products/README.md](../apps/backend/src/modules/products/README.md)
-- **Categories:** [apps/backend/src/modules/categories/](../apps/backend/src/modules/categories/)
-
-### По задаче:
-- **Запустить проект:** [QUICK_START.md](../QUICK_START.md)
+### По типу задачи:
+- **Запустить проект:** [README.md](../README.md) → Быстрый старт
+- **Setup окружения:** [DEPLOYMENT.md](../DEPLOYMENT.md) → Quick Start
 - **Настроить Docker:** [deployment/DOCKER_SETUP.md](deployment/DOCKER_SETUP.md)
-- **Аутентификация:** [apps/backend/src/modules/auth/INTEGRATION.md](../apps/backend/src/modules/auth/INTEGRATION.md)
-- **Работа с API:** См. README модулей
+- **Работа с API:** [API_INTEGRATION.md](../API_INTEGRATION.md)
 - **Миграции БД:** [development/MIGRATION.md](development/MIGRATION.md)
 
----
-
-## 📊 Статистика документации
-
-| Категория | Файлов | Строк |
-|-----------|--------|-------|
-| Проектная документация | 8 | ~15,000 |
-| Отчеты разработки | 2 | ~8,000 |
-| Модули backend | 15+ | ~10,000 |
-| Инфраструктура | 3 | ~2,000 |
-| **Всего** | **28+** | **~35,000** |
+### По модулю backend:
+- **Аутентификация:** [auth/README.md](../apps/backend/src/modules/auth/README.md)
+- **Пользователи:** [users/README.md](../apps/backend/src/modules/users/README.md)
+- **Товары:** [products/README.md](../apps/backend/src/modules/products/README.md)
+- **Все модули:** [modules/README.md](modules/README.md)
 
 ---
 
-## 💡 Советы по навигации
+## 📊 Текущий статус проекта
 
-1. **Начните с:** [README.md](../README.md) - главный обзор
-2. **Запустить проект:** [QUICK_START.md](../QUICK_START.md)
-3. **Изучить API:** [modules/README.md](modules/README.md)
-4. **Узнать прогресс:** [project/PHASE_2_REPORT.md](project/PHASE_2_REPORT.md)
-5. **Настроить Docker:** [deployment/DOCKER_SETUP.md](deployment/DOCKER_SETUP.md)
+**Phase 4 Complete ✅** (Backend + Frontend Ready)
 
----
+- ✅ Backend: 9 модулей, 51 endpoints, 0 TypeScript errors
+- ✅ Frontend: 11 pages, 15 components, 0 TypeScript errors
+- ✅ CI/CD: GitHub Actions workflows configured
+- ✅ Documentation: Complete and up-to-date
 
-## 🔗 Полезные ссылки
+**Проект готов к production deployment!** 🚀
 
-- [GitHub Repository](https://github.com/your-repo)
-- [Live API](http://localhost:3001/api) (когда запущен)
-- [Prisma Studio](http://localhost:5555) (pnpm db:studio)
-- [Technical Specification](../files/technical-specification-v1.1.md)
+Детали: [README.md](../README.md)
 
 ---
 
-**Последнее обновление:** 2024-11-13
+**Последнее обновление:** 2024-11-16
 **Версия проекта:** 1.1.0
-**Статус:** Phase 2 Complete ✅
+**Статус:** Phase 4 Complete ✅

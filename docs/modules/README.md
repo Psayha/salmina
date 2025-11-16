@@ -1,6 +1,6 @@
 # 📦 Backend Modules Documentation
 
-Документация по модулям backend находится непосредственно в исходном коде для удобства разработки.
+Документация по всем модулям backend.
 
 ---
 
@@ -10,7 +10,9 @@
 
 ---
 
-## 🔐 Authentication Module
+## ✅ Реализованные модули (Phase 3 Complete)
+
+### 🔐 Authentication Module
 
 **Путь:** `/apps/backend/src/modules/auth/`
 
@@ -28,7 +30,7 @@
 - Обновление токенов
 - Logout
 
-**Endpoints:**
+**Endpoints (5):**
 - `POST /api/auth/telegram`
 - `POST /api/auth/refresh`
 - `POST /api/auth/logout`
@@ -37,7 +39,7 @@
 
 ---
 
-## 👤 Users Module
+### 👤 Users Module
 
 **Путь:** `/apps/backend/src/modules/users/`
 
@@ -52,18 +54,19 @@
 - Администрирование пользователей (ADMIN)
 - Управление ролями (ADMIN)
 
-**Endpoints:**
+**Endpoints (8):**
 - `GET /api/users/me`
 - `PATCH /api/users/me`
 - `POST /api/users/me/accept-terms`
 - `GET /api/users` (admin)
 - `GET /api/users/:id` (admin)
+- `PATCH /api/users/:id` (admin)
 - `PATCH /api/users/:id/role` (admin)
 - `DELETE /api/users/:id` (admin)
 
 ---
 
-## 📦 Products Module
+### 📦 Products Module
 
 **Путь:** `/apps/backend/src/modules/products/`
 
@@ -81,7 +84,7 @@
 - Управление остатками
 - Связанные товары
 
-**Endpoints:**
+**Endpoints (8):**
 - `GET /api/products`
 - `GET /api/products/search`
 - `GET /api/products/:slug`
@@ -93,12 +96,9 @@
 
 ---
 
-## 📁 Categories Module
+### 📁 Categories Module
 
 **Путь:** `/apps/backend/src/modules/categories/`
-
-**Документация:**
-- Файлы с документацией: `categories.types.ts`, `categories.service.ts`
 
 **Функционал:**
 - Древовидная структура категорий
@@ -106,7 +106,7 @@
 - Подсчет товаров в категории
 - CRUD операции (ADMIN)
 
-**Endpoints:**
+**Endpoints (6):**
 - `GET /api/categories`
 - `GET /api/categories/home`
 - `GET /api/categories/:slug`
@@ -114,72 +114,116 @@
 - `PATCH /api/categories/:id` (admin)
 - `DELETE /api/categories/:id` (admin)
 
+**Документация:** В коде (types, service, controller, validation)
+
 ---
 
-## 🛒 Cart Module
-
-**Статус:** В разработке
+### 🛒 Cart Module
 
 **Путь:** `/apps/backend/src/modules/cart/`
 
-**Планируемый функционал:**
-- Управление корзиной
+**Функционал:**
+- Управление корзиной (session + user support)
 - Добавление/удаление товаров
+- Обновление количества
 - Применение промокодов
-- Подсчет стоимости
+- Подсчет стоимости с учетом скидок
+
+**Endpoints (5):**
+- `GET /api/cart`
+- `POST /api/cart/items`
+- `PATCH /api/cart/items/:id`
+- `DELETE /api/cart/items/:id`
+- `DELETE /api/cart`
+
+**Документация:** В коде (types, service, controller, validation, routes)
 
 ---
 
-## 📋 Orders Module
-
-**Статус:** В разработке
+### 📋 Orders Module
 
 **Путь:** `/apps/backend/src/modules/orders/`
 
-**Планируемый функционал:**
-- Создание заказов
-- Управление статусами
-- История заказов
+**Функционал:**
+- Создание заказов из корзины
+- Управление статусами (PENDING → CONFIRMED → SHIPPED → DELIVERED)
+- История заказов пользователя
+- Администрирование заказов (ADMIN)
+- Transaction handling (stock update)
 - Tracking информация
+
+**Endpoints (6):**
+- `GET /api/orders`
+- `GET /api/orders/:id`
+- `POST /api/orders`
+- `PATCH /api/orders/:id/status` (admin)
+- `PATCH /api/orders/:id/tracking` (admin)
+- `DELETE /api/orders/:id` (admin)
+
+**Документация:** В коде (types, service, controller, validation, routes)
 
 ---
 
-## 🎟️ Promocodes Module
-
-**Статус:** В разработке
+### 🎟️ Promocodes Module
 
 **Путь:** `/apps/backend/src/modules/promocodes/`
 
-**Планируемый функционал:**
-- CRUD промокодов
-- Валидация и применение
-- Статистика использования
+**Функционал:**
+- CRUD промокодов (ADMIN)
+- Валидация и применение промокодов
+- Типы скидок (процент, фиксированная сумма)
+- Лимиты использования
+- Даты действия
+
+**Endpoints (5):**
+- `GET /api/promocodes` (admin)
+- `POST /api/promocodes` (admin)
+- `PATCH /api/promocodes/:id` (admin)
+- `DELETE /api/promocodes/:id` (admin)
+- `POST /api/promocodes/validate` (public)
+
+**Документация:** В коде (index.ts - inline routes)
 
 ---
 
-## 🎉 Promotions Module
-
-**Статус:** В разработке
+### 🎉 Promotions Module
 
 **Путь:** `/apps/backend/src/modules/promotions/`
 
-**Планируемый функционал:**
-- Управление акциями
-- Баннеры
-- Расписание показа
+**Функционал:**
+- Управление акциями и баннерами
+- Типы промо (banner, sale, bundle, seasonal)
+- Расписание показа (validFrom/validTo)
+- Целевые категории
+- Публикация/деактивация
+
+**Endpoints (4):**
+- `GET /api/promotions`
+- `POST /api/promotions` (admin)
+- `PATCH /api/promotions/:id` (admin)
+- `DELETE /api/promotions/:id` (admin)
+
+**Документация:** В коде (index.ts - inline routes)
 
 ---
 
-## 📄 Legal Module
-
-**Статус:** В разработке
+### 📄 Legal Module
 
 **Путь:** `/apps/backend/src/modules/legal/`
 
-**Планируемый функционал:**
-- Юридические документы
-- Версионирование
-- Отслеживание принятия
+**Функционал:**
+- Юридические документы (Terms, Privacy, Refund, Shipping)
+- Версионирование документов
+- Публикация и активация
+- История изменений
+
+**Endpoints (4):**
+- `GET /api/legal` (public)
+- `GET /api/legal/:type` (public)
+- `POST /api/legal` (admin)
+- `PATCH /api/legal/:id` (admin)
+
+**Документация:** В коде (index.ts - inline routes)
 
 ---
 
@@ -187,24 +231,52 @@
 
 | Модуль | Статус | Endpoints | Документация |
 |--------|--------|-----------|--------------|
-| Auth | ✅ Complete | 5 | Полная |
-| Users | ✅ Complete | 8 | Полная |
-| Products | ✅ Complete | 8 | Полная |
+| Auth | ✅ Complete | 5 | Полная (5 файлов) |
+| Users | ✅ Complete | 8 | Полная (3 файла) |
+| Products | ✅ Complete | 8 | Полная (3 файла) |
 | Categories | ✅ Complete | 6 | В коде |
-| Cart | ⏳ Planned | - | - |
-| Orders | ⏳ Planned | - | - |
-| Promocodes | ⏳ Planned | - | - |
-| Promotions | ⏳ Planned | - | - |
-| Legal | ⏳ Planned | - | - |
+| Cart | ✅ Complete | 5 | В коде |
+| Orders | ✅ Complete | 6 | В коде |
+| Promocodes | ✅ Complete | 5 | В коде |
+| Promotions | ✅ Complete | 4 | В коде |
+| Legal | ✅ Complete | 4 | В коде |
+
+**Итого:** 9 модулей, 51 endpoint ✅
+
+---
+
+## 🏗️ Архитектура модулей
+
+Все модули следуют Clean Architecture:
+
+```
+module/
+├── module.types.ts      # Interfaces, DTOs, Enums
+├── module.validation.ts # Zod schemas
+├── module.service.ts    # Business logic
+├── module.controller.ts # HTTP handlers
+├── module.routes.ts     # Express routes
+└── index.ts            # Module exports (or inline routes)
+```
+
+**Принципы:**
+- Separation of Concerns
+- Dependency Injection готовность
+- Type Safety (strict TypeScript)
+- Validation с Zod
+- Error handling с AppError
+- Clean Code
 
 ---
 
 ## 🔗 Связанная документация
 
-- [Phase 2 Report](../project/PHASE_2_REPORT.md) - Отчет по Phase 2
-- [API Documentation](http://localhost:3001/api) - Живая документация API
-- [Quick Start](../../QUICK_START.md) - Быстрый старт проекта
+- [API_INTEGRATION.md](../../API_INTEGRATION.md) - Все API endpoints с примерами
+- [PHASE_3_COMPLETE.md](../../PHASE_3_COMPLETE.md) - Отчет по Phase 3 (Backend)
+- [DEPLOYMENT.md](../../DEPLOYMENT.md) - Setup и deployment guide
 
 ---
 
-**Примечание:** Документация модулей намеренно хранится в папках модулей для удобства разработчиков. Это позволяет видеть документацию рядом с кодом.
+**Статус:** Phase 3 Complete ✅
+**Версия:** 1.1.0
+**Последнее обновление:** 2024-11-16
