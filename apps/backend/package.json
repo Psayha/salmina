@@ -9,39 +9,45 @@
     "start": "node dist/index.js",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "express": "^4.19.0",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "dotenv": "^16.4.0",
     "@prisma/client": "^5.19.0",
-    "zod": "^3.23.0",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "redis": "^4.7.0",
     "axios": "^1.7.0",
-    "node-telegram-bot-api": "^0.66.0"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.0",
+    "express": "^4.19.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "redis": "^4.7.0",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
-    "typescript": "^5.6.0",
-    "@types/node": "^20.14.0",
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17",
-    "@types/jsonwebtoken": "^9.0.5",
+    "@jest/globals": "^30.2.0",
     "@types/bcryptjs": "^2.4.6",
-    "tsx": "^4.16.0",
-    "prisma": "^5.19.0",
-    "eslint": "^9.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0"
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^9.0.0",
+    "jest": "^30.2.0",
+    "prisma": "^5.19.0",
+    "ts-jest": "^29.4.5",
+    "tsx": "^4.16.0",
+    "typescript": "^5.6.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   }
 }
-
