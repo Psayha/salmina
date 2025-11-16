@@ -21,6 +21,7 @@ import { env } from '../../config/env.js';
 import { UnauthorizedError, ErrorCode, BadRequestError } from '../../common/errors/AppError.js';
 import { AuthResponse, RefreshResponse, toUserData, TokenPayload } from './auth.types.js';
 import { logger } from '../../utils/logger.js';
+import { telegramService } from '../../services/telegram.service.js';
 
 /**
  * Redis key prefixes
@@ -227,6 +228,10 @@ export class AuthService {
     const isAdmin = env.ADMIN_TELEGRAM_IDS.includes(telegramUser.id.toString());
     const role = isAdmin ? UserRole.ADMIN : UserRole.USER;
 
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({ where: { telegramId } });
+    const isNewUser = !existingUser;
+
     // Find or create user
     const user = await prisma.user.upsert({
       where: { telegramId },
@@ -250,6 +255,16 @@ export class AuthService {
     });
 
     logger.info(`User found/created: ${user.id} (Telegram ID: ${telegramId})`);
+
+    // Send welcome message to new users
+    if (isNewUser) {
+      try {
+        await telegramService.sendWelcomeMessage(telegramUser.id, telegramUser.first_name);
+      } catch (error) {
+        logger.error('Failed to send welcome message:', error);
+        // Don't fail auth if welcome message fails
+      }
+    }
 
     return user;
   }

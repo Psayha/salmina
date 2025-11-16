@@ -6,6 +6,7 @@
 import { prisma } from '../../database/prisma.service.js';
 import { NotFoundError, BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
+import { telegramService } from '../../services/telegram.service.js';
 // import { cartService } from '../cart/cart.service.js'; // unused
 import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus } from './orders.types.js';
 
@@ -169,6 +170,24 @@ class OrdersService {
     }
 
     logger.info(`Order created: ${order.orderNumber}`);
+
+    // Send notification to admin
+    try {
+      await telegramService.notifyNewOrder({
+        orderNumber: order.orderNumber,
+        customerName: order.customerName,
+        total: Number(order.total),
+        items: order.items.map((item) => ({
+          productName: item.productName,
+          quantity: item.quantity,
+          price: Number(item.appliedPrice),
+        })),
+      });
+    } catch (error) {
+      logger.error('Failed to send order notification:', error);
+      // Don't fail the order creation if notification fails
+    }
+
     return toOrderDTO(order);
   }
 
@@ -240,10 +259,23 @@ class OrdersService {
     const updated = await prisma.order.update({
       where: { id: orderId },
       data: updateData,
-      include: { items: true },
+      include: { items: true, user: true },
     });
 
     logger.info(`Order status updated: ${orderId} -> ${data.status}`);
+
+    // Send notification to customer
+    try {
+      await telegramService.notifyOrderStatus({
+        telegramId: Number(updated.user.telegramId),
+        orderNumber: updated.orderNumber,
+        status: updated.status,
+        trackingNumber: updated.trackingNumber || undefined,
+      });
+    } catch (error) {
+      logger.error('Failed to send status update notification:', error);
+    }
+
     return toOrderDTO(updated);
   }
 
