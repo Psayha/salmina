@@ -2,7 +2,7 @@
 
 **Версия:** 1.1.0
 **Платформа:** Telegram Mini App
-**Статус:** Phase 4 Complete ✅ (Backend + Frontend Ready)
+**Статус:** 🚀 DEPLOYED TO PRODUCTION ✅
 
 ---
 
@@ -29,6 +29,24 @@ telegram-shop/
 
 ---
 
+## 🌐 Production Environment
+
+**Live URLs:**
+- 🛍️ **Shop:** https://salminashop.ru
+- 🔌 **API:** https://app.salminashop.ru
+- 👨‍💼 **Admin:** https://admin.salminashop.ru
+
+**Server:**
+- 🖥️ VPS: 91.229.11.132
+- 🐧 OS: Ubuntu 22.04
+- 🔒 SSL: Let's Encrypt (Auto-renewal)
+- 🚀 Process Manager: PM2
+- 🌐 Reverse Proxy: Nginx
+
+**Status:** ✅ All services online and healthy
+
+---
+
 ## 🚀 Быстрый старт
 
 ### Требования
@@ -37,25 +55,29 @@ telegram-shop/
 - pnpm >= 8.0.0
 - Docker & Docker Compose
 
-### Текущий Статус Сборки
+### Production Deployment Status
 
 **Frontend:**
 - ✅ TypeScript: 0 errors
 - ✅ Production build: Successful
-- ✅ 11 pages (10 static, 1 dynamic)
+- ✅ 11 pages deployed
 - ✅ 15 components
-- ✅ Ready for production
+- ✅ **DEPLOYED:** https://salminashop.ru
 
-**Backend:**
+**Backend API:**
 - ✅ TypeScript: 0 errors
 - ✅ Production build: Successful
-- ✅ 9 модулей, 51 endpoints реализованы
-- ✅ Ready for production
+- ✅ 9 модулей, 51 endpoints
+- ✅ **DEPLOYED:** https://app.salminashop.ru
+- ✅ Database: PostgreSQL (connected)
+- ✅ Cache: Redis (connected)
 
-**CI/CD:**
-- ✅ GitHub Actions workflows configured
-- ✅ Automated testing pipeline
-- ✅ Automated deployment pipeline
+**Infrastructure:**
+- ✅ Nginx configured with SSL
+- ✅ HTTP → HTTPS redirect enabled
+- ✅ PM2 auto-restart enabled
+- ✅ Firewall configured
+- ✅ SEO: robots.txt (noindex)
 
 ### Установка
 
@@ -255,75 +277,89 @@ cp .env.example .env
   - **Отчет:** [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md)
   - **Frontend готов к production!** 🎉
 
-- [ ] **Phase 5: Integrations**
+- [x] **Phase 5: Production Deployment** - Deployed! 🚀
+  - ✅ VPS server setup (Ubuntu 22.04)
+  - ✅ Database migration & seeding
+  - ✅ PM2 process manager configured
+  - ✅ Nginx reverse proxy with SSL
+  - ✅ Let's Encrypt SSL certificates
+  - ✅ HTTP → HTTPS redirects
+  - ✅ Domain configuration (4 domains)
+  - ✅ Auto-restart on reboot
+  - ✅ robots.txt (noindex)
+  - **Status:** Live at https://salminashop.ru
+
+- [ ] **Phase 6: Integrations**
   - Prodamus payment integration
   - Telegram Bot notifications
   - CDEK delivery (optional)
 
-- [ ] **Phase 6: Testing**
+- [ ] **Phase 7: Testing**
   - Unit tests (Jest)
   - Integration tests (Supertest)
   - E2E tests (Playwright)
   - Test coverage >80%
 
-- [ ] **Phase 7: Deployment & Polish**
-  - Production deployment
-  - Monitoring
-  - Documentation finalization
+- [ ] **Phase 8: Monitoring & Polish**
+  - Monitoring setup
   - Performance optimization
+  - Analytics integration
 
 ---
 
-## 📊 Production Readiness
+## 📊 Production Status
 
-### ✅ Готово к Production
+### 🚀 DEPLOYED TO PRODUCTION
 
-**Frontend (100%):**
-- ✅ 11 страниц (Home, Product, Cart, Checkout, Profile, Search, Category, Favorites, Orders)
-- ✅ 15 UI компонентов (Button, Loading, Toast, ErrorBoundary, Icons, etc.)
-- ✅ 3 Zustand stores (Auth, Cart, Favorites) с persist
-- ✅ Telegram SDK integration (useTelegram hook)
-- ✅ API client с auto token refresh
-- ✅ Error handling (ErrorBoundary + global-error)
-- ✅ TypeScript: 0 errors
-- ✅ Production build: Successful
+**Frontend (LIVE):**
+- ✅ https://salminashop.ru
+- ✅ 11 страниц deployed
+- ✅ 15 UI компонентов
+- ✅ 3 Zustand stores с persist
+- ✅ Telegram SDK integration
+- ✅ SSL enabled (Let's Encrypt)
+- ✅ HTTP → HTTPS redirect
+- ✅ robots.txt (noindex)
 
-**Backend (100%):**
-- ✅ 9 модулей реализованы
-- ✅ 51 endpoint готовы
-- ✅ TypeScript: 0 errors
-- ✅ Production build: Successful
+**Backend API (LIVE):**
+- ✅ https://app.salminashop.ru
+- ✅ 9 модулей, 51 endpoints
+- ✅ PostgreSQL database (migrated & seeded)
+- ✅ Redis cache
+- ✅ PM2 process manager
+- ✅ Health check: /health
 
-**Documentation (100%):**
-- ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - От разработки до production
-- ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - Все API endpoints
-- ✅ [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Детальный отчет frontend
-- ✅ README.md - Актуальный статус проекта
+**Infrastructure:**
+- ✅ VPS: 91.229.11.132 (Ubuntu 22.04)
+- ✅ Nginx reverse proxy
+- ✅ SSL certificates (auto-renewal)
+- ✅ PM2 auto-restart on reboot
+- ✅ 4 domains configured
+
+**Documentation:**
+- ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment guide
+- ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - API docs
+- ✅ [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Frontend report
+- ✅ README.md - Project status
 
 ### ⏳ Следующие шаги
 
-**Проект полностью готов к production deployment!** 🚀
-
-Рекомендуемая последовательность запуска:
-
-1. **Production Deployment** (см. [DEPLOYMENT.md](DEPLOYMENT.md))
-   - Настроить переменные окружения (.env)
-   - Развернуть базу данных (PostgreSQL + Redis)
-   - Запустить backend API
-   - Запустить frontend
-   - Настроить Telegram Bot
-
-2. **Интеграции** (Phase 5)
+1. **Интеграции** (Phase 6)
    - Prodamus payment integration
    - Telegram Bot notifications
    - CDEK delivery (optional)
 
-3. **Тестирование** (Phase 6)
+2. **Тестирование** (Phase 7)
    - Unit tests (Jest)
    - Integration tests
    - E2E tests (Playwright)
 
-**Статус:** Готов к deployment (все TypeScript ошибки исправлены ✅)
+3. **Мониторинг** (Phase 8)
+   - Error tracking (Sentry)
+   - Analytics
+   - Performance monitoring
+
+**Статус:** 🟢 Production ready and deployed!
 
 ---
 

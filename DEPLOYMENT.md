@@ -2,6 +2,13 @@
 
 Полное руководство от локальной разработки до production deployment.
 
+**Production Status:** 🟢 **DEPLOYED AND RUNNING**
+
+**Live URLs:**
+- 🛍️ Shop: https://salminashop.ru
+- 🔌 API: https://app.salminashop.ru
+- 👨‍💼 Admin: https://admin.salminashop.ru
+
 ---
 
 ## 🎯 ЧТО ДЕЛАТЬ СЕЙЧАС - Пошаговый план
@@ -59,24 +66,35 @@ pnpm dev
 
 ---
 
-## 📊 Текущий Статус
+## 📊 Production Deployment Status
 
-**Frontend:** ✅ Ready for production
+**Frontend:** 🟢 DEPLOYED
+- URL: https://salminashop.ru
 - TypeScript: 0 errors
-- Production build: Successful
-- 11 pages, 15 components
+- Build: Successful
+- Pages: 11 deployed
+- Components: 15
+- SSL: ✅ Let's Encrypt
+- Redirect: HTTP → HTTPS ✅
 
-**Backend:** ✅ Ready for production
+**Backend API:** 🟢 DEPLOYED
+- URL: https://app.salminashop.ru
 - TypeScript: 0 errors
-- Production build: Successful
-- 9 модулей, 51 endpoints реализованы
+- Build: Successful
+- Modules: 9 (51 endpoints)
+- Database: PostgreSQL ✅ (migrated & seeded)
+- Cache: Redis ✅
+- Health: /health endpoint ✅
 
-**CI/CD:** ✅ Configured
-- GitHub Actions workflows ready
-- Automated testing pipeline
-- Automated deployment pipeline
+**Infrastructure:** 🟢 RUNNING
+- VPS: 91.229.11.132 (Ubuntu 22.04)
+- Nginx: reverse proxy ✅
+- SSL: Let's Encrypt auto-renewal ✅
+- PM2: auto-restart enabled ✅
+- Firewall: configured ✅
+- SEO: robots.txt (noindex) ✅
 
-**Статус:** Проект полностью готов к deployment! 🚀
+**Статус:** 🚀 Production ready and deployed!
 
 ---
 
