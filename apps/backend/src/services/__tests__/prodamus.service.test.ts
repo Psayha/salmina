@@ -18,12 +18,15 @@ describe('ProdamusService', () => {
 
       const paymentUrl = prodamusService.generatePaymentLink(params);
 
-      expect(paymentUrl).toContain('https://demo.payform.ru');
-      expect(paymentUrl).toContain('order_id=ORD-12345678-9012');
-      expect(paymentUrl).toContain('customer_name=');
-      expect(paymentUrl).toContain('customer_email=ivan@example.com');
-      expect(paymentUrl).toContain('customer_phone=');
-      expect(paymentUrl).toContain('sign=');
+      // Проверяем через URLSearchParams для корректной работы с encoding
+      const url = new URL(paymentUrl);
+
+      expect(url.origin).toBe('https://demo.payform.ru');
+      expect(url.searchParams.get('order_id')).toBe('ORD-12345678-9012');
+      expect(url.searchParams.get('customer_name')).toBe('Иван Иванов');
+      expect(url.searchParams.get('customer_email')).toBe('ivan@example.com');
+      expect(url.searchParams.get('customer_phone')).toBe('+79991234567');
+      expect(url.searchParams.get('sign')).toBeTruthy();
     });
 
     it('должен генерировать подпись для данных', () => {
@@ -64,28 +67,28 @@ describe('ProdamusService', () => {
 
   describe('verifyWebhookSignature', () => {
     it('должен проверять корректную подпись webhook', () => {
-      // Подготовим тестовые данные
-      const testData = {
-        order_num: 'ORD-123',
-        sum: '1500.00',
-        payment_status: 'success',
-      };
-
-      // Генерируем подпись вручную используя приватный метод
-      const signature = (prodamusService as any).generateSignature(testData);
-
-      const webhookData: ProdamusWebhookData = {
-        ...testData,
+      // Подготовим полные данные webhook (без подписи)
+      const webhookDataWithoutSign = {
         date: '2024-11-16 10:00:00',
         order_id: 'internal_123',
+        order_num: 'ORD-123',
         domain: 'test.payform.ru',
+        sum: '1500.00',
         payment_type: 'card',
+        payment_status: 'success',
         payment_status_description: 'Успешная оплата',
         currency: 'rub',
         products: '[]',
         payment_init: 'online',
         attempt: '1',
         sys: 'test',
+      };
+
+      // Генерируем подпись для всех полей
+      const signature = (prodamusService as any).generateSignature(webhookDataWithoutSign);
+
+      const webhookData: ProdamusWebhookData = {
+        ...webhookDataWithoutSign,
         sign: signature,
       };
 
