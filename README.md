@@ -132,7 +132,8 @@ Backend API: http://localhost:3001
 - [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Phase 4: Frontend (11 pages, 15 components) ✅
 - [PHASE_6_TELEGRAM.md](PHASE_6_TELEGRAM.md) - Phase 6.1: Telegram Bot Integration ✅
 - [PHASE_6.2_PRODAMUS.md](PHASE_6.2_PRODAMUS.md) - Phase 6.2: Prodamus Payment Integration ✅
-- [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Phase 7: Testing (в процессе) 🚧
+- [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Phase 7: Testing (70% завершена, есть долг) ⚠️
+- [PHASE_8_MONITORING.md](PHASE_8_MONITORING.md) - Phase 8: Monitoring & Polish (начинается) 🚀
 
 ### 🔧 Руководства по настройке
 
@@ -327,22 +328,24 @@ cp .env.example .env
     - Order status updates
   - [ ] CDEK delivery (optional)
 
-- [ ] **Phase 7: Testing** - В процессе 🚧
+- [ ] **Phase 7: Testing** - 70% завершена ⚠️ (есть технический долг)
   - ✅ Jest 30+ setup с ESM поддержкой
   - ✅ Unit tests для Prodamus service (14/14 passing, 88.7% coverage)
   - ✅ Unit tests для Auth service (17/17 passing, 94.25% coverage)
   - ✅ Unit tests для Cart service (7/7 passing)
   - ✅ Unit tests для Orders service (11/11 passing)
-  - [ ] Unit tests для Products, Telegram services
-  - [ ] Integration tests (Supertest)
-  - [ ] E2E tests (Playwright)
-  - [ ] Test coverage >80% (текущий: ~90% для покрытых сервисов)
+  - [ ] 🔴 **ДОЛГ:** Unit tests для Products, Telegram services
+  - [ ] 🔴 **ДОЛГ:** Integration tests (Supertest)
+  - [ ] 🟡 E2E tests (Playwright) - опционально
   - **Отчет:** [PHASE_7_TESTING.md](PHASE_7_TESTING.md)
 
-- [ ] **Phase 8: Monitoring & Polish**
-  - Monitoring setup
-  - Performance optimization
+- [ ] **Phase 8: Monitoring & Polish** - 🚀 Начинается
+  - Error tracking (Sentry)
+  - Logging infrastructure
+  - Performance monitoring
   - Analytics integration
+  - Health checks & uptime monitoring
+  - **План:** [PHASE_8_MONITORING.md](PHASE_8_MONITORING.md)
 
 ---
 
@@ -407,20 +410,20 @@ cp .env.example .env
 
 ### ⏳ Следующие шаги
 
-1. **Phase 7: Testing** (текущая фаза)
-   - ✅ Prodamus service unit tests (14/14 passing, 88.7%)
-   - ✅ Auth service unit tests (17/17 passing, 94.25%)
-   - ✅ Cart service unit tests (7/7 passing)
-   - ✅ Orders service unit tests (11/11 passing)
-   - [ ] Products service unit tests
-   - [ ] Integration tests с Supertest
-   - [ ] E2E tests с Playwright
+1. **Phase 8: Monitoring & Polish** (текущая фаза 🚀)
+   - [ ] Error tracking (Sentry setup)
+   - [ ] Logging infrastructure
+   - [ ] Performance monitoring
+   - [ ] Analytics integration (GA4 / Amplitude)
+   - [ ] Health checks & uptime monitoring
+   - [ ] Alerts в Telegram
 
-2. **Phase 8: Monitoring & Analytics**
-   - Error tracking (Sentry)
-   - Performance monitoring
-   - Analytics integration
-   - User behavior tracking
+2. **Phase 7: Технический долг** (вернуться позже)
+   - [ ] 🔴 Products service unit tests
+   - [ ] 🔴 Telegram service unit tests
+   - [ ] 🔴 Integration tests с Supertest
+   - [ ] 🔴 Тесты в CI/CD pipeline
+   - [ ] 🟡 E2E tests с Playwright (опционально)
 
 3. **Future Enhancements**
    - CDEK delivery integration
