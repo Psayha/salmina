@@ -5,9 +5,9 @@
  * @created 2024-11-13
  */
 
-import { prisma } from '../../database/prisma.service';
-import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError';
-import { logger } from '../../utils/logger';
+import { prisma } from '../../database/prisma.service.js';
+import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError.js';
+import { logger } from '../../utils/logger.js';
 import {
   CategoryDTO,
   CategoryTree,

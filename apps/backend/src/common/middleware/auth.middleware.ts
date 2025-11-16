@@ -6,8 +6,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { UnauthorizedError, ForbiddenError } from '../errors/AppError';
-import { verifyAccessToken, JWTPayload } from '../utils/crypto';
+import { UnauthorizedError, ForbiddenError } from '../errors/AppError.js';
+import { verifyAccessToken, JWTPayload } from '../utils/crypto.js';
 import { UserRole } from '@prisma/client';
 
 /**

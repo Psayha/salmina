@@ -7,8 +7,8 @@
 
 import { Router } from 'express';
 import { productsController } from './products.controller';
-import { validate } from '../../common/middleware/validation.middleware';
-import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware';
+import { validate } from '../../common/middleware/validation.middleware.js';
+import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import {
   getProductsQuerySchema,
   searchProductsQuerySchema,

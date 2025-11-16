@@ -6,8 +6,8 @@
  */
 
 import { UserRole, Prisma } from '@prisma/client';
-import { prisma } from '../../database/prisma.service';
-import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors/AppError';
+import { prisma } from '../../database/prisma.service.js';
+import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors/AppError.js';
 import {
   UserDTO,
   UpdateUserProfileDTO,
@@ -18,7 +18,7 @@ import {
   toUserDTO,
   toUserDTOList,
 } from './users.types';
-import { logger } from '../../utils/logger';
+import { logger } from '../../utils/logger.js';
 
 /**
  * User Service

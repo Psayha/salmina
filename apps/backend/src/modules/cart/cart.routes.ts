@@ -7,8 +7,8 @@
 
 import { Router } from 'express';
 import { cartController } from './cart.controller';
-import { optionalAuth } from '../../common/middleware/auth.middleware';
-import { validate } from '../../common/middleware/validation.middleware';
+import { optionalAuth } from '../../common/middleware/auth.middleware.js';
+import { validate } from '../../common/middleware/validation.middleware.js';
 import {
   addToCartSchema,
   updateCartItemSchema,

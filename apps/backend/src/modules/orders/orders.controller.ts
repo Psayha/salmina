@@ -4,7 +4,7 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { AuthRequest } from '../../common/middleware/auth.middleware';
+import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { ordersService } from './orders.service';
 import { CreateOrderInput, UpdateOrderStatusInput } from './orders.validation';
 import { OrderStatus } from './orders.types';

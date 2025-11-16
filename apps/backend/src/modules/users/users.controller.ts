@@ -12,9 +12,9 @@ import {
   UpdateUserRoleInput,
   UserIdParam,
 } from './users.validation';
-import { AuthRequest } from '../../common/middleware/auth.middleware';
-import { BadRequestError } from '../../common/errors/AppError';
-import { logger } from '../../utils/logger';
+import { AuthRequest } from '../../common/middleware/auth.middleware.js';
+import { BadRequestError } from '../../common/errors/AppError.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * User Controller

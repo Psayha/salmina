@@ -8,8 +8,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
-import { AppError, ErrorCode, InternalError, ValidationError } from '../common/errors/AppError';
-import { logger } from '../utils/logger';
+import { AppError, ErrorCode, InternalError, ValidationError } from '../common/errors/AppError.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Global error handler middleware

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { prisma } from '../../database/prisma.service';
-import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware';
-import { NotFoundError } from '../../common/errors/AppError';
+import { prisma } from '../../database/prisma.service.js';
+import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
+import { NotFoundError } from '../../common/errors/AppError.js';
 
 const router: any = Router();
 

@@ -7,8 +7,8 @@
 
 import { Router } from 'express';
 import { authController } from './auth.controller';
-import { validateBody } from '../../common/middleware/validation.middleware';
-import { authenticate } from '../../common/middleware/auth.middleware';
+import { validateBody } from '../../common/middleware/validation.middleware.js';
+import { authenticate } from '../../common/middleware/auth.middleware.js';
 import { telegramAuthSchema, refreshTokenSchema } from './auth.validation';
 
 /**

@@ -11,7 +11,7 @@ import {
   paginationSchema,
   sortOrderSchema,
   articleSchema,
-} from '../../common/utils/validators';
+} from '../../common/utils/validators.js';
 
 /**
  * Product sort by options

@@ -7,8 +7,8 @@
 
 import { Router } from 'express';
 import { userController } from './users.controller';
-import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware';
-import { validateBody, validateQuery, validateParams } from '../../common/middleware/validation.middleware';
+import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
+import { validateBody, validateQuery, validateParams } from '../../common/middleware/validation.middleware.js';
 import {
   updateUserProfileSchema,
   updateUserRoleSchema,

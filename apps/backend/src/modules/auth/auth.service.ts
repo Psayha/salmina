@@ -6,8 +6,8 @@
  */
 
 import { User, UserRole } from '@prisma/client';
-import { prisma } from '../../database/prisma.service';
-import { redis } from '../../database/redis.service';
+import { prisma } from '../../database/prisma.service.js';
+import { redis } from '../../database/redis.service.js';
 import {
   validateTelegramInitData,
   parseTelegramInitData,
@@ -16,11 +16,11 @@ import {
   verifyRefreshToken,
   verifyAccessToken,
   JWTPayload,
-} from '../../common/utils/crypto';
-import { env } from '../../config/env';
-import { UnauthorizedError, ErrorCode, BadRequestError } from '../../common/errors/AppError';
+} from '../../common/utils/crypto.js';
+import { env } from '../../config/env.js';
+import { UnauthorizedError, ErrorCode, BadRequestError } from '../../common/errors/AppError.js';
 import { AuthResponse, RefreshResponse, toUserData, TokenPayload } from './auth.types';
-import { logger } from '../../utils/logger';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Redis key prefixes

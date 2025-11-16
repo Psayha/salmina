@@ -5,10 +5,10 @@
  * @created 2024-11-13
  */
 
-import { prisma } from '../../database/prisma.service';
-import { NotFoundError, BadRequestError } from '../../common/errors/AppError';
-import { logger } from '../../utils/logger';
-import { generateRandomToken } from '../../common/utils/crypto';
+import { prisma } from '../../database/prisma.service.js';
+import { NotFoundError, BadRequestError } from '../../common/errors/AppError.js';
+import { logger } from '../../utils/logger.js';
+import { generateRandomToken } from '../../common/utils/crypto.js';
 import {
   CartSummary,
   CartWithItems,

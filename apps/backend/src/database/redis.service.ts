@@ -6,8 +6,8 @@
  */
 
 import { createClient, RedisClientType } from 'redis';
-import { logger } from '../utils/logger';
-import { env } from '../config/env';
+import { logger } from '../utils/logger.js';
+import { env } from '../config/env.js';
 
 /**
  * Redis Client singleton service

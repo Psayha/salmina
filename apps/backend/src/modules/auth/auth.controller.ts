@@ -8,9 +8,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { authService } from './auth.service';
 import { TelegramAuthInput, RefreshTokenInput } from './auth.validation';
-import { AuthRequest } from '../../common/middleware/auth.middleware';
+import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { toUserData } from './auth.types';
-import { logger } from '../../utils/logger';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Authentication Controller

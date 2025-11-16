@@ -4,8 +4,8 @@
 
 import { Router } from 'express';
 import { ordersController } from './orders.controller';
-import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware';
-import { validate } from '../../common/middleware/validation.middleware';
+import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
+import { validate } from '../../common/middleware/validation.middleware.js';
 import { createOrderSchema, updateOrderStatusSchema, getOrderSchema, getOrdersSchema } from './orders.validation';
 
 const router: any = Router();

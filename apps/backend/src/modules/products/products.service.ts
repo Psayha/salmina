@@ -6,7 +6,7 @@
  */
 
 import { Prisma } from '@prisma/client';
-import { prisma } from '../../database/prisma.service';
+import { prisma } from '../../database/prisma.service.js';
 import {
   ProductListItem,
   ProductDetail,
@@ -19,8 +19,8 @@ import {
   toProductListItem,
   toProductDetail,
 } from './products.types';
-import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError';
-import { logger } from '../../utils/logger';
+import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Products Service

@@ -8,7 +8,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { productsService } from './products.service';
 import { ProductSearchParams } from './products.types';
-import { logger } from '../../utils/logger';
+import { logger } from '../../utils/logger.js';
 
 /**
  * Products Controller

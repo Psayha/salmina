@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { prisma } from '../../database/prisma.service';
-import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware';
+import { prisma } from '../../database/prisma.service.js';
+import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { LegalDocumentType } from '@prisma/client';
 
 const router: any = Router();

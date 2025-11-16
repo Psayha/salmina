@@ -7,7 +7,7 @@
 
 import { Response, NextFunction } from 'express';
 import { cartService } from './cart.service';
-import { AuthRequest } from '../../common/middleware/auth.middleware';
+import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { AddToCartInput, UpdateCartItemInput } from './cart.validation';
 
 /**

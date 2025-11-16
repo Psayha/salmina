@@ -7,7 +7,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
-import { ValidationError } from '../errors/AppError';
+import { ValidationError } from '../errors/AppError.js';
 
 /**
  * Validate request data against Zod schema
