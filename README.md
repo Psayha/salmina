@@ -32,11 +32,13 @@ telegram-shop/
 ## 🌐 Production Environment
 
 **Live URLs:**
+
 - 🛍️ **Shop:** https://salminashop.ru
 - 🔌 **API:** https://app.salminashop.ru
 - 👨‍💼 **Admin:** https://admin.salminashop.ru
 
 **Server:**
+
 - 🖥️ VPS: 91.229.11.132
 - 🐧 OS: Ubuntu 22.04
 - 🔒 SSL: Let's Encrypt (Auto-renewal)
@@ -58,6 +60,7 @@ telegram-shop/
 ### Production Deployment Status
 
 **Frontend:**
+
 - ✅ TypeScript: 0 errors
 - ✅ Production build: Successful
 - ✅ 11 pages deployed
@@ -65,6 +68,7 @@ telegram-shop/
 - ✅ **DEPLOYED:** https://salminashop.ru
 
 **Backend API:**
+
 - ✅ TypeScript: 0 errors
 - ✅ Production build: Successful
 - ✅ 9 модулей, 51 endpoints
@@ -73,6 +77,7 @@ telegram-shop/
 - ✅ Cache: Redis (connected)
 
 **Infrastructure:**
+
 - ✅ Nginx configured with SSL
 - ✅ HTTP → HTTPS redirect enabled
 - ✅ PM2 auto-restart enabled
@@ -289,10 +294,13 @@ cp .env.example .env
   - ✅ robots.txt (noindex)
   - **Status:** Live at https://salminashop.ru
 
-- [ ] **Phase 6: Integrations**
-  - Prodamus payment integration
-  - Telegram Bot notifications
-  - CDEK delivery (optional)
+- [x] **Phase 6: Integrations** - In Progress
+  - ✅ Telegram Bot notifications (completed)
+    - Order creation alerts
+    - Status update notifications
+    - Welcome messages
+  - [ ] Prodamus payment integration
+  - [ ] CDEK delivery (optional)
 
 - [ ] **Phase 7: Testing**
   - Unit tests (Jest)
@@ -312,6 +320,7 @@ cp .env.example .env
 ### 🚀 DEPLOYED TO PRODUCTION
 
 **Frontend (LIVE):**
+
 - ✅ https://salminashop.ru
 - ✅ 11 страниц deployed
 - ✅ 15 UI компонентов
@@ -322,6 +331,7 @@ cp .env.example .env
 - ✅ robots.txt (noindex)
 
 **Backend API (LIVE):**
+
 - ✅ https://app.salminashop.ru
 - ✅ 9 модулей, 51 endpoints
 - ✅ PostgreSQL database (migrated & seeded)
@@ -330,6 +340,7 @@ cp .env.example .env
 - ✅ Health check: /health
 
 **Infrastructure:**
+
 - ✅ VPS: 91.229.11.132 (Ubuntu 22.04)
 - ✅ Nginx reverse proxy
 - ✅ SSL certificates (auto-renewal)
@@ -337,7 +348,9 @@ cp .env.example .env
 - ✅ 4 domains configured
 
 **Documentation:**
+
 - ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment guide
+- ✅ [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) - Telegram Bot setup
 - ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - API docs
 - ✅ [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Frontend report
 - ✅ README.md - Project status
@@ -345,9 +358,8 @@ cp .env.example .env
 ### ⏳ Следующие шаги
 
 1. **Интеграции** (Phase 6)
+   - ✅ Telegram Bot notifications (completed)
    - Prodamus payment integration
-   - Telegram Bot notifications
-   - CDEK delivery (optional)
 
 2. **Тестирование** (Phase 7)
    - Unit tests (Jest)
