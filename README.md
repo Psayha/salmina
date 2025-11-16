@@ -128,6 +128,8 @@ Backend API: http://localhost:3001
 
 - [PHASE_3_COMPLETE.md](PHASE_3_COMPLETE.md) - Phase 3: Backend (9 модулей, 51 endpoint) ✅
 - [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Phase 4: Frontend (11 pages, 15 components) ✅
+- [PHASE_6_TELEGRAM.md](PHASE_6_TELEGRAM.md) - Phase 6.1: Telegram Bot Integration ✅
+- [PHASE_6.2_PRODAMUS.md](PHASE_6.2_PRODAMUS.md) - Phase 6.2: Prodamus Payment Integration ✅
 
 ### 📋 Техническое задание
 
@@ -294,12 +296,16 @@ cp .env.example .env
   - ✅ robots.txt (noindex)
   - **Status:** Live at https://salminashop.ru
 
-- [x] **Phase 6: Integrations** - In Progress
-  - ✅ Telegram Bot notifications (completed)
+- [x] **Phase 6: Integrations** - Completed ✅
+  - ✅ Telegram Bot notifications
     - Order creation alerts
     - Status update notifications
     - Welcome messages
-  - [ ] Prodamus payment integration
+  - ✅ Prodamus payment integration
+    - Payment link generation
+    - Webhook processing
+    - Signature verification
+    - Order status updates
   - [ ] CDEK delivery (optional)
 
 - [ ] **Phase 7: Testing**
@@ -357,9 +363,10 @@ cp .env.example .env
 
 ### ⏳ Следующие шаги
 
-1. **Интеграции** (Phase 6)
-   - ✅ Telegram Bot notifications (completed)
-   - Prodamus payment integration
+1. **Frontend Payment Integration**
+   - Update checkout page with payment flow
+   - Handle payment redirects
+   - Display payment status
 
 2. **Тестирование** (Phase 7)
    - Unit tests (Jest)
