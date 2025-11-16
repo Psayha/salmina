@@ -75,23 +75,24 @@ jobs:
           pnpm db:generate
           pnpm prisma migrate deploy
 
-      # TODO: Add tests in Phase 7
-      # - name: Run tests
-      #   env:
-      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/telegram_shop_test
-      #     REDIS_URL: redis://localhost:6379
-      #     JWT_ACCESS_SECRET: test-secret-access
-      #     JWT_REFRESH_SECRET: test-secret-refresh
-      #     NODE_ENV: test
-      #   run: pnpm test
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/telegram_shop_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-secret-jwt
+          JWT_REFRESH_SECRET: test-secret-refresh
+          TELEGRAM_BOT_TOKEN: test-bot-token
+          NODE_ENV: test
+        run: pnpm test:coverage
 
       - name: Build
         run: pnpm build
 
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        if: success()
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
         with:
-          files: ./coverage/coverage-final.json
+          files: ./apps/backend/coverage/lcov.info
           flags: unittests
-          name: codecov-umbrella
+          name: backend-coverage
+          fail_ci_if_error: false
