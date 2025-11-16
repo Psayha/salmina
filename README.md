@@ -75,6 +75,7 @@ telegram-shop/
 - ✅ **DEPLOYED:** https://app.salminashop.ru
 - ✅ Database: PostgreSQL (connected)
 - ✅ Cache: Redis (connected)
+- ✅ **Testing:** 14/14 unit tests passing (100%) 🧪
 
 **Infrastructure:**
 
@@ -83,6 +84,7 @@ telegram-shop/
 - ✅ PM2 auto-restart enabled
 - ✅ Firewall configured
 - ✅ SEO: robots.txt (noindex)
+- ✅ CI/CD: GitHub Actions configured
 
 ### Установка
 
@@ -130,6 +132,15 @@ Backend API: http://localhost:3001
 - [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Phase 4: Frontend (11 pages, 15 components) ✅
 - [PHASE_6_TELEGRAM.md](PHASE_6_TELEGRAM.md) - Phase 6.1: Telegram Bot Integration ✅
 - [PHASE_6.2_PRODAMUS.md](PHASE_6.2_PRODAMUS.md) - Phase 6.2: Prodamus Payment Integration ✅
+- [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Phase 7: Testing (в процессе) 🚧
+
+### 🔧 Руководства по настройке
+
+- [DEPLOYMENT.md](DEPLOYMENT.md) - 🚀 Production deployment guide
+- [PRODAMUS_SETUP.md](PRODAMUS_SETUP.md) - 💳 Настройка платежной системы Prodamus
+- [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) - 🤖 Настройка Telegram Bot
+- [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) - ⚙️ CI/CD с GitHub Actions
+- [API_INTEGRATION.md](API_INTEGRATION.md) - 🔗 API endpoints и примеры использования
 
 ### 📋 Техническое задание
 
@@ -177,11 +188,14 @@ Backend API: http://localhost:3001
 - PostgreSQL 15+
 - Redis
 - JWT authentication
+- Jest 30+ (тестирование)
 
-### DevOps
+### DevOps & CI/CD
 
 - Docker & Docker Compose
-- GitHub Actions (CI/CD)
+- GitHub Actions (автодеплой в production)
+- PM2 (process manager)
+- Nginx (reverse proxy + SSL)
 
 ---
 
@@ -201,6 +215,11 @@ pnpm build:backend    # Только backend
 # Линтинг и проверка типов
 pnpm lint
 pnpm type-check
+
+# Тестирование
+pnpm test             # Запуск всех тестов
+pnpm test:watch       # Watch режим
+pnpm test:coverage    # С отчетом о покрытии
 
 # База данных
 pnpm db:generate      # Генерация Prisma Client
@@ -308,11 +327,14 @@ cp .env.example .env
     - Order status updates
   - [ ] CDEK delivery (optional)
 
-- [ ] **Phase 7: Testing**
-  - Unit tests (Jest)
-  - Integration tests (Supertest)
-  - E2E tests (Playwright)
-  - Test coverage >80%
+- [ ] **Phase 7: Testing** - В процессе 🚧
+  - ✅ Jest 30+ setup с ESM поддержкой
+  - ✅ Unit tests для Prodamus service (14/14 passing, 88.7% coverage)
+  - [ ] Unit tests для остальных сервисов
+  - [ ] Integration tests (Supertest)
+  - [ ] E2E tests (Playwright)
+  - [ ] Test coverage >80% (текущий: Prodamus 88.7%)
+  - **Отчет:** [PHASE_7_TESTING.md](PHASE_7_TESTING.md)
 
 - [ ] **Phase 8: Monitoring & Polish**
   - Monitoring setup
@@ -355,30 +377,48 @@ cp .env.example .env
 
 **Documentation:**
 
-- ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - Deployment guide
+- ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment
+- ✅ [PRODAMUS_SETUP.md](PRODAMUS_SETUP.md) - Prodamus payment setup
 - ✅ [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) - Telegram Bot setup
-- ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - API docs
-- ✅ [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Frontend report
-- ✅ README.md - Project status
+- ✅ [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) - CI/CD automation
+- ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - API documentation
+- ✅ [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Testing progress
+- ✅ README.md - Project overview
+
+**Integrations:**
+
+- ✅ Telegram Bot - Order notifications
+- ✅ Prodamus Payment Gateway - Online payments (card, SBP)
+- ✅ GitHub Actions - Auto-deploy to production
+
+**Testing:**
+
+- ✅ Jest 30+ с ESM поддержкой
+- ✅ 14/14 unit tests passing (Prodamus service)
+- ✅ 88.7% code coverage (Prodamus service)
 
 ### ⏳ Следующие шаги
 
-1. **Frontend Payment Integration**
-   - Update checkout page with payment flow
-   - Handle payment redirects
-   - Display payment status
+1. **Phase 7: Testing** (текущая фаза)
+   - ✅ Prodamus service unit tests (14/14 passing)
+   - [ ] Auth service unit tests
+   - [ ] Orders service unit tests
+   - [ ] Products service unit tests
+   - [ ] Integration tests с Supertest
+   - [ ] E2E tests с Playwright
 
-2. **Тестирование** (Phase 7)
-   - Unit tests (Jest)
-   - Integration tests
-   - E2E tests (Playwright)
-
-3. **Мониторинг** (Phase 8)
+2. **Phase 8: Monitoring & Analytics**
    - Error tracking (Sentry)
-   - Analytics
    - Performance monitoring
+   - Analytics integration
+   - User behavior tracking
 
-**Статус:** 🟢 Production ready and deployed!
+3. **Future Enhancements**
+   - CDEK delivery integration
+   - Admin panel enhancements
+   - Push notifications
+
+**Статус:** 🟢 Production deployed & testing in progress!
 
 ---
 
