@@ -17,7 +17,7 @@ import {
   toCartItemDTO,
   calculateAppliedPrice,
   calculateCartTotals,
-} from './cart.types';
+} from './cart.types.js';
 
 const CART_EXPIRES_DAYS = 30;
 

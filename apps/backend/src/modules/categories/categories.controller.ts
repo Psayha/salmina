@@ -6,8 +6,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { categoriesService } from './categories.service';
-import { CreateCategoryInput, UpdateCategoryInput } from './categories.validation';
+import { categoriesService } from './categories.service.js';
+import { CreateCategoryInput, UpdateCategoryInput } from './categories.validation.js';
 
 class CategoriesController {
   /**

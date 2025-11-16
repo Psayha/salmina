@@ -6,14 +6,14 @@
  */
 
 import { Router } from 'express';
-import { cartController } from './cart.controller';
+import { cartController } from './cart.controller.js';
 import { optionalAuth } from '../../common/middleware/auth.middleware.js';
 import { validate } from '../../common/middleware/validation.middleware.js';
 import {
   addToCartSchema,
   updateCartItemSchema,
   removeCartItemSchema,
-} from './cart.validation';
+} from './cart.validation.js';
 
 const router: any = Router();
 

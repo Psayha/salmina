@@ -6,7 +6,7 @@
  */
 
 import { Router } from 'express';
-import { productsController } from './products.controller';
+import { productsController } from './products.controller.js';
 import { validate } from '../../common/middleware/validation.middleware.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import {
@@ -18,7 +18,7 @@ import {
   updateProductSchema,
   deleteProductParamsSchema,
   updateStockSchema,
-} from './products.validation';
+} from './products.validation.js';
 
 const router: any = Router();
 

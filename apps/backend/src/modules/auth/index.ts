@@ -5,8 +5,8 @@
  * @created 2024-11-13
  */
 
-export * from './auth.types';
-export * from './auth.validation';
-export * from './auth.service';
-export * from './auth.controller';
-export * from './auth.routes';
+export * from './auth.types.js';
+export * from './auth.validation.js';
+export * from './auth.service.js';
+export * from './auth.controller.js';
+export * from './auth.routes.js';

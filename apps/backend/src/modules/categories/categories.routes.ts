@@ -6,7 +6,7 @@
  */
 
 import { Router } from 'express';
-import { categoriesController } from './categories.controller';
+import { categoriesController } from './categories.controller.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { validate } from '../../common/middleware/validation.middleware.js';
 import {
@@ -14,7 +14,7 @@ import {
   updateCategorySchema,
   getCategoryBySlugSchema,
   deleteCategorySchema,
-} from './categories.validation';
+} from './categories.validation.js';
 
 const router: any = Router();
 

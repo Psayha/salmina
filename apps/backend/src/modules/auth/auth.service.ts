@@ -19,7 +19,7 @@ import {
 } from '../../common/utils/crypto.js';
 import { env } from '../../config/env.js';
 import { UnauthorizedError, ErrorCode, BadRequestError } from '../../common/errors/AppError.js';
-import { AuthResponse, RefreshResponse, toUserData, TokenPayload } from './auth.types';
+import { AuthResponse, RefreshResponse, toUserData, TokenPayload } from './auth.types.js';
 import { logger } from '../../utils/logger.js';
 
 /**

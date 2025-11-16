@@ -17,7 +17,7 @@ import {
   AcceptTermsResponse,
   toUserDTO,
   toUserDTOList,
-} from './users.types';
+} from './users.types.js';
 import { logger } from '../../utils/logger.js';
 
 /**

@@ -6,7 +6,7 @@
  */
 
 import { Router } from 'express';
-import { userController } from './users.controller';
+import { userController } from './users.controller.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { validateBody, validateQuery, validateParams } from '../../common/middleware/validation.middleware.js';
 import {
@@ -14,7 +14,7 @@ import {
   updateUserRoleSchema,
   getAllUsersQuerySchema,
   userIdParamSchema,
-} from './users.validation';
+} from './users.validation.js';
 
 /**
  * Create user routes

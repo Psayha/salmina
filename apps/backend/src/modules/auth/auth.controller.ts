@@ -6,10 +6,10 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { authService } from './auth.service';
-import { TelegramAuthInput, RefreshTokenInput } from './auth.validation';
+import { authService } from './auth.service.js';
+import { TelegramAuthInput, RefreshTokenInput } from './auth.validation.js';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
-import { toUserData } from './auth.types';
+import { toUserData } from './auth.types.js';
 import { logger } from '../../utils/logger.js';
 
 /**

@@ -18,7 +18,7 @@ import {
   UpdateProductDTO,
   toProductListItem,
   toProductDetail,
-} from './products.types';
+} from './products.types.js';
 import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
 

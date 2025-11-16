@@ -5,9 +5,9 @@
 
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
-import { ordersService } from './orders.service';
-import { CreateOrderInput, UpdateOrderStatusInput } from './orders.validation';
-import { OrderStatus } from './orders.types';
+import { ordersService } from './orders.service.js';
+import { CreateOrderInput, UpdateOrderStatusInput } from './orders.validation.js';
+import { OrderStatus } from './orders.types.js';
 
 class OrdersController {
   async createOrder(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {

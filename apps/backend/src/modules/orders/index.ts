@@ -1,3 +1,3 @@
-export { default as ordersRoutes } from './orders.routes';
-export { ordersService } from './orders.service';
-export * from './orders.types';
+export { default as ordersRoutes } from './orders.routes.js';
+export { ordersService } from './orders.service.js';
+export * from './orders.types.js';

@@ -6,9 +6,9 @@
  */
 
 import { Response, NextFunction } from 'express';
-import { cartService } from './cart.service';
+import { cartService } from './cart.service.js';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
-import { AddToCartInput, UpdateCartItemInput } from './cart.validation';
+import { AddToCartInput, UpdateCartItemInput } from './cart.validation.js';
 
 /**
  * Extended request with session token

@@ -5,7 +5,7 @@
  * @created 2024-11-13
  */
 
-export { default as cartRoutes } from './cart.routes';
-export { cartService } from './cart.service';
-export { cartController } from './cart.controller';
-export * from './cart.types';
+export { default as cartRoutes } from './cart.routes.js';
+export { cartService } from './cart.service.js';
+export { cartController } from './cart.controller.js';
+export * from './cart.types.js';

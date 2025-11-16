@@ -8,23 +8,23 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { env } from './config/env';
-import { errorHandler } from './middleware/errorHandler';
-import { notFoundHandler } from './middleware/notFound';
-import { logger } from './utils/logger';
-import { prisma } from './database/prisma.service';
-import { redis } from './database/redis.service';
+import { env } from './config/env.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { notFoundHandler } from './middleware/notFound.js';
+import { logger } from './utils/logger.js';
+import { prisma } from './database/prisma.service.js';
+import { redis } from './database/redis.service.js';
 
 // Import module routes
-import { authRoutes } from './modules/auth';
-import { userRoutes } from './modules/users';
-import { productsRoutes } from './modules/products';
-import { categoriesRoutes } from './modules/categories';
-import { cartRoutes } from './modules/cart';
-import { ordersRoutes } from './modules/orders';
-import promocodesRoutes from './modules/promocodes';
-import promotionsRoutes from './modules/promotions';
-import legalRoutes from './modules/legal';
+import { authRoutes } from './modules/auth/index.js';
+import { userRoutes } from './modules/users/index.js';
+import { productsRoutes } from './modules/products/index.js';
+import { categoriesRoutes } from './modules/categories/index.js';
+import { cartRoutes } from './modules/cart/index.js';
+import { ordersRoutes } from './modules/orders/index.js';
+import promocodesRoutes from './modules/promocodes/index.js';
+import promotionsRoutes from './modules/promotions/index.js';
+import legalRoutes from './modules/legal/index.js';
 
 const app = express();
 

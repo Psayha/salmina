@@ -6,12 +6,12 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { userService } from './users.service';
+import { userService } from './users.service.js';
 import {
   UpdateUserProfileInput,
   UpdateUserRoleInput,
   UserIdParam,
-} from './users.validation';
+} from './users.validation.js';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';

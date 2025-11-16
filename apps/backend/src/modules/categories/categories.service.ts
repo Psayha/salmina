@@ -15,7 +15,7 @@ import {
   CreateCategoryDTO,
   UpdateCategoryDTO,
   toCategoryDTO,
-} from './categories.types';
+} from './categories.types.js';
 
 class CategoriesService {
   /**

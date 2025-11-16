@@ -3,10 +3,10 @@
  */
 
 import { Router } from 'express';
-import { ordersController } from './orders.controller';
+import { ordersController } from './orders.controller.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { validate } from '../../common/middleware/validation.middleware.js';
-import { createOrderSchema, updateOrderStatusSchema, getOrderSchema, getOrdersSchema } from './orders.validation';
+import { createOrderSchema, updateOrderStatusSchema, getOrderSchema, getOrdersSchema } from './orders.validation.js';
 
 const router: any = Router();
 

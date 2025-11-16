@@ -7,7 +7,7 @@ import { prisma } from '../../database/prisma.service.js';
 import { NotFoundError, BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
 // import { cartService } from '../cart/cart.service.js'; // unused
-import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus } from './orders.types';
+import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus } from './orders.types.js';
 
 class OrdersService {
   /**

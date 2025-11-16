@@ -6,13 +6,13 @@
  */
 
 // Export routes
-export { userRoutes, createUserRoutes } from './users.routes';
+export { userRoutes, createUserRoutes } from './users.routes.js';
 
 // Export service
-export { userService, UserService } from './users.service';
+export { userService, UserService } from './users.service.js';
 
 // Export controller
-export { userController, UserController } from './users.controller';
+export { userController, UserController } from './users.controller.js';
 
 // Export types
 export type {
@@ -23,9 +23,9 @@ export type {
   UserFilters,
   PaginatedUsersResponse,
   AcceptTermsResponse,
-} from './users.types';
+} from './users.types.js';
 
-export { toUserDTO, toUserDTOList } from './users.types';
+export { toUserDTO, toUserDTOList } from './users.types.js';
 
 // Export validation schemas and types
 export {
@@ -34,11 +34,11 @@ export {
   updateUserRoleSchema,
   getAllUsersQuerySchema,
   userIdParamSchema,
-} from './users.validation';
+} from './users.validation.js';
 
 export type {
   UpdateUserProfileInput,
   UpdateUserRoleInput,
   GetAllUsersQuery,
   UserIdParam,
-} from './users.validation';
+} from './users.validation.js';

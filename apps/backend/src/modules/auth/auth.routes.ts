@@ -6,10 +6,10 @@
  */
 
 import { Router } from 'express';
-import { authController } from './auth.controller';
+import { authController } from './auth.controller.js';
 import { validateBody } from '../../common/middleware/validation.middleware.js';
 import { authenticate } from '../../common/middleware/auth.middleware.js';
-import { telegramAuthSchema, refreshTokenSchema } from './auth.validation';
+import { telegramAuthSchema, refreshTokenSchema } from './auth.validation.js';
 
 /**
  * Create authentication routes

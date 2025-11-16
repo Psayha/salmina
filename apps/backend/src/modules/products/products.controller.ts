@@ -6,8 +6,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { productsService } from './products.service';
-import { ProductSearchParams } from './products.types';
+import { productsService } from './products.service.js';
+import { ProductSearchParams } from './products.types.js';
 import { logger } from '../../utils/logger.js';
 
 /**
