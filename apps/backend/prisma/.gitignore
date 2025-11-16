@@ -1,2 +1,2 @@
-migrations/
+# migrations/ - Removing from gitignore to commit initial migration
 
