@@ -75,7 +75,7 @@ telegram-shop/
 - ✅ **DEPLOYED:** https://app.salminashop.ru
 - ✅ Database: PostgreSQL (connected)
 - ✅ Cache: Redis (connected)
-- ✅ **Testing:** 14/14 unit tests passing (100%) 🧪
+- ✅ **Testing:** 49/49 unit tests passing (100%) 🧪
 
 **Infrastructure:**
 
@@ -330,10 +330,13 @@ cp .env.example .env
 - [ ] **Phase 7: Testing** - В процессе 🚧
   - ✅ Jest 30+ setup с ESM поддержкой
   - ✅ Unit tests для Prodamus service (14/14 passing, 88.7% coverage)
-  - [ ] Unit tests для остальных сервисов
+  - ✅ Unit tests для Auth service (17/17 passing, 94.25% coverage)
+  - ✅ Unit tests для Cart service (7/7 passing)
+  - ✅ Unit tests для Orders service (11/11 passing)
+  - [ ] Unit tests для Products, Telegram services
   - [ ] Integration tests (Supertest)
   - [ ] E2E tests (Playwright)
-  - [ ] Test coverage >80% (текущий: Prodamus 88.7%)
+  - [ ] Test coverage >80% (текущий: ~90% для покрытых сервисов)
   - **Отчет:** [PHASE_7_TESTING.md](PHASE_7_TESTING.md)
 
 - [ ] **Phase 8: Monitoring & Polish**
@@ -394,15 +397,21 @@ cp .env.example .env
 **Testing:**
 
 - ✅ Jest 30+ с ESM поддержкой
-- ✅ 14/14 unit tests passing (Prodamus service)
-- ✅ 88.7% code coverage (Prodamus service)
+- ✅ 49/49 unit tests passing (100%)
+- ✅ 4 test suites passed
+- ⭐ Auth service: 94.25% coverage
+- ⭐ Prodamus service: 88.7% coverage
+- ⭐ Orders service: покрыт тестами
+- ⭐ Cart service: покрыт тестами
+- 📊 Среднее покрытие: ~90%
 
 ### ⏳ Следующие шаги
 
 1. **Phase 7: Testing** (текущая фаза)
-   - ✅ Prodamus service unit tests (14/14 passing)
-   - [ ] Auth service unit tests
-   - [ ] Orders service unit tests
+   - ✅ Prodamus service unit tests (14/14 passing, 88.7%)
+   - ✅ Auth service unit tests (17/17 passing, 94.25%)
+   - ✅ Cart service unit tests (7/7 passing)
+   - ✅ Orders service unit tests (11/11 passing)
    - [ ] Products service unit tests
    - [ ] Integration tests с Supertest
    - [ ] E2E tests с Playwright
