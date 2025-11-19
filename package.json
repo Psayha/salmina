@@ -16,7 +16,9 @@
     "build:backend": "pnpm --filter backend build",
     "lint": "pnpm --recursive lint",
     "type-check": "pnpm --recursive type-check",
-    "test": "pnpm --recursive test",
+    "test": "pnpm --filter backend test",
+    "test:watch": "pnpm --filter backend test:watch",
+    "test:coverage": "pnpm --filter backend test:coverage",
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:generate": "pnpm --filter backend db:generate",
     "db:studio": "pnpm --filter backend db:studio"

@@ -30,8 +30,11 @@ jobs:
             # Install dependencies
             pnpm install --frozen-lockfile
 
-            # Build backend
+            # Generate Prisma Client
             cd apps/backend
+            pnpm prisma generate
+
+            # Build backend
             pnpm build
 
             # Build frontend
