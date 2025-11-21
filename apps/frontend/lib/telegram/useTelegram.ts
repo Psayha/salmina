@@ -25,6 +25,7 @@ export interface TelegramWebApp {
     link_color?: string;
     button_color?: string;
     button_text_color?: string;
+    secondary_bg_color?: string;
   };
   isExpanded: boolean;
   viewportHeight: number;

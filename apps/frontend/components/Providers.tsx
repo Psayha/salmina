@@ -7,6 +7,7 @@ import { useCartStore } from '@/store/useCartStore';
 import { useTelegram } from '@/lib/telegram/useTelegram';
 import { ToastProvider } from './Toast';
 import { ErrorBoundary } from './ErrorBoundary';
+import { ThemeProvider } from './ThemeProvider';
 
 /**
  * App providers with React Query and initialization
@@ -28,7 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <AppInitializer>{children}</AppInitializer>
+          <ThemeProvider>
+            <AppInitializer>{children}</AppInitializer>
+          </ThemeProvider>
         </ToastProvider>
       </QueryClientProvider>
     </ErrorBoundary>

@@ -45,13 +45,13 @@ export const ProductCard = memo(function ProductCard({
 
   return (
     <div
-      className="group bg-white/40 backdrop-blur-md rounded-2xl overflow-hidden border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer"
+      className="group bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden border border-[var(--card-border)] shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer"
       onClick={handleClick}
       role="article"
       aria-label={`Товар: ${name}`}
     >
       {/* Image */}
-      <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 shrink-0 overflow-hidden">
+      <div className="w-full aspect-square bg-white/30 dark:bg-white/5 backdrop-blur-sm flex items-center justify-center border-b border-[var(--card-border)] shrink-0 overflow-hidden">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -68,16 +68,22 @@ export const ProductCard = memo(function ProductCard({
 
       {/* Content */}
       <div className="p-2.5 space-y-1 flex flex-col grow">
-        <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">{name}</h3>
+        <h3 className="text-sm font-normal text-[var(--foreground)] tracking-wide uppercase">{name}</h3>
 
-        {description && <p className="text-xs text-gray-700 font-light line-clamp-2 grow">{description}</p>}
+        {description && (
+          <p className="text-xs text-[var(--foreground)]/70 font-light line-clamp-2 grow">{description}</p>
+        )}
 
         {/* Price & Add to Cart */}
-        <div className="pt-1.5 flex items-center justify-between border-t border-white/30 shrink-0">
+        <div className="pt-1.5 flex items-center justify-between border-t border-[var(--card-border)] shrink-0">
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-900">{finalPrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="text-sm font-semibold text-[var(--foreground)]">
+              {finalPrice.toLocaleString('ru-RU')} ₽
+            </span>
             {hasDiscount && (
-              <span className="text-xs text-gray-600 line-through">{price.toLocaleString('ru-RU')} ₽</span>
+              <span className="text-xs text-[var(--foreground)]/60 line-through">
+                {price.toLocaleString('ru-RU')} ₽
+              </span>
             )}
           </div>
 
@@ -88,7 +94,7 @@ export const ProductCard = memo(function ProductCard({
             aria-label="Добавить в корзину"
             className="shrink-0"
           >
-            <CartIcon className="w-4 h-4 text-gray-700" />
+            <CartIcon className="w-4 h-4 text-[var(--foreground)]/80" />
           </Button>
         </div>
       </div>

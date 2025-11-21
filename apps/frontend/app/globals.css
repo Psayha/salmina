@@ -1,9 +1,21 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --foreground: #111111;
+  --background-start: #ffb6c1;
+  --background-end: #ffd4b3;
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(255, 255, 255, 0.3);
   --font-geist-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-geist-mono: 'Geist Mono', 'Courier New', monospace;
+}
+
+.dark {
+  --foreground: #ffffff;
+  --background-start: #1a1a1a;
+  --background-end: #2d2d2d;
+  --card-bg: rgba(30, 30, 30, 0.6);
+  --card-border: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
@@ -12,15 +24,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Градиентный фон в стиле заката/рассвета */
+/* Градиентный фон */
 body {
-  background: linear-gradient(135deg,
-    #FFB6C1 0%,
-    #FFD4B3 20%,
-    #FFC0CB 40%,
-    #FFA07A 60%,
-    #FFB6C1 80%,
-    #FFD4B3 100%);
+  background: linear-gradient(135deg, var(--background-start) 0%, var(--background-end) 100%);
   background-attachment: fixed;
   min-height: 100vh;
   position: relative;
@@ -40,8 +46,8 @@ body::before {
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(255, 160, 122, 0.2) 0%, transparent 50%);
+    radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 160, 122, 0.1) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
