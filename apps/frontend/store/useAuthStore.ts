@@ -12,6 +12,13 @@ interface AuthState {
   // Actions
   setUser: (user: User | null) => void;
   loginWithTelegram: (initData: string) => Promise<void>;
+  autoLoginWithTelegram: (telegramUser: {
+    id: number;
+    first_name: string;
+    last_name?: string;
+    username?: string;
+    photo_url?: string;
+  }) => Promise<void>;
   logout: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
   clearError: () => void;
@@ -34,6 +41,31 @@ export const useAuthStore = create<AuthState>()(
       loginWithTelegram: async (initData: string) => {
         set({ isLoading: true, error: null });
         try {
+          const response = await authApi.loginWithTelegram({ initData });
+          set({
+            user: response.user,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : 'Ошибка авторизации';
+          set({
+            error: message,
+            isLoading: false,
+          });
+          throw error;
+        }
+      },
+
+      autoLoginWithTelegram: async (telegramUser) => {
+        set({ isLoading: true, error: null });
+        try {
+          // Create initData from Telegram user
+          const initData = JSON.stringify({
+            user: telegramUser,
+          });
+
+          // Try to login/register with Telegram data
           const response = await authApi.loginWithTelegram({ initData });
           set({
             user: response.user,

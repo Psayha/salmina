@@ -13,7 +13,7 @@ interface HeaderProps {
 export const Header = ({ cartItemsCount = 0, onMenuClick, onCartClick, onSearchClick }: HeaderProps) => {
   return (
     <header
-      className="w-full fixed top-0 left-0 right-0 z-50 bg-[var(--card-bg)] backdrop-blur-md border-b border-[var(--card-border)] shadow-sm transition-colors duration-300"
+      className="w-full fixed top-0 left-0 right-0 z-50 transition-colors duration-300"
       style={{
         paddingTop: 'var(--safe-top, 0px)',
         paddingLeft: 'var(--safe-left, 0px)',
