@@ -141,7 +141,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 pt-8 pb-20 relative z-10">
+      <main className="max-w-7xl mx-auto px-3 pt-20 pb-20 relative z-10">
         {/* Categories Scroll */}
         <div className="mb-8 -mx-4 px-4">
           <div
