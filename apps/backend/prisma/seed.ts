@@ -29,14 +29,21 @@ async function main(): Promise<void> {
     await prisma.user.deleteMany();
   }
 
-  // Create admin user
-  console.log('👤 Creating admin user...');
-  const adminUser = await prisma.user.create({
-    data: {
-      telegramId: BigInt(123456789),
-      username: 'admin',
+  // Create or update admin user
+  console.log('👤 Creating/updating admin user...');
+  const adminUser = await prisma.user.upsert({
+    where: { telegramId: BigInt('887567962') },
+    update: {
       firstName: 'Admin',
       lastName: 'User',
+      username: 'admin',
+      role: UserRole.ADMIN,
+    },
+    create: {
+      telegramId: BigInt('887567962'),
+      firstName: 'Admin',
+      lastName: 'User',
+      username: 'admin',
       role: UserRole.ADMIN,
       hasAcceptedTerms: true,
       termsAcceptedAt: new Date(),
