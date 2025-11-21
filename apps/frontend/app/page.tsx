@@ -7,6 +7,7 @@ import { CategoryPill } from '@/components/ui/CategoryPill';
 import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { MenuModal } from '@/components/MenuModal';
 
 // Mock data - TODO: replace with API calls
 const CATEGORIES = [
@@ -55,6 +56,7 @@ const MOCK_PRODUCTS = [
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showMenu, setShowMenu] = useState(false);
 
   // Zustand stores
   const { addToCart, itemsCount } = useCartStore();
@@ -75,8 +77,7 @@ export default function Home() {
     }
 
     const handleScroll = () => {
-      const scrollTop =
-        window.pageYOffset || document.documentElement.scrollTop;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
       if (scrollTop > 0) {
         // При прокрутке - скрываем статус бар
@@ -113,7 +114,7 @@ export default function Home() {
 
   const handleMenuClick = () => {
     haptic.impactOccurred('light');
-    router.push('/profile');
+    setShowMenu(true);
   };
 
   const handleSearchClick = () => {
@@ -167,12 +168,7 @@ export default function Home() {
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {MOCK_PRODUCTS.map((product) => (
-            <ProductCard
-              key={product.id}
-              {...product}
-              onAddToCart={handleAddToCart}
-              onClick={handleProductClick}
-            />
+            <ProductCard key={product.id} {...product} onAddToCart={handleAddToCart} onClick={handleProductClick} />
           ))}
         </div>
       </main>
@@ -180,11 +176,12 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-white/30 mt-32">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <p className="text-center text-xs text-gray-700/70 font-light tracking-wider uppercase">
-            © 2024
-          </p>
+          <p className="text-center text-xs text-gray-700/70 font-light tracking-wider uppercase">© 2024</p>
         </div>
       </footer>
+
+      {/* Menu Modal */}
+      <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />
     </div>
   );
 }
