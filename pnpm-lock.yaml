@@ -24,10 +24,10 @@ importers:
   apps/backend:
     dependencies:
       '@prisma/client':
-        specifier: ^5.19.0
+        specifier: 5.22.0
         version: 5.22.0(prisma@5.22.0)
       axios:
-        specifier: ^1.7.0
+        specifier: ^1.13.2
         version: 1.13.2
       bcryptjs:
         specifier: ^2.4.3
@@ -94,7 +94,7 @@ importers:
         specifier: ^30.2.0
         version: 30.2.0(@types/node@20.19.25)
       prisma:
-        specifier: ^5.19.0
+        specifier: 5.22.0
         version: 5.22.0
       supertest:
         specifier: ^7.1.4
@@ -187,6 +187,9 @@ importers:
 
   packages/types:
     devDependencies:
+      '@types/node':
+        specifier: ^20.14.0
+        version: 20.19.25
       typescript:
         specifier: ^5.6.0
         version: 5.9.3
@@ -6914,6 +6917,7 @@ packages:
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+    requiresBuild: true
 
   /tsx@4.20.6:
     resolution: {integrity: sha512-ytQKuwgmrrkDTFP4LjR0ToE2nqgy886GpvRSpU0JAnrdBYppuY5rLkRUYPU1yCryb24SsKBTL/hlDQAEFVwtZg==}
