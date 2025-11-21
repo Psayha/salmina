@@ -8,6 +8,9 @@ import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { MenuModal } from '@/components/MenuModal';
+import { productsApi } from '@/lib/api';
+import { Product } from '@/lib/api/types';
+import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 
 // Mock data - TODO: replace with API calls
 const CATEGORIES = [
@@ -21,48 +24,34 @@ const CATEGORIES = [
   { id: 'body', name: 'Уход за телом' },
 ];
 
-const MOCK_PRODUCTS = [
-  {
-    id: '1',
-    name: 'Крем для лица',
-    description:
-      'Увлажняющий крем для лица с глубоким проникновением, насыщает кожу влагой и создает защитный барьер от внешних воздействий окружающей среды',
-    price: 1500,
-    emoji: '✨',
-  },
-  {
-    id: '2',
-    name: 'Сыворотка',
-    description: 'Омолаживающая',
-    price: 2300,
-    emoji: '🌸',
-  },
-  {
-    id: '3',
-    name: 'Маска для лица',
-    description: 'Очищающая',
-    price: 890,
-    emoji: '💅',
-  },
-  {
-    id: '4',
-    name: 'Тонер',
-    description: 'Очищающий',
-    price: 650,
-    emoji: '🧴',
-  },
-];
-
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showMenu, setShowMenu] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Zustand stores
   const { addToCart, itemsCount } = useCartStore();
 
   // Telegram SDK
   const haptic = useTelegramHaptic();
+
+  // Fetch products on mount
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        setIsLoading(true);
+        const response = await productsApi.getProducts();
+        setProducts(response.items); // Extract items from paginated response
+      } catch (error) {
+        console.error('Failed to load products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.Telegram?.WebApp) {
@@ -167,9 +156,12 @@ export default function Home() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {MOCK_PRODUCTS.map((product) => (
-            <ProductCard key={product.id} {...product} onAddToCart={handleAddToCart} onClick={handleProductClick} />
-          ))}
+          {isLoading
+            ? // Show skeleton loaders while loading
+              Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : products.map((product) => (
+                <ProductCard key={product.id} {...product} onAddToCart={handleAddToCart} onClick={handleProductClick} />
+              ))}
         </div>
       </main>
 
