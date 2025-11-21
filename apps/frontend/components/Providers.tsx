@@ -57,26 +57,32 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
       try {
         // Get Telegram initData (the raw string from Telegram)
         const initData = webApp?.initData;
+        console.log('[Providers] Initializing app...');
+        console.log('[Providers] initData exists:', !!initData);
+        console.log('[Providers] initData length:', initData?.length || 0);
 
         if (initData) {
           // Auto-login with Telegram initData
+          console.log('[Providers] Attempting auto-login with Telegram initData...');
           await autoLoginWithTelegram(initData);
+          console.log('[Providers] Auto-login completed');
         } else {
           // Fallback: try to fetch current user if token exists
           const hasToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
+          console.log('[Providers] No initData, checking for existing token:', !!hasToken);
           if (hasToken) {
             await fetchCurrentUser();
           }
         }
       } catch (error) {
-        console.error('Initialization error:', error);
+        console.error('[Providers] Initialization error:', error);
       }
 
       // Always fetch cart (works for both authenticated and anonymous)
       try {
         await fetchCart();
       } catch (error) {
-        console.error('Cart fetch error:', error);
+        console.error('[Providers] Cart fetch error:', error);
       }
     }
 
