@@ -130,7 +130,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 pt-24 pb-20 relative z-10">
+      <main className="max-w-7xl mx-auto px-3 pt-32 pb-20 relative z-10">
         {/* Categories Scroll */}
         <div className="mb-8 -mx-4 px-4">
           <div
@@ -164,13 +164,6 @@ export default function Home() {
               ))}
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/30 mt-32">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <p className="text-center text-xs text-gray-700/70 font-light tracking-wider uppercase">© 2024</p>
-        </div>
-      </footer>
 
       {/* Menu Modal */}
       <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />

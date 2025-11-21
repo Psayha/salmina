@@ -50,80 +50,72 @@ export const BottomNav = () => {
   ];
 
   const handleNavClick = (href: string) => {
-    if (pathname !== href) {
-      haptic.selectionChanged();
-      router.push(href);
-    }
+    haptic.impactOccurred('light');
+    router.push(href);
   };
 
-  // Don't show on checkout pages
-  if (pathname?.startsWith('/checkout')) {
-    return null;
-  }
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 pb-4 px-4 pointer-events-none">
-      <motion.nav
-        className="mx-auto max-w-md bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 pointer-events-auto"
-        style={{
-          paddingBottom: 'env(safe-area-inset-bottom)',
-        }}
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-      >
-        <div className="flex items-center justify-around px-2 py-2">
-          {navItems.map((item, index) => {
-            const Icon = item.icon;
+    <motion.nav
+      className="fixed bottom-0 left-0 right-0 z-40"
+      style={{
+        paddingBottom: 'max(env(safe-area-inset-bottom), 12px)',
+      }}
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
+      <div className="mx-auto max-w-md px-4 pb-2">
+        <div className="relative flex items-center justify-around gap-2 rounded-2xl bg-card-bg/80 backdrop-blur-xl border border-card-border/50 px-4 py-2 shadow-lg">
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const Icon = item.icon;
 
             return (
               <motion.button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="relative flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
+                className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors"
                 whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
               >
-                {isActive && (
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-pink-100 to-blue-100 rounded-xl"
-                    layoutId="activeTab"
-                    transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                  />
-                )}
-
-                <div className="relative z-10">
-                  <Icon
-                    className={`w-6 h-6 transition-colors duration-300 ${isActive ? 'text-gray-900' : 'text-gray-500'}`}
-                  />
-                  {item.showBadge && item.badgeCount && item.badgeCount > 0 && (
+                {/* Icon container */}
+                <div className="relative">
+                  <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-pink-500' : 'text-foreground/60'}`} />
+                  {/* Badge */}
+                  {item.showBadge && item.badgeCount! > 0 && (
                     <motion.span
-                      className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-pink-400 to-pink-500 text-white text-[10px] font-medium rounded-full flex items-center justify-center shadow-lg"
+                      className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-semibold text-white"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ type: 'spring', damping: 15 }}
+                      transition={{ type: 'spring', stiffness: 500, damping: 15 }}
                     >
-                      {item.badgeCount > 9 ? '9+' : item.badgeCount}
+                      {item.badgeCount! > 9 ? '9+' : item.badgeCount}
                     </motion.span>
                   )}
                 </div>
 
+                {/* Label */}
                 <span
-                  className={`text-[10px] font-light transition-colors duration-300 relative z-10 ${
-                    isActive ? 'text-gray-900 font-medium' : 'text-gray-500'
+                  className={`text-[10px] font-medium transition-colors ${
+                    isActive ? 'text-pink-500' : 'text-foreground/50'
                   }`}
                 >
                   {item.label}
                 </span>
+
+                {/* Active indicator */}
+                {isActive && (
+                  <motion.div
+                    className="absolute -bottom-0.5 left-1/2 h-0.5 w-8 rounded-full bg-gradient-to-r from-pink-500 to-blue-500"
+                    layoutId="activeTab"
+                    style={{ x: '-50%' }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
               </motion.button>
             );
           })}
         </div>
-      </motion.nav>
-    </div>
+      </div>
+    </motion.nav>
   );
 };

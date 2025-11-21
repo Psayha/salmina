@@ -32,23 +32,20 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #ffeef8 0%, #e8f4ff 100%)',
-        }}
+        className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-gradient-to-br from-background-start to-background-end"
         initial={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
         {/* Animated background circles */}
         <motion.div
-          className="absolute w-96 h-96 rounded-full"
+          className="absolute w-96 h-96 rounded-full opacity-20"
           style={{
-            background: 'radial-gradient(circle, rgba(255,182,193,0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, var(--card-bg) 0%, transparent 70%)',
           }}
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{
             duration: 3,
@@ -58,15 +55,15 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
         />
 
         <motion.div
-          className="absolute w-64 h-64 rounded-full"
+          className="absolute w-64 h-64 rounded-full opacity-15"
           style={{
-            background: 'radial-gradient(circle, rgba(173,216,230,0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, var(--card-border) 0%, transparent 70%)',
             left: '20%',
             top: '30%',
           }}
           animate={{
             scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.1, 0.3, 0.1],
           }}
           transition={{
             duration: 4,
@@ -88,10 +85,10 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             <motion.div
               className="text-6xl font-light mb-2"
               animate={{
-                textShadow: [
-                  '0 0 20px rgba(255,182,193,0.5)',
-                  '0 0 40px rgba(255,182,193,0.8)',
-                  '0 0 20px rgba(255,182,193,0.5)',
+                filter: [
+                  'drop-shadow(0 0 10px rgba(255,182,193,0.3))',
+                  'drop-shadow(0 0 20px rgba(255,182,193,0.5))',
+                  'drop-shadow(0 0 10px rgba(255,182,193,0.3))',
                 ],
               }}
               transition={{
@@ -102,18 +99,17 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
             >
               ✨
             </motion.div>
-            <h1 className="text-3xl font-light tracking-wider text-gray-800">Salmina</h1>
-            <p className="text-sm text-gray-600 mt-2 font-light">Beauty & Care</p>
+            <h1 className="text-3xl font-light tracking-wider text-foreground">Salmina</h1>
+            <p className="text-sm text-foreground/70 mt-2 font-light">Beauty & Care</p>
           </motion.div>
 
           {/* Progress bar */}
           <div className="w-64">
-            <div className="h-1 bg-white/50 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-1 bg-card-bg rounded-full overflow-hidden backdrop-blur-sm border border-card-border">
               <motion.div
-                className="h-full rounded-full"
+                className="h-full rounded-full bg-gradient-to-r from-pink-400 to-blue-400"
                 style={{
-                  background: 'linear-gradient(90deg, #FFB6C1 0%, #ADD8E6 100%)',
-                  boxShadow: '0 0 20px rgba(255,182,193,0.6)',
+                  boxShadow: '0 0 10px rgba(255,182,193,0.4)',
                 }}
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
@@ -123,9 +119,9 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
 
             {/* Loading text */}
             <motion.p
-              className="text-center text-sm text-gray-600 mt-4 font-light"
+              className="text-center text-sm text-foreground/60 mt-4 font-light"
               animate={{
-                opacity: [0.5, 1, 0.5],
+                opacity: [0.4, 1, 0.4],
               }}
               transition={{
                 duration: 1.5,
@@ -141,14 +137,14 @@ export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-pink-300/40"
+              className="absolute w-2 h-2 rounded-full bg-card-border opacity-30"
               style={{
                 left: `${20 + i * 15}%`,
                 top: `${30 + (i % 3) * 20}%`,
               }}
               animate={{
                 y: [-20, 20, -20],
-                opacity: [0.2, 0.6, 0.2],
+                opacity: [0.1, 0.3, 0.1],
               }}
               transition={{
                 duration: 2 + i * 0.3,
