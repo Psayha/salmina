@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 export interface TelegramWebApp {
   initData: string;
@@ -111,12 +111,15 @@ export function useTelegram() {
     }
   }, [webApp]);
 
-  return {
-    webApp,
-    isReady,
-    user: webApp?.initDataUnsafe?.user,
-    initData: webApp?.initData,
-  };
+  return useMemo(
+    () => ({
+      webApp,
+      isReady,
+      user: webApp?.initDataUnsafe?.user,
+      initData: webApp?.initData,
+    }),
+    [webApp, isReady],
+  );
 }
 
 /**
@@ -193,15 +196,18 @@ export function useTelegramMainButton(
 export function useTelegramHaptic() {
   const { webApp } = useTelegram();
 
-  return {
-    impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium') => {
-      webApp?.HapticFeedback.impactOccurred(style);
-    },
-    notificationOccurred: (type: 'error' | 'success' | 'warning') => {
-      webApp?.HapticFeedback.notificationOccurred(type);
-    },
-    selectionChanged: () => {
-      webApp?.HapticFeedback.selectionChanged();
-    },
-  };
+  return useMemo(
+    () => ({
+      impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium') => {
+        webApp?.HapticFeedback.impactOccurred(style);
+      },
+      notificationOccurred: (type: 'error' | 'success' | 'warning') => {
+        webApp?.HapticFeedback.notificationOccurred(type);
+      },
+      selectionChanged: () => {
+        webApp?.HapticFeedback.selectionChanged();
+      },
+    }),
+    [webApp],
+  );
 }
