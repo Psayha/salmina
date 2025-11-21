@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'ghost' | 'icon';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -18,12 +18,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'disabled:opacity-50 disabled:pointer-events-none',
           {
             // Variants
-            'px-6 py-2.5 text-xs font-light tracking-widest uppercase':
-              variant === 'primary' && size === 'md',
-            'px-5 py-2.5 text-xs font-light tracking-wide':
-              variant === 'ghost' && size === 'md',
+            'px-6 py-2.5 text-xs font-light tracking-widest uppercase': variant === 'primary' && size === 'md',
+            'px-4 py-2 text-[10px] font-light tracking-widest uppercase': variant === 'primary' && size === 'sm',
+            'px-5 py-2.5 text-xs font-light tracking-wide': variant === 'ghost' && size === 'md',
             'w-10 h-10': variant === 'icon' && size === 'md',
             'w-8 h-8': variant === 'icon' && size === 'sm',
+            'w-7 h-7': variant === 'icon' && size === 'xs',
           },
           className,
         )}
