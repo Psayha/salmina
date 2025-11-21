@@ -55,18 +55,12 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 
     async function initialize() {
       try {
-        // Get Telegram user data
-        const telegramUser = webApp?.initDataUnsafe?.user;
+        // Get Telegram initData (the raw string from Telegram)
+        const initData = webApp?.initData;
 
-        if (telegramUser) {
-          // Auto-login with Telegram user data
-          await autoLoginWithTelegram({
-            id: telegramUser.id,
-            first_name: telegramUser.first_name,
-            last_name: telegramUser.last_name,
-            username: telegramUser.username,
-            photo_url: telegramUser.photo_url,
-          });
+        if (initData) {
+          // Auto-login with Telegram initData
+          await autoLoginWithTelegram(initData);
         } else {
           // Fallback: try to fetch current user if token exists
           const hasToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
