@@ -30,6 +30,12 @@ export interface TelegramWebApp {
   isExpanded: boolean;
   viewportHeight: number;
   viewportStableHeight: number;
+  safeAreaInset?: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
   headerColor: string;
   backgroundColor: string;
   BackButton: {
@@ -114,6 +120,13 @@ export function useTelegram() {
       } else {
         webApp.expand();
       }
+
+      // Set safe area CSS variables
+      const safeAreaInset = webApp.safeAreaInset || { top: 0, bottom: 0, left: 0, right: 0 };
+      document.documentElement.style.setProperty('--safe-top', `${safeAreaInset.top}px`);
+      document.documentElement.style.setProperty('--safe-bottom', `${safeAreaInset.bottom}px`);
+      document.documentElement.style.setProperty('--safe-left', `${safeAreaInset.left}px`);
+      document.documentElement.style.setProperty('--safe-right', `${safeAreaInset.right}px`);
     }
   }, [webApp]);
 
