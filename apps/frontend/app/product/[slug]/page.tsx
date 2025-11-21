@@ -183,7 +183,7 @@ export default function ProductPage() {
         {relatedProducts.length > 0 && (
           <div className="space-y-4">
             <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 px-2">Похожие товары</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {relatedProducts.map((related) => (
                 <div
                   key={related.id}

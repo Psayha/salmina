@@ -98,7 +98,7 @@ export default function FavoritesPage() {
         />
       ) : (
         <div className="px-6 py-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {products.map((product) => (
               <div key={product.id} className="relative">
                 {/* Favorite button overlay */}

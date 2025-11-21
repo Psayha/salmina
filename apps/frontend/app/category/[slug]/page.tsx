@@ -146,7 +146,7 @@ export default function CategoryPage() {
             <p className="text-sm font-light text-gray-600">
               {products.length} {products.length === 1 ? 'товар' : 'товаров'}
             </p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {products.map((product) => (
                 <ProductCard
                   key={product.id}
