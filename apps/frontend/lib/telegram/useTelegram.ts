@@ -81,6 +81,7 @@ export interface TelegramWebApp {
   openLink?: (url: string) => void;
   openTelegramLink?: (url: string) => void;
   sendData?: (data: string) => void;
+  requestFullscreen?: () => void;
 }
 
 declare global {
@@ -107,7 +108,11 @@ export function useTelegram() {
   useEffect(() => {
     if (webApp) {
       webApp.ready();
-      webApp.expand();
+      if (webApp.requestFullscreen) {
+        webApp.requestFullscreen();
+      } else {
+        webApp.expand();
+      }
     }
   }, [webApp]);
 
