@@ -8,27 +8,16 @@ import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { MenuModal } from '@/components/MenuModal';
-import { productsApi } from '@/lib/api';
-import { Product } from '@/lib/api/types';
+import { productsApi, categoriesApi } from '@/lib/api';
+import { Product, Category } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
-
-// Mock data - TODO: replace with API calls
-const CATEGORIES = [
-  { id: 'all', name: 'Все товары' },
-  { id: 'creams', name: 'Кремы' },
-  { id: 'serums', name: 'Сыворотки' },
-  { id: 'masks', name: 'Маски' },
-  { id: 'toners', name: 'Тонеры' },
-  { id: 'eye', name: 'Для глаз' },
-  { id: 'cleansing', name: 'Очищение' },
-  { id: 'body', name: 'Уход за телом' },
-];
 
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showMenu, setShowMenu] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Partial<Category>[]>([{ id: 'all', name: 'Все товары', slug: 'all' }]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Zustand stores
@@ -37,20 +26,24 @@ export default function Home() {
   // Telegram SDK
   const haptic = useTelegramHaptic();
 
-  // Fetch products on mount
+  // Fetch products and categories on mount
   useEffect(() => {
-    async function loadProducts() {
+    async function fetchData() {
       try {
         setIsLoading(true);
-        const response = await productsApi.getProducts();
-        setProducts(response.items); // Extract items from paginated response
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          productsApi.getProducts(),
+          categoriesApi.getCategories(),
+        ]);
+        setProducts(productsResponse.items); // Extract items from paginated response
+        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }, ...categoriesResponse]);
       } catch (error) {
-        console.error('Failed to load products:', error);
+        console.error('Failed to fetch data:', error);
       } finally {
         setIsLoading(false);
       }
     }
-    loadProducts();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -141,15 +134,17 @@ export default function Home() {
             }}
           >
             <div className="flex gap-3 pl-4">
-              {CATEGORIES.map((category) => (
-                <CategoryPill
-                  key={category.id}
-                  active={selectedCategory === category.id}
-                  onClick={() => handleCategoryChange(category.id)}
-                >
-                  {category.name}
-                </CategoryPill>
-              ))}
+              {categories
+                .filter((c) => c.id)
+                .map((category) => (
+                  <CategoryPill
+                    key={category.id}
+                    active={selectedCategory === category.id}
+                    onClick={() => handleCategoryChange(category.id!)}
+                  >
+                    {category.name}
+                  </CategoryPill>
+                ))}
             </div>
           </div>
         </div>
