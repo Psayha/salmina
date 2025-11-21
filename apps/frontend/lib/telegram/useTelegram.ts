@@ -56,9 +56,7 @@ export interface TelegramWebApp {
     hideProgress: () => void;
   };
   HapticFeedback: {
-    impactOccurred: (
-      style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft',
-    ) => void;
+    impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft') => void;
     notificationOccurred: (type: 'error' | 'success' | 'warning') => void;
     selectionChanged: () => void;
   };
@@ -97,21 +95,21 @@ declare global {
  * Hook for Telegram Web App integration
  */
 export function useTelegram() {
-  const [webApp, setWebApp] = useState<TelegramWebApp | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [webApp] = useState<TelegramWebApp | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return window.Telegram?.WebApp || null;
+  });
+  const [isReady] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !!window.Telegram?.WebApp;
+  });
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const tg = window.Telegram?.WebApp;
-
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      setWebApp(tg);
-      setIsReady(true);
+    if (webApp) {
+      webApp.ready();
+      webApp.expand();
     }
-  }, []);
+  }, [webApp]);
 
   return {
     webApp,
@@ -163,7 +161,9 @@ export function useTelegramMainButton(
 
     mainButton.setText(text);
 
+    // eslint-disable-next-line react-hooks/immutability
     if (options?.color) mainButton.color = options.color;
+
     if (options?.textColor) mainButton.textColor = options.textColor;
 
     mainButton.onClick(onClick);
@@ -194,9 +194,7 @@ export function useTelegramHaptic() {
   const { webApp } = useTelegram();
 
   return {
-    impactOccurred: (
-      style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium',
-    ) => {
+    impactOccurred: (style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft' = 'medium') => {
       webApp?.HapticFeedback.impactOccurred(style);
     },
     notificationOccurred: (type: 'error' | 'success' | 'warning') => {

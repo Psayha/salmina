@@ -50,9 +50,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     async function initialize() {
       try {
         // Check if we have access token
-        const hasToken =
-          typeof window !== 'undefined' &&
-          localStorage.getItem('accessToken');
+        const hasToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
 
         if (hasToken) {
           // Try to fetch current user
@@ -74,7 +72,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     }
 
     initialize();
-  }, [isReady, initData]);
+  }, [isReady, initData, fetchCart, fetchCurrentUser, loginWithTelegram]);
 
   return <>{children}</>;
 }

@@ -1,8 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 // API base URL from environment
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 /**
  * Axios instance with default configuration
@@ -51,7 +50,7 @@ apiClient.interceptors.response.use(
         await refreshAuthToken();
         // Retry original request
         return apiClient.request(error.config as AxiosRequestConfig);
-      } catch (refreshError) {
+      } catch {
         // Refresh failed, clear auth and redirect
         clearAuth();
         // Optionally notify user or redirect to login

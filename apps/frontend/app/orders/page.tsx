@@ -109,7 +109,7 @@ export default function OrdersPage() {
     } else {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, haptic]);
 
   const handleOrderClick = (orderId: string) => {
     setSelectedOrder(orderId);
@@ -167,18 +167,14 @@ export default function OrdersPage() {
         <div className="sticky top-0 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
           <div className="px-6 py-6">
             <h1 className="text-2xl font-light text-gray-900">Заказ {order.orderNumber}</h1>
-            <p className="text-sm font-light text-gray-600 mt-1">
-              {formatDate(order.createdAt)}
-            </p>
+            <p className="text-sm font-light text-gray-600 mt-1">{formatDate(order.createdAt)}</p>
           </div>
         </div>
 
         <div className="px-6 py-6 space-y-6">
           {/* Status */}
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">
-              Статус заказа
-            </h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">Статус заказа</h2>
             <div
               className={`inline-block px-4 py-2 rounded-full border backdrop-blur-md ${statusColors[order.status]}`}
             >
@@ -188,20 +184,13 @@ export default function OrdersPage() {
 
           {/* Items */}
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-              Состав заказа
-            </h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Состав заказа</h2>
 
             {order.items.map((item) => (
               <div key={item.id} className="flex gap-4 pb-4 border-b border-white/30 last:border-0 last:pb-0">
-                <div className="relative w-16 h-16 bg-white/30 rounded-xl overflow-hidden flex-shrink-0">
+                <div className="relative w-16 h-16 bg-white/30 rounded-xl overflow-hidden shrink-0">
                   {item.productImage ? (
-                    <Image
-                      src={item.productImage}
-                      alt={item.productName}
-                      fill
-                      className="object-cover"
-                    />
+                    <Image src={item.productImage} alt={item.productName} fill className="object-cover" />
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <span className="text-3xl">{item.productEmoji || '🎁'}</span>
@@ -229,16 +218,12 @@ export default function OrdersPage() {
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
             <div className="flex justify-between items-center">
               <span className="text-base font-light text-gray-900">Итого:</span>
-              <span className="text-2xl font-light text-gray-900">
-                {order.total.toLocaleString('ru-RU')} ₽
-              </span>
+              <span className="text-2xl font-light text-gray-900">{order.total.toLocaleString('ru-RU')} ₽</span>
             </div>
           </div>
 
           {/* Actions */}
-          {order.status === 'delivered' && (
-            <Button className="w-full">Повторить заказ</Button>
-          )}
+          {order.status === 'delivered' && <Button className="w-full">Повторить заказ</Button>}
         </div>
       </div>
     );
@@ -253,11 +238,7 @@ export default function OrdersPage() {
       <div className="sticky top-0 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
         <div className="px-6 py-6">
           <h1 className="text-2xl font-light text-gray-900">Мои заказы</h1>
-          {!isEmpty && (
-            <p className="text-sm font-light text-gray-600 mt-1">
-              Всего заказов: {orders.length}
-            </p>
-          )}
+          {!isEmpty && <p className="text-sm font-light text-gray-600 mt-1">Всего заказов: {orders.length}</p>}
         </div>
       </div>
 
@@ -268,9 +249,7 @@ export default function OrdersPage() {
               <span className="text-5xl">📦</span>
             </div>
             <h2 className="text-xl font-light text-gray-900 mb-3">Заказов пока нет</h2>
-            <p className="text-sm font-light text-gray-600 mb-6">
-              Оформите первый заказ и он появится здесь
-            </p>
+            <p className="text-sm font-light text-gray-600 mb-6">Оформите первый заказ и он появится здесь</p>
             <Button onClick={() => router.push('/')}>Перейти к покупкам</Button>
           </div>
         </div>
@@ -284,16 +263,10 @@ export default function OrdersPage() {
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <p className="text-base font-light text-gray-900 mb-1">
-                    Заказ {order.orderNumber}
-                  </p>
-                  <p className="text-xs font-light text-gray-600">
-                    {formatDate(order.createdAt)}
-                  </p>
+                  <p className="text-base font-light text-gray-900 mb-1">Заказ {order.orderNumber}</p>
+                  <p className="text-xs font-light text-gray-600">{formatDate(order.createdAt)}</p>
                 </div>
-                <div
-                  className={`px-3 py-1 rounded-full border backdrop-blur-md ${statusColors[order.status]}`}
-                >
+                <div className={`px-3 py-1 rounded-full border backdrop-blur-md ${statusColors[order.status]}`}>
                   <span className="text-xs font-light">{statusLabels[order.status]}</span>
                 </div>
               </div>
@@ -302,9 +275,7 @@ export default function OrdersPage() {
                 <span className="text-sm font-light text-gray-600">
                   {order.itemsCount} {order.itemsCount === 1 ? 'товар' : 'товаров'}
                 </span>
-                <span className="text-lg font-light text-gray-900">
-                  {order.total.toLocaleString('ru-RU')} ₽
-                </span>
+                <span className="text-lg font-light text-gray-900">{order.total.toLocaleString('ru-RU')} ₽</span>
               </div>
             </button>
           ))}

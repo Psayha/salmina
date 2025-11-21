@@ -40,9 +40,10 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : 'Ошибка авторизации';
           set({
-            error: error.message || 'Ошибка авторизации',
+            error: message,
             isLoading: false,
           });
           throw error;
@@ -72,9 +73,10 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : 'Ошибка загрузки пользователя';
           set({
-            error: error.message || 'Ошибка загрузки пользователя',
+            error: message,
             isLoading: false,
             user: null,
             isAuthenticated: false,

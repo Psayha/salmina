@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -80,10 +81,12 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4 mb-6">
               <div className="w-20 h-20 bg-white/50 backdrop-blur-md rounded-full border border-white/30 flex items-center justify-center">
                 {user.photoUrl ? (
-                  <img
-                    src={user.photoUrl}
-                    alt={user.firstName}
-                    className="w-full h-full rounded-full object-cover"
+                  <Image
+                    src={user.photoUrl || ''}
+                    alt={user.firstName || 'User'}
+                    fill
+                    className="rounded-full object-cover"
+                    unoptimized
                   />
                 ) : (
                   <UserIcon className="w-10 h-10 text-gray-600" />
@@ -94,12 +97,8 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-light text-gray-900 mb-1">
                   {user.firstName} {user.lastName || ''}
                 </h2>
-                {user.username && (
-                  <p className="text-sm font-light text-gray-600">@{user.username}</p>
-                )}
-                {user.phoneNumber && (
-                  <p className="text-sm font-light text-gray-600">{user.phoneNumber}</p>
-                )}
+                {user.username && <p className="text-sm font-light text-gray-600">@{user.username}</p>}
+                {user.phoneNumber && <p className="text-sm font-light text-gray-600">{user.phoneNumber}</p>}
               </div>
             </div>
 
@@ -107,27 +106,19 @@ export default function ProfilePage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 text-center">
                 <p className="text-2xl font-light text-gray-900 mb-1">0</p>
-                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">
-                  Заказов
-                </p>
+                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">Заказов</p>
               </div>
               <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 text-center">
                 <p className="text-2xl font-light text-gray-900 mb-1">{favoriteIds.length}</p>
-                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">
-                  Избранное
-                </p>
+                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">Избранное</p>
               </div>
             </div>
           </div>
         ) : (
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-lg text-center">
             <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-lg font-light text-gray-900 mb-2">
-              Войдите в аккаунт
-            </h2>
-            <p className="text-sm font-light text-gray-600 mb-6">
-              Чтобы просматривать заказы и сохранять избранное
-            </p>
+            <h2 className="text-lg font-light text-gray-900 mb-2">Войдите в аккаунт</h2>
+            <p className="text-sm font-light text-gray-600 mb-6">Чтобы просматривать заказы и сохранять избранное</p>
             <Button onClick={() => router.push('/')}>На главную</Button>
           </div>
         )}
@@ -148,29 +139,18 @@ export default function ProfilePage() {
 
         {/* Legal Links */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg space-y-3">
-          <button
-            onClick={() => haptic.impactOccurred('light')}
-            className="w-full text-left"
-          >
+          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
             <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">
               Политика конфиденциальности
             </p>
           </button>
-          <button
-            onClick={() => haptic.impactOccurred('light')}
-            className="w-full text-left"
-          >
+          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
             <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">
               Пользовательское соглашение
             </p>
           </button>
-          <button
-            onClick={() => haptic.impactOccurred('light')}
-            className="w-full text-left"
-          >
-            <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">
-              О приложении
-            </p>
+          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
+            <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">О приложении</p>
           </button>
         </div>
 

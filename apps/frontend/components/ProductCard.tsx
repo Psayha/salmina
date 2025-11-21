@@ -1,6 +1,7 @@
 'use client';
 
 import { memo } from 'react';
+import Image from 'next/image';
 import { Button } from './ui/Button';
 import { CartIcon } from './ui/icons';
 
@@ -50,43 +51,33 @@ export const ProductCard = memo(function ProductCard({
       aria-label={`Товар: ${name}`}
     >
       {/* Image */}
-      <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 flex-shrink-0 overflow-hidden">
+      <div className="w-full aspect-square bg-white/30 backdrop-blur-sm flex items-center justify-center border-b border-white/20 shrink-0 overflow-hidden">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-            loading="lazy"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            unoptimized
           />
         ) : (
-          <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">
-            {emoji}
-          </span>
+          <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">{emoji}</span>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-2.5 space-y-1 flex flex-col flex-grow">
-        <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">
-          {name}
-        </h3>
+      <div className="p-2.5 space-y-1 flex flex-col grow">
+        <h3 className="text-sm font-normal text-gray-900 tracking-wide uppercase">{name}</h3>
 
-        {description && (
-          <p className="text-xs text-gray-700 font-light line-clamp-2 flex-grow">
-            {description}
-          </p>
-        )}
+        {description && <p className="text-xs text-gray-700 font-light line-clamp-2 grow">{description}</p>}
 
         {/* Price & Add to Cart */}
-        <div className="pt-1.5 flex items-center justify-between border-t border-white/30 flex-shrink-0">
+        <div className="pt-1.5 flex items-center justify-between border-t border-white/30 shrink-0">
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-900">
-              {finalPrice.toLocaleString('ru-RU')} ₽
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{finalPrice.toLocaleString('ru-RU')} ₽</span>
             {hasDiscount && (
-              <span className="text-xs text-gray-600 line-through">
-                {price.toLocaleString('ru-RU')} ₽
-              </span>
+              <span className="text-xs text-gray-600 line-through">{price.toLocaleString('ru-RU')} ₽</span>
             )}
           </div>
 
@@ -95,7 +86,7 @@ export const ProductCard = memo(function ProductCard({
             size="sm"
             onClick={handleAddToCart}
             aria-label="Добавить в корзину"
-            className="flex-shrink-0"
+            className="shrink-0"
           >
             <CartIcon className="w-4 h-4 text-gray-700" />
           </Button>

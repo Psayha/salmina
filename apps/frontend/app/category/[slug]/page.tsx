@@ -67,7 +67,7 @@ export default function CategoryPage() {
     if (slug) {
       fetchData();
     }
-  }, [slug, sortBy]);
+  }, [slug, sortBy, haptic]);
 
   const handleSortChange = (value: typeof sortBy) => {
     setSortBy(value);
@@ -111,9 +111,7 @@ export default function CategoryPage() {
       <div className="sticky top-0 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
         <div className="px-6 py-6">
           <h1 className="text-2xl font-light text-gray-900">{category.name}</h1>
-          {category.description && (
-            <p className="text-sm font-light text-gray-600 mt-2">{category.description}</p>
-          )}
+          {category.description && <p className="text-sm font-light text-gray-600 mt-2">{category.description}</p>}
         </div>
 
         {/* Sort Options */}

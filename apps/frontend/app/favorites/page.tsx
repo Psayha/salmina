@@ -48,7 +48,7 @@ export default function FavoritesPage() {
     }
 
     fetchFavorites();
-  }, [favoriteIds]);
+  }, [favoriteIds, haptic]);
 
   const handleAddToCart = async (productId: string) => {
     try {

@@ -51,7 +51,7 @@ export default function ProductPage() {
     if (slug) {
       fetchProduct();
     }
-  }, [slug]);
+  }, [slug, haptic]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -117,13 +117,7 @@ export default function ProductPage() {
       {/* Product Image */}
       <div className="relative h-96 w-full bg-white/40 backdrop-blur-md border-b border-white/30">
         {product.images && product.images.length > 0 ? (
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            fill
-            className="object-cover"
-            priority
-          />
+          <Image src={product.images[0]} alt={product.name} fill className="object-cover" priority />
         ) : (
           <div className="flex items-center justify-center h-full">
             <span className="text-9xl">🎁</span>
@@ -135,9 +129,7 @@ export default function ProductPage() {
           onClick={handleToggleFavorite}
           className="absolute top-6 right-6 w-12 h-12 bg-white/60 backdrop-blur-md rounded-full border border-white/30 shadow-lg flex items-center justify-center hover:bg-white/70 transition-all duration-300"
         >
-          <HeartIcon
-            className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-700'}`}
-          />
+          <HeartIcon className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-700'}`} />
         </button>
       </div>
 
@@ -148,13 +140,9 @@ export default function ProductPage() {
           <h1 className="text-2xl font-light text-gray-900 mb-4">{product.name}</h1>
 
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-light text-gray-900">
-              {finalPrice.toLocaleString('ru-RU')} ₽
-            </span>
+            <span className="text-3xl font-light text-gray-900">{finalPrice.toLocaleString('ru-RU')} ₽</span>
             {hasDiscount && (
-              <span className="text-lg text-gray-500 line-through">
-                {product.price.toLocaleString('ru-RU')} ₽
-              </span>
+              <span className="text-lg text-gray-500 line-through">{product.price.toLocaleString('ru-RU')} ₽</span>
             )}
           </div>
         </div>
@@ -162,20 +150,14 @@ export default function ProductPage() {
         {/* Description */}
         {product.description && (
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">
-              Описание
-            </h2>
-            <p className="text-sm font-light text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">Описание</h2>
+            <p className="text-sm font-light text-gray-600 leading-relaxed">{product.description}</p>
           </div>
         )}
 
         {/* Quantity Selector */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-            Количество
-          </h2>
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Количество</h2>
           <div className="flex items-center justify-center gap-6">
             <button
               onClick={() => handleQuantityChange(-1)}
@@ -185,9 +167,7 @@ export default function ProductPage() {
               <span className="text-2xl font-light text-gray-700">−</span>
             </button>
 
-            <span className="text-3xl font-light text-gray-900 min-w-[60px] text-center">
-              {quantity}
-            </span>
+            <span className="text-3xl font-light text-gray-900 min-w-[60px] text-center">{quantity}</span>
 
             <button
               onClick={() => handleQuantityChange(1)}
@@ -202,9 +182,7 @@ export default function ProductPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 px-2">
-              Похожие товары
-            </h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 px-2">Похожие товары</h2>
             <div className="grid grid-cols-2 gap-4">
               {relatedProducts.map((related) => (
                 <div
@@ -214,21 +192,14 @@ export default function ProductPage() {
                 >
                   <div className="aspect-square relative mb-3 bg-white/30 rounded-lg overflow-hidden">
                     {related.images && related.images.length > 0 ? (
-                      <Image
-                        src={related.images[0]}
-                        alt={related.name}
-                        fill
-                        className="object-cover"
-                      />
+                      <Image src={related.images[0]} alt={related.name} fill className="object-cover" />
                     ) : (
                       <div className="flex items-center justify-center h-full">
                         <span className="text-5xl">🎁</span>
                       </div>
                     )}
                   </div>
-                  <p className="text-sm font-light text-gray-900 mb-1 line-clamp-2">
-                    {related.name}
-                  </p>
+                  <p className="text-sm font-light text-gray-900 mb-1 line-clamp-2">{related.name}</p>
                   <p className="text-base font-light text-gray-900">
                     {(related.promotionPrice || related.discountPrice || related.price).toLocaleString('ru-RU')} ₽
                   </p>
@@ -241,11 +212,7 @@ export default function ProductPage() {
 
       {/* Fixed Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white/60 backdrop-blur-md border-t border-white/30 shadow-lg p-6 z-50">
-        <Button
-          onClick={handleAddToCart}
-          disabled={isAddingToCart}
-          className="w-full py-4 text-base"
-        >
+        <Button onClick={handleAddToCart} disabled={isAddingToCart} className="w-full py-4 text-base">
           <CartIcon className="w-5 h-5 mr-2 text-gray-900" />
           {isAddingToCart ? 'Добавление...' : 'Добавить в корзину'}
         </Button>

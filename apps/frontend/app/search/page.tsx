@@ -80,7 +80,7 @@ function SearchPageContent() {
     } finally {
       setIsLoading(false);
     }
-  }, [searchQuery, selectedCategory, sortBy]);
+  }, [searchQuery, selectedCategory, sortBy, haptic]);
 
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -167,14 +167,9 @@ function SearchPageContent() {
         {/* Categories Filter */}
         {categories.length > 0 && (
           <div className="space-y-3">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700">
-              Категории
-            </h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700">Категории</h2>
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-              <CategoryPill
-                active={selectedCategory === 'all'}
-                onClick={() => handleCategoryChange('all')}
-              >
+              <CategoryPill active={selectedCategory === 'all'} onClick={() => handleCategoryChange('all')}>
                 Все
               </CategoryPill>
               {categories.map((category) => (
@@ -223,9 +218,7 @@ function SearchPageContent() {
                 {searchQuery ? 'Ничего не найдено' : 'Начните поиск'}
               </h2>
               <p className="text-sm font-light text-gray-600">
-                {searchQuery
-                  ? 'Попробуйте изменить запрос или фильтры'
-                  : 'Введите название товара в поле поиска'}
+                {searchQuery ? 'Попробуйте изменить запрос или фильтры' : 'Введите название товара в поле поиска'}
               </p>
             </div>
           </div>
@@ -237,11 +230,13 @@ function SearchPageContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen relative z-10 flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen relative z-10 flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin"></div>
+        </div>
+      }
+    >
       <SearchPageContent />
     </Suspense>
   );

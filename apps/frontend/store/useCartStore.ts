@@ -45,9 +45,10 @@ export const useCartStore = create<CartState>((set, get) => ({
       }
 
       set({ cart, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Ошибка загрузки корзины';
       set({
-        error: error.message || 'Ошибка загрузки корзины',
+        error: message,
         isLoading: false,
       });
     }
@@ -58,9 +59,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const cart = await cartApi.addToCart({ productId, quantity });
       set({ cart, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Ошибка добавления в корзину';
       set({
-        error: error.message || 'Ошибка добавления в корзину',
+        error: message,
         isLoading: false,
       });
       throw error;
@@ -72,9 +74,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const cart = await cartApi.updateCartItem(itemId, { quantity });
       set({ cart, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Ошибка обновления корзины';
       set({
-        error: error.message || 'Ошибка обновления корзины',
+        error: message,
         isLoading: false,
       });
       throw error;
@@ -86,9 +89,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       const cart = await cartApi.removeCartItem(itemId);
       set({ cart, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Ошибка удаления из корзины';
       set({
-        error: error.message || 'Ошибка удаления из корзины',
+        error: message,
         isLoading: false,
       });
       throw error;
@@ -100,9 +104,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     try {
       await cartApi.clearCart();
       set({ cart: null, isLoading: false });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Ошибка очистки корзины';
       set({
-        error: error.message || 'Ошибка очистки корзины',
+        error: message,
         isLoading: false,
       });
     }
