@@ -27,8 +27,8 @@ export class ProductsController {
     try {
       const query = req.query as any;
       const {
-        page,
-        limit,
+        page: pageParam,
+        limit: limitParam,
         sortBy,
         order,
         categoryId,
@@ -42,7 +42,11 @@ export class ProductsController {
         hasPromotion,
       } = query;
 
-      logger.info('Get all products request');
+      // Parse and validate pagination parameters with defaults
+      const page = pageParam ? parseInt(pageParam, 10) : 1;
+      const limit = limitParam ? parseInt(limitParam, 10) : 20;
+
+      logger.info(`Get all products request: page=${page}, limit=${limit}`);
 
       const params: ProductSearchParams = {
         page,
@@ -87,8 +91,8 @@ export class ProductsController {
       const query = req.query as any;
       const {
         q,
-        page,
-        limit,
+        page: pageParam,
+        limit: limitParam,
         sortBy,
         order,
         categoryId,
@@ -102,7 +106,11 @@ export class ProductsController {
         hasPromotion,
       } = query;
 
-      logger.info(`Search products request: query="${q}"`);
+      // Parse and validate pagination parameters with defaults
+      const page = pageParam ? parseInt(pageParam, 10) : 1;
+      const limit = limitParam ? parseInt(limitParam, 10) : 20;
+
+      logger.info(`Search products request: query="${q}", page=${page}, limit=${limit}`);
 
       const params: ProductSearchParams = {
         query: q,

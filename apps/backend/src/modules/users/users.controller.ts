@@ -7,11 +7,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { userService } from './users.service.js';
-import {
-  UpdateUserProfileInput,
-  UpdateUserRoleInput,
-  UserIdParam,
-} from './users.validation.js';
+import { UpdateUserProfileInput, UpdateUserRoleInput, UserIdParam } from './users.validation.js';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
@@ -124,20 +120,17 @@ export class UserController {
    * @param res - Express response
    * @param next - Express next function
    */
-  async getAllUsers(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  async getAllUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { page, limit, role, isActive, hasAcceptedTerms, search } = req.query as any;
+      const { page: pageParam, limit: limitParam, role, isActive, hasAcceptedTerms, search } = req.query as any;
+
+      // Parse and validate pagination parameters with defaults
+      const page = pageParam ? parseInt(pageParam, 10) : 1;
+      const limit = limitParam ? parseInt(limitParam, 10) : 20;
 
       logger.info(`Get all users request: page=${page}, limit=${limit}`);
 
-      const result = await userService.getAllUsers(
-        { page, limit },
-        { role, isActive, hasAcceptedTerms, search },
-      );
+      const result = await userService.getAllUsers({ page, limit }, { role, isActive, hasAcceptedTerms, search });
 
       res.status(200).json({
         success: true,
@@ -157,11 +150,7 @@ export class UserController {
    * @param res - Express response
    * @param next - Express next function
    */
-  async getUserById(
-    req: Request<UserIdParam>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  async getUserById(req: Request<UserIdParam>, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
 
@@ -228,11 +217,7 @@ export class UserController {
    * @param res - Express response
    * @param next - Express next function
    */
-  async deactivateUser(
-    req: Request<UserIdParam> & AuthRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  async deactivateUser(req: Request<UserIdParam> & AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.user) {
         throw new BadRequestError('User not authenticated');
@@ -268,11 +253,7 @@ export class UserController {
    * @param res - Express response
    * @param next - Express next function
    */
-  async reactivateUser(
-    req: Request<UserIdParam>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> {
+  async reactivateUser(req: Request<UserIdParam>, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
 
