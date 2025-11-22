@@ -47,7 +47,6 @@ export const useAuthStore = create<AuthState>()(
             error: message,
             isLoading: false,
           });
-          throw error;
         }
       },
 
@@ -67,7 +66,6 @@ export const useAuthStore = create<AuthState>()(
             error: message,
             isLoading: false,
           });
-          throw error;
         }
       },
 

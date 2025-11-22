@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from '@/components/Providers';
 import { BottomNav } from '@/components/BottomNav';
 import { DebugPanel } from '@/components/DebugPanel';
+import { Eruda } from '@/components/Eruda';
 import './globals.css';
 
 const geistSans = Geist({
@@ -34,13 +35,14 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
-        <script src="https://telegram.org/js/telegram-web-app.js" async></script>
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
           <BottomNav />
           <DebugPanel />
+          <Eruda />
         </Providers>
       </body>
     </html>

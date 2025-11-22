@@ -35,8 +35,8 @@ export default function Home() {
           productsApi.getProducts(),
           categoriesApi.getCategories(),
         ]);
-        setProducts(productsResponse.items); // Extract items from paginated response
-        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }, ...categoriesResponse]);
+        setProducts(productsResponse?.items || []); // Extract items from paginated response
+        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }, ...(categoriesResponse || [])]);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
