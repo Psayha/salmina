@@ -283,7 +283,7 @@ export class ProductsService {
     // Update product
     const updateData: any = { ...data };
     if (updateData.characteristics !== undefined) {
-      updateData.characteristics = updateData.characteristics as any;
+      updateData.characteristics = updateData.characteristics;
     }
     updateData.updatedAt = new Date();
 
@@ -524,7 +524,9 @@ export class ProductsService {
       where.push({ sku });
     }
 
-    if (where.length === 0) return;
+    if (where.length === 0) {
+return;
+}
 
     const existing = await prisma.product.findFirst({
       where: {

@@ -1,17 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-import { logger } from "../utils/logger.js";
+import { PrismaClient } from '@prisma/client';
+import { logger } from '../utils/logger.js';
 
 const prisma = new PrismaClient({
   log:
-    process.env.NODE_ENV === "development"
-      ? ["query", "error", "warn"]
-      : ["error"],
+    process.env.NODE_ENV === 'development'
+      ? ['query', 'error', 'warn']
+      : ['error'],
 });
 
 // Graceful shutdown
-process.on("beforeExit", async () => {
+process.on('beforeExit', async () => {
   await prisma.$disconnect();
-  logger.info("Database connection closed");
+  logger.info('Database connection closed');
 });
 
 export { prisma };

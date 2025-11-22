@@ -55,7 +55,7 @@ class TelegramService {
     const itemsList = orderData.items
       .map(
         (item) =>
-          `  • ${item.productName} x${item.quantity} - ${item.price * item.quantity}₽`
+          `  • ${item.productName} x${item.quantity} - ${item.price * item.quantity}₽`,
       )
       .join('\n');
 

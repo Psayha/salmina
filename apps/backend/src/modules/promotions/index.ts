@@ -19,7 +19,9 @@ router.get('/', async (_req: any, res: any, next: any) => {
       orderBy: { order: 'asc' },
     });
     res.json({ success: true, data: promotions });
-  } catch (error) { next(error); }
+  } catch (error) {
+ next(error); 
+}
 });
 
 // POST /api/promotions - Create (admin)
@@ -27,7 +29,9 @@ router.post('/', authenticate, requireAdmin, async (req: any, res: any, next: an
   try {
     const promotion = await prisma.promotion.create({ data: req.body });
     res.status(201).json({ success: true, data: promotion });
-  } catch (error) { next(error); }
+  } catch (error) {
+ next(error); 
+}
 });
 
 // PATCH /api/promotions/:id - Update (admin)
@@ -35,7 +39,9 @@ router.patch('/:id', authenticate, requireAdmin, async (req: any, res: any, next
   try {
     const promotion = await prisma.promotion.update({ where: { id: req.params.id }, data: req.body });
     res.json({ success: true, data: promotion });
-  } catch (error) { next(error); }
+  } catch (error) {
+ next(error); 
+}
 });
 
 // DELETE /api/promotions/:id - Delete (admin)
@@ -43,7 +49,9 @@ router.delete('/:id', authenticate, requireAdmin, async (req: any, res: any, nex
   try {
     await prisma.promotion.delete({ where: { id: req.params.id } });
     res.json({ success: true, message: 'Promotion deleted' });
-  } catch (error) { next(error); }
+  } catch (error) {
+ next(error); 
+}
 });
 
 export default router;

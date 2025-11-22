@@ -204,7 +204,9 @@ export function calculateFinalPrice(
  * Calculate discount percentage
  */
 export function calculateDiscountPercent(price: number, finalPrice: number): number | null {
-  if (finalPrice >= price) return null;
+  if (finalPrice >= price) {
+return null;
+}
   const discount = ((price - finalPrice) / price) * 100;
   return Math.round(discount);
 }

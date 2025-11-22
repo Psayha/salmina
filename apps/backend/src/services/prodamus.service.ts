@@ -177,7 +177,7 @@ class ProdamusService {
     try {
       const isValid = crypto.timingSafeEqual(
         Buffer.from(expectedSignature),
-        Buffer.from(receivedSignature)
+        Buffer.from(receivedSignature),
       );
 
       if (isValid) {
@@ -232,7 +232,7 @@ class ProdamusService {
     return successStatuses.some(
       (status) =>
         webhookData.payment_status?.toLowerCase().includes(status) ||
-        webhookData.payment_status_description?.toLowerCase().includes(status)
+        webhookData.payment_status_description?.toLowerCase().includes(status),
     );
   }
 }
