@@ -2,13 +2,6 @@
 
 Полное руководство от локальной разработки до production deployment.
 
-**Production Status:** 🟢 **DEPLOYED AND RUNNING**
-
-**Live URLs:**
-- 🛍️ Shop: https://salminashop.ru
-- 🔌 API: https://app.salminashop.ru
-- 👨‍💼 Admin: https://admin.salminashop.ru
-
 ---
 
 ## 🎯 ЧТО ДЕЛАТЬ СЕЙЧАС - Пошаговый план
@@ -47,6 +40,7 @@ pnpm dev
 ### Вариант 2: Production Deployment (делать ПОСЛЕ успешного локального запуска)
 
 **Предварительные требования:**
+
 - [ ] У вас есть VPS сервер (например, DigitalOcean, Hetzner, Selectel)
 - [ ] У вас есть доменное имя (например, shop.example.com)
 - [ ] Вы можете подключиться к серверу по SSH
@@ -63,38 +57,6 @@ pnpm dev
 8. **Настройка Telegram Bot** → создать Mini App
 
 **Подробные инструкции для каждого шага ниже ↓**
-
----
-
-## 📊 Production Deployment Status
-
-**Frontend:** 🟢 DEPLOYED
-- URL: https://salminashop.ru
-- TypeScript: 0 errors
-- Build: Successful
-- Pages: 11 deployed
-- Components: 15
-- SSL: ✅ Let's Encrypt
-- Redirect: HTTP → HTTPS ✅
-
-**Backend API:** 🟢 DEPLOYED
-- URL: https://app.salminashop.ru
-- TypeScript: 0 errors
-- Build: Successful
-- Modules: 9 (51 endpoints)
-- Database: PostgreSQL ✅ (migrated & seeded)
-- Cache: Redis ✅
-- Health: /health endpoint ✅
-
-**Infrastructure:** 🟢 RUNNING
-- VPS: 91.229.11.132 (Ubuntu 22.04)
-- Nginx: reverse proxy ✅
-- SSL: Let's Encrypt auto-renewal ✅
-- PM2: auto-restart enabled ✅
-- Firewall: configured ✅
-- SEO: robots.txt (noindex) ✅
-
-**Статус:** 🚀 Production ready and deployed!
 
 ---
 
@@ -122,6 +84,7 @@ cp apps/backend/.env.example apps/backend/.env
 ```
 
 **Отредактируйте `apps/backend/.env`:**
+
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/telegram_shop"
 REDIS_URL="redis://localhost:6379"
@@ -134,6 +97,7 @@ CORS_ORIGIN="http://localhost:3000"
 ```
 
 **Генерация JWT secrets:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -531,8 +495,8 @@ services:
     image: nginx:alpine
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs:/etc/nginx/certs:ro
