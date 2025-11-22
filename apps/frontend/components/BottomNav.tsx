@@ -54,6 +54,10 @@ export const BottomNav = () => {
     router.push(href);
   };
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <motion.nav
       className="fixed bottom-0 left-0 right-0 z-40"

@@ -17,13 +17,8 @@ export interface GetProductsParams {
 /**
  * Get products list with filters
  */
-export async function getProducts(
-  params?: GetProductsParams,
-): Promise<PaginatedResponse<Product>> {
-  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>(
-    '/products',
-    { params },
-  );
+export async function getProducts(params?: GetProductsParams): Promise<PaginatedResponse<Product>> {
+  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>('/products', { params });
   return response.data.data;
 }
 
@@ -31,9 +26,7 @@ export async function getProducts(
  * Get product by slug
  */
 export async function getProductBySlug(slug: string): Promise<Product> {
-  const response = await apiClient.get<ApiResponse<Product>>(
-    `/products/${slug}`,
-  );
+  const response = await apiClient.get<ApiResponse<Product>>(`/products/${slug}`);
   return response.data.data;
 }
 
@@ -44,12 +37,9 @@ export async function searchProducts(
   query: string,
   params?: Omit<GetProductsParams, 'search'>,
 ): Promise<PaginatedResponse<Product>> {
-  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>(
-    '/products/search',
-    {
-      params: { q: query, ...params },
-    },
-  );
+  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>('/products/search', {
+    params: { q: query, ...params },
+  });
   return response.data.data;
 }
 
@@ -57,8 +47,29 @@ export async function searchProducts(
  * Get related products
  */
 export async function getRelatedProducts(productId: string): Promise<Product[]> {
-  const response = await apiClient.get<ApiResponse<Product[]>>(
-    `/products/${productId}/related`,
-  );
+  const response = await apiClient.get<ApiResponse<Product[]>>(`/products/${productId}/related`);
   return response.data.data;
+}
+
+/**
+ * Create product
+ */
+export async function createProduct(data: Partial<Product>): Promise<Product> {
+  const response = await apiClient.post<ApiResponse<Product>>('/products', data);
+  return response.data.data;
+}
+
+/**
+ * Update product
+ */
+export async function updateProduct(id: string, data: Partial<Product>): Promise<Product> {
+  const response = await apiClient.patch<ApiResponse<Product>>(`/products/${id}`, data);
+  return response.data.data;
+}
+
+/**
+ * Delete product
+ */
+export async function deleteProduct(id: string): Promise<void> {
+  await apiClient.delete(`/products/${id}`);
 }
