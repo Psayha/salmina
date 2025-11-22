@@ -31,6 +31,19 @@ export default function ProfilePage() {
   };
 
   const menuItems = [
+    ...(user?.role === 'ADMIN'
+      ? [
+          {
+            label: '⚡ Админ-панель',
+            description: 'Управление магазином',
+            onClick: () => {
+              haptic.impactOccurred('medium');
+              router.push('/admin');
+            },
+            isAdmin: true,
+          },
+        ]
+      : []),
     {
       label: 'Мои заказы',
       description: 'История покупок и статусы',
@@ -129,7 +142,11 @@ export default function ProfilePage() {
             <button
               key={index}
               onClick={item.onClick}
-              className="w-full bg-white/40 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg hover:bg-white/50 transition-all duration-300 text-left"
+              className={`w-full backdrop-blur-md rounded-2xl p-5 border shadow-lg hover:bg-white/50 transition-all duration-300 text-left ${
+                (item as any).isAdmin
+                  ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30'
+                  : 'bg-white/40 border-white/30'
+              }`}
             >
               <p className="text-base font-light text-gray-900 mb-1">{item.label}</p>
               <p className="text-xs font-light text-gray-600">{item.description}</p>
