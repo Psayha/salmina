@@ -11,7 +11,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
 
   useEffect(() => {
+    console.log('[AdminLayout] Auth state:', {
+      isLoading,
+      isAuthenticated,
+      userRole: user?.role,
+      userId: user?.id,
+      telegramId: user?.telegramId,
+    });
+
     if (!isLoading && (!isAuthenticated || user?.role !== 'ADMIN')) {
+      console.log('[AdminLayout] Access denied, redirecting to home');
       router.push('/');
     }
   }, [isAuthenticated, user, isLoading, router]);
@@ -21,8 +30,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (!isAuthenticated || user?.role !== 'ADMIN') {
+    console.log('[AdminLayout] Rendering null - not authenticated or not admin');
     return null;
   }
+
+  console.log('[AdminLayout] Rendering admin panel for user:', user.telegramId);
 
   return (
     <div className="min-h-screen bg-gray-50">
