@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from '@/components/Providers';
 import { BottomNav } from '@/components/BottomNav';
+import { DebugPanel } from '@/components/DebugPanel';
 import './globals.css';
 
 const geistSans = Geist({
@@ -16,8 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Telegram Shop - Интернет-магазин косметики',
-  description:
-    'Профессиональный интернет-магазин косметики в формате Telegram Mini App',
+  description: 'Профессиональный интернет-магазин косметики в формате Telegram Mini App',
   viewport: {
     width: 'device-width',
     initialScale: 1,
@@ -34,17 +34,13 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
-        <script
-          src="https://telegram.org/js/telegram-web-app.js"
-          async
-        ></script>
+        <script src="https://telegram.org/js/telegram-web-app.js" async></script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
           <BottomNav />
+          <DebugPanel />
         </Providers>
       </body>
     </html>
