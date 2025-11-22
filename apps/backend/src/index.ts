@@ -31,12 +31,32 @@ const app = express();
 
 // Middleware
 app.use(helmet());
+
+// CORS configuration with multiple allowed origins
+const allowedOrigins = [
+  env.FRONTEND_URL,
+  'https://salminashop.ru',
+  'https://www.salminashop.ru',
+  'http://localhost:3000', // Development
+];
+
 app.use(
   cors({
-    origin: env.FRONTEND_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked request from origin: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   }),
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
