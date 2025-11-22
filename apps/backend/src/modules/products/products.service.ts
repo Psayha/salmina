@@ -282,9 +282,7 @@ export class ProductsService {
 
     // Update product
     const updateData: any = { ...data };
-    if (updateData.characteristics !== undefined) {
-      updateData.characteristics = updateData.characteristics;
-    }
+
     updateData.updatedAt = new Date();
 
     const product = await prisma.product.update({
@@ -506,12 +504,7 @@ export class ProductsService {
    * @throws {ConflictError} If any field already exists
    * @private
    */
-  private async validateUniqueFields(
-    slug?: string,
-    article?: string,
-    sku?: string,
-    excludeId?: string,
-  ): Promise<void> {
+  private async validateUniqueFields(slug?: string, article?: string, sku?: string, excludeId?: string): Promise<void> {
     const where: Prisma.ProductWhereInput[] = [];
 
     if (slug) {
@@ -525,8 +518,8 @@ export class ProductsService {
     }
 
     if (where.length === 0) {
-return;
-}
+      return;
+    }
 
     const existing = await prisma.product.findFirst({
       where: {

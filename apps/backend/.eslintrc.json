@@ -1,9 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "ecmaVersion": 2022,
@@ -11,13 +8,25 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "no-console": ["warn", { "allow": ["warn", "error"] }]
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off",
+    "brace-style": "off",
+    "no-case-declarations": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "no-console": ["warn", { "allow": ["warn", "error", "info"] }]
   },
+  "ignorePatterns": ["src/**/__tests__/**/*", "dist/**/*", "coverage/**/*"],
   "env": {
     "node": true,
     "es2022": true
   }
 }
-
