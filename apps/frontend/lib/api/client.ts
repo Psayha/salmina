@@ -1,7 +1,38 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-// API base URL from environment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+/**
+ * Get API base URL based on environment
+ * - Production: https://app.salminashop.ru/api
+ * - Development: http://localhost:3001/api
+ * - Can be overridden with NEXT_PUBLIC_API_URL env variable
+ */
+function getApiBaseUrl(): string {
+  // Allow explicit override via environment variable
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // Detect production environment
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+
+    // Production domain
+    if (hostname === 'salminashop.ru' || hostname === 'www.salminashop.ru') {
+      return 'https://app.salminashop.ru/api';
+    }
+  }
+
+  // Default to localhost for development
+  return 'http://localhost:3001/api';
+}
+
+// API base URL
+const API_BASE_URL = getApiBaseUrl();
+
+// Log the API URL in development for debugging
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('[API Client] Using API base URL:', API_BASE_URL);
+}
 
 /**
  * Axios instance with default configuration
