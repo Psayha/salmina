@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import { api } from '@/lib/api/client';
+import { apiClient } from '@/lib/api/client';
 
 interface ImageUploadProps {
   value: string[];
@@ -54,7 +54,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await api.post('/upload/single', formData, {
+        const response = await apiClient.post('/upload/single', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

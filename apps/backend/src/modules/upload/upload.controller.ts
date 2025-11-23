@@ -69,10 +69,11 @@ export const upload = multer({
 export async function uploadSingle(req: Request, res: Response) {
   try {
     if (!req.file) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'No file uploaded',
       });
+      return;
     }
 
     const fileUrl = `/uploads/${req.file.filename}`;
@@ -103,10 +104,11 @@ export async function uploadSingle(req: Request, res: Response) {
 export async function uploadMultiple(req: Request, res: Response) {
   try {
     if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'No files uploaded',
       });
+      return;
     }
 
     const files = req.files.map((file) => ({
@@ -139,10 +141,11 @@ export async function deleteFile(req: Request, res: Response) {
     const { filename } = req.params;
 
     if (!filename) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         error: 'Filename is required',
       });
+      return;
     }
 
     // Security: prevent path traversal
