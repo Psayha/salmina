@@ -18,6 +18,16 @@ export interface Order {
   items: OrderItem[];
 }
 
+export interface CreateOrderInput {
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  deliveryAddress?: string;
+  deliveryMethod?: string;
+  paymentMethod?: string;
+  comment?: string;
+}
+
 export const ordersApi = {
   getOrders: async (): Promise<Order[]> => {
     const response = await apiClient.get<ApiResponse<Order[]>>('/orders');
@@ -26,6 +36,11 @@ export const ordersApi = {
 
   getOrder: async (id: string): Promise<Order> => {
     const response = await apiClient.get<ApiResponse<Order>>(`/orders/${id}`);
+    return response.data.data;
+  },
+
+  createOrder: async (input: CreateOrderInput): Promise<Order> => {
+    const response = await apiClient.post<ApiResponse<Order>>('/orders', input);
     return response.data.data;
   },
 

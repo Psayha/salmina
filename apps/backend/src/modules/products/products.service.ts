@@ -133,6 +133,32 @@ export class ProductsService {
   }
 
   /**
+   * Get multiple products by IDs (bulk fetch for favorites)
+   *
+   * @param ids - Array of product IDs
+   * @returns Array of product details
+   */
+  async getProductsByIds(ids: string[]): Promise<ProductListItem[]> {
+    logger.info(`Getting ${ids.length} products by IDs`);
+
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const products = await prisma.product.findMany({
+      where: {
+        id: { in: ids },
+        isActive: true,
+      },
+      include: { category: true },
+    });
+
+    logger.info(`Found ${products.length} products out of ${ids.length} requested`);
+
+    return products.map(toProductListItem);
+  }
+
+  /**
    * Search products by query string
    *
    * @param params - Search parameters

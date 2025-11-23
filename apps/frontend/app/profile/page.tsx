@@ -65,7 +65,7 @@ export default function ProfilePage() {
       description: 'Уведомления и параметры',
       onClick: () => {
         haptic.impactOccurred('light');
-        // TODO: Navigate to settings
+        router.push('/settings');
       },
     },
     {
@@ -73,7 +73,7 @@ export default function ProfilePage() {
       description: 'Помощь и обратная связь',
       onClick: () => {
         haptic.impactOccurred('light');
-        // TODO: Navigate to support
+        router.push('/support');
       },
     },
   ];

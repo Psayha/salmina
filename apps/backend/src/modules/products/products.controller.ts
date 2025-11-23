@@ -144,6 +144,40 @@ export class ProductsController {
   }
 
   /**
+   * POST /api/products/bulk
+   * Get multiple products by IDs (bulk fetch for favorites)
+   *
+   * @param req - Express request with array of product IDs in body
+   * @param res - Express response
+   * @param next - Express next function
+   */
+  async getProductsByIds(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { ids } = req.body;
+
+      if (!Array.isArray(ids)) {
+        res.status(400).json({
+          success: false,
+          message: 'Request body must contain an array of product IDs',
+        });
+        return;
+      }
+
+      logger.info(`Bulk fetch products request: ${ids.length} IDs`);
+
+      const products = await productsService.getProductsByIds(ids);
+
+      res.status(200).json({
+        success: true,
+        data: products,
+        message: 'Products retrieved successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * GET /api/products/:slug
    * Get product by slug (increments view count)
    *

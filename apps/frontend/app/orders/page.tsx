@@ -6,11 +6,13 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { Button } from '@/components/ui';
 import Image from 'next/image';
+import { ordersApi, Order as ApiOrder } from '@/lib/api/endpoints/orders';
 
+// UI display type for orders
 interface Order {
   id: string;
   orderNumber: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   createdAt: string;
   total: number;
   itemsCount: number;
@@ -25,8 +27,8 @@ interface Order {
 }
 
 const statusLabels: Record<Order['status'], string> = {
-  pending: 'Ожидает обработки',
-  processing: 'В обработке',
+  pending: 'Ожидает оплаты',
+  paid: 'Оплачен',
   shipped: 'Отправлен',
   delivered: 'Доставлен',
   cancelled: 'Отменен',
@@ -34,11 +36,24 @@ const statusLabels: Record<Order['status'], string> = {
 
 const statusColors: Record<Order['status'], string> = {
   pending: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-700',
-  processing: 'bg-blue-500/20 border-blue-500/30 text-blue-700',
+  paid: 'bg-blue-500/20 border-blue-500/30 text-blue-700',
   shipped: 'bg-purple-500/20 border-purple-500/30 text-purple-700',
   delivered: 'bg-green-500/20 border-green-500/30 text-green-700',
   cancelled: 'bg-red-500/20 border-red-500/30 text-red-700',
 };
+
+// Transform API order to UI order
+function transformOrder(apiOrder: ApiOrder): Order {
+  return {
+    id: apiOrder.id,
+    orderNumber: apiOrder.orderNumber,
+    status: apiOrder.status.toLowerCase() as Order['status'],
+    createdAt: apiOrder.createdAt,
+    total: apiOrder.totalAmount,
+    itemsCount: apiOrder.items.length,
+    items: apiOrder.items,
+  };
+}
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -62,43 +77,18 @@ export default function OrdersPage() {
     async function fetchOrders() {
       try {
         setIsLoading(true);
-        // TODO: Replace with actual orders API call
-        // const data = await ordersApi.getMyOrders();
 
-        // Mock data for demonstration
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Fetch orders from API
+        const apiOrders = await ordersApi.getOrders();
 
-        const mockOrders: Order[] = [
-          {
-            id: '1',
-            orderNumber: 'ORD-001',
-            status: 'delivered',
-            createdAt: '2025-01-10T10:00:00Z',
-            total: 2500,
-            itemsCount: 2,
-            items: [
-              {
-                id: '1',
-                productName: 'Крем для лица',
-                productEmoji: '✨',
-                quantity: 1,
-                price: 1500,
-              },
-              {
-                id: '2',
-                productName: 'Сыворотка',
-                productEmoji: '💧',
-                quantity: 1,
-                price: 1000,
-              },
-            ],
-          },
-        ];
+        // Transform API orders to UI format
+        const transformedOrders = apiOrders.map(transformOrder);
 
-        setOrders(mockOrders);
+        setOrders(transformedOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
         haptic.notificationOccurred('error');
+        setOrders([]); // Set empty array on error
       } finally {
         setIsLoading(false);
       }

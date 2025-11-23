@@ -39,9 +39,15 @@ router.get('/', validate(getProductsQuerySchema), productsController.getAllProdu
 router.get('/search', validate(searchProductsQuerySchema), productsController.searchProducts.bind(productsController));
 
 /**
+ * POST /api/products/bulk
+ * Get multiple products by IDs (bulk fetch for favorites)
+ */
+router.post('/bulk', productsController.getProductsByIds.bind(productsController));
+
+/**
  * GET /api/products/:slug
  * Get product by slug (increments view count)
- * Note: This must be after /search to avoid conflict
+ * Note: This must be after /search and /bulk to avoid conflict
  */
 router.get('/:slug', validate(getProductBySlugParamsSchema), productsController.getProductBySlug.bind(productsController));
 

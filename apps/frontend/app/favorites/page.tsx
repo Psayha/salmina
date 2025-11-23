@@ -34,11 +34,9 @@ export default function FavoritesPage() {
 
       try {
         setIsLoading(true);
-        // TODO: Replace with bulk fetch API when available
-        // For now, fetch all products and filter by IDs (not optimal)
-        const allProducts = await productsApi.getProducts({ limit: 100 });
-        const filtered = allProducts.items.filter((p) => favoriteIds.includes(p.id));
-        setProducts(filtered);
+        // Bulk fetch products by IDs (optimized)
+        const favoriteProducts = await productsApi.getProductsByIds(favoriteIds);
+        setProducts(favoriteProducts);
       } catch (error) {
         console.error('Error fetching favorites:', error);
         haptic.notificationOccurred('error');

@@ -6,6 +6,7 @@ import { useCartStore } from '@/store/useCartStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { Button } from '@/components/ui';
+import { ordersApi } from '@/lib/api/endpoints/orders';
 
 interface CheckoutFormData {
   fullName: string;
@@ -101,18 +102,19 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual order API call
-      // const order = await ordersApi.createOrder({
-      //   items: cart!.items.map(item => ({
-      //     productId: item.product.id,
-      //     quantity: item.quantity,
-      //     price: item.price,
-      //   })),
-      //   ...formData,
-      // });
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Create order with API
+      await ordersApi.createOrder({
+        customerName: formData.fullName,
+        customerPhone: formData.phone,
+        customerEmail: formData.email || undefined,
+        deliveryAddress:
+          formData.deliveryMethod === 'pickup'
+            ? 'Самовывоз'
+            : `${formData.city}, ${formData.address}${formData.postalCode ? ', ' + formData.postalCode : ''}`,
+        deliveryMethod: formData.deliveryMethod,
+        paymentMethod: formData.paymentMethod,
+        comment: formData.comment || undefined,
+      });
 
       haptic.notificationOccurred('success');
       await clearCart();
@@ -122,6 +124,8 @@ export default function CheckoutPage() {
     } catch (error) {
       haptic.notificationOccurred('error');
       console.error('Error creating order:', error);
+      // Show error message to user
+      alert('Ошибка при создании заказа. Пожалуйста, попробуйте снова.');
     } finally {
       setIsSubmitting(false);
     }
