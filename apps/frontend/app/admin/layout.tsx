@@ -1,14 +1,15 @@
 'use client';
 
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { AdminBottomNav } from '@/components/admin/AdminBottomNav';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useTelegramTheme } from '@/lib/telegram/useTelegram';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
+  const { isDark } = useTelegramTheme();
 
   useEffect(() => {
     console.log('[AdminLayout] Auth state:', {
@@ -41,7 +42,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   console.log('[AdminLayout] Rendering admin panel for user:', user.telegramId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 relative">
+    <div
+      className={`min-h-screen relative transition-colors duration-300 ${
+        isDark
+          ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900'
+          : 'bg-gradient-to-br from-pink-50 via-white to-blue-50'
+      }`}
+    >
       {/* Header with Safe Area */}
       <div
         className="fixed top-0 left-0 right-0 z-40"
@@ -57,14 +64,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         className="px-4 max-w-7xl mx-auto w-full"
         style={{
           paddingTop: 'calc(5rem + env(safe-area-inset-top))',
-          paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
+          paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))',
         }}
       >
         {children}
       </main>
-
-      {/* Bottom Navigation with Safe Area */}
-      <AdminBottomNav />
     </div>
   );
 }

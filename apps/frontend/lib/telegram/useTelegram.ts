@@ -230,3 +230,52 @@ export function useTelegramHaptic() {
     [webApp],
   );
 }
+
+/**
+ * Hook for Telegram Theme
+ */
+export function useTelegramTheme() {
+  const { webApp } = useTelegram();
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    if (!webApp) {
+      setColorScheme('light');
+      return;
+    }
+
+    // Set initial theme
+    setColorScheme(webApp.colorScheme);
+
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      setColorScheme(webApp.colorScheme);
+
+      // Apply theme to document
+      if (webApp.colorScheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    // Initial theme application
+    handleThemeChange();
+
+    // Telegram WebApp theme changed event
+    window.addEventListener('themeChanged', handleThemeChange);
+
+    return () => {
+      window.removeEventListener('themeChanged', handleThemeChange);
+    };
+  }, [webApp]);
+
+  return useMemo(
+    () => ({
+      colorScheme,
+      isDark: colorScheme === 'dark',
+      themeParams: webApp?.themeParams || {},
+    }),
+    [colorScheme, webApp],
+  );
+}
