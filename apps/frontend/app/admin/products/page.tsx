@@ -66,6 +66,8 @@ const columns: ColumnDef<Product>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
+      const router = useRouter();
+
       const handleDelete = async () => {
         if (confirm('Вы уверены, что хотите удалить этот товар?')) {
           try {
@@ -80,7 +82,10 @@ const columns: ColumnDef<Product>[] = [
 
       return (
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
+          <button
+            onClick={() => router.push(`/admin/products/${row.original.id}`)}
+            className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+          >
             <Pencil className="w-4 h-4" />
           </button>
           <button onClick={handleDelete} className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors">
