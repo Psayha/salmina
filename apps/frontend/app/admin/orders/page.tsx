@@ -2,9 +2,10 @@
 
 import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { Eye } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ordersApi, Order } from '@/lib/api/endpoints/orders';
+import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const columns: ColumnDef<Order>[] = [
   {
@@ -34,29 +35,53 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'status',
     header: 'Статус',
     cell: ({ row }) => {
-      const status = row.getValue('status') as string;
+      const [status, setStatus] = useState(row.getValue('status') as Order['status']);
+      const [isUpdating, setIsUpdating] = useState(false);
+      const haptic = useTelegramHaptic();
+
+      const handleStatusChange = async (newStatus: Order['status']) => {
+        if (newStatus === status) return;
+
+        setIsUpdating(true);
+        haptic?.impactOccurred('medium');
+
+        try {
+          await ordersApi.updateStatus(row.original.id, newStatus);
+          setStatus(newStatus);
+          haptic?.notificationOccurred('success');
+        } catch (error) {
+          console.error('Failed to update order status:', error);
+          haptic?.notificationOccurred('error');
+          alert('Ошибка при обновлении статуса');
+        } finally {
+          setIsUpdating(false);
+        }
+      };
+
       const styles = {
-        PAID: 'bg-green-100 text-green-700',
-        PENDING: 'bg-yellow-100 text-yellow-700',
-        SHIPPED: 'bg-blue-100 text-blue-700',
-        DELIVERED: 'bg-purple-100 text-purple-700',
-        CANCELLED: 'bg-red-100 text-red-700',
+        PAID: 'bg-green-100 text-green-700 border-green-200',
+        PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        PROCESSING: 'bg-orange-100 text-orange-700 border-orange-200',
+        SHIPPED: 'bg-blue-100 text-blue-700 border-blue-200',
+        DELIVERED: 'bg-purple-100 text-purple-700 border-purple-200',
+        CANCELLED: 'bg-red-100 text-red-700 border-red-200',
       };
-      const labels = {
-        PAID: 'Оплачен',
-        PENDING: 'Ожидает',
-        SHIPPED: 'Отправлен',
-        DELIVERED: 'Доставлен',
-        CANCELLED: 'Отменен',
-      };
+
       return (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700'
+        <select
+          value={status}
+          onChange={(e) => handleStatusChange(e.target.value as Order['status'])}
+          disabled={isUpdating}
+          className={`px-2 py-1 rounded-lg text-xs font-medium border cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 ${
+            styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700 border-gray-200'
           }`}
         >
-          {labels[status as keyof typeof labels] || status}
-        </span>
+          <option value="PAID">Оплачен</option>
+          <option value="PROCESSING">В обработке</option>
+          <option value="SHIPPED">Отправлен</option>
+          <option value="DELIVERED">Доставлен</option>
+          <option value="CANCELLED">Отменен</option>
+        </select>
       );
     },
   },
@@ -67,48 +92,55 @@ const columns: ColumnDef<Order>[] = [
       <div className="text-gray-500 text-sm">{new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
     ),
   },
-  {
-    id: 'actions',
-    cell: () => {
-      return (
-        <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
-          <Eye className="w-4 h-4" />
-        </button>
-      );
-    },
-  },
 ];
 
 export default function OrdersPage() {
+  const router = useRouter();
+  const haptic = useTelegramHaptic();
   const [data, setData] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Telegram back button - возврат в dashboard
+  useTelegramBackButton(() => {
+    router.push('/admin');
+  });
 
   useEffect(() => {
     async function fetchData() {
       try {
         const orders = await ordersApi.getOrders();
         setData(orders);
+        haptic?.notificationOccurred('success');
       } catch (error) {
         console.error('Failed to fetch orders:', error);
+        haptic?.notificationOccurred('error');
       } finally {
         setIsLoading(false);
       }
     }
     fetchData();
-  }, []);
+  }, [haptic]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-96">Загрузка...</div>;
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-gray-600 font-light">Загрузка заказов...</div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Заказы</h1>
-        <p className="text-gray-500">Управление заказами клиентов</p>
+        <h1 className="text-2xl font-light text-gray-900">Заказы</h1>
+        <p className="text-sm font-light text-gray-600 mt-1">
+          Управление заказами клиентов ({data.length} шт.)
+        </p>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+        <DataTable columns={columns} data={data} />
+      </div>
     </div>
   );
 }
