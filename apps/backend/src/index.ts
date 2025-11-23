@@ -25,6 +25,7 @@ import { ordersRoutes } from './modules/orders/index.js';
 import promocodesRoutes from './modules/promocodes/index.js';
 import promotionsRoutes from './modules/promotions/index.js';
 import legalRoutes from './modules/legal/index.js';
+import { uploadRoutes } from './modules/upload/index.js';
 import webhooksRoutes from './routes/webhooks.routes.js';
 
 const app = express();
@@ -115,6 +116,7 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/promocodes', promocodesRoutes);
 app.use('/api/promotions', promotionsRoutes);
 app.use('/api/legal', legalRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/webhooks', webhooksRoutes);
 
 // 404 handler
@@ -182,4 +184,3 @@ async function startServer(): Promise<void> {
 
 // Start the server
 startServer();
-
