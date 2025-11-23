@@ -25,6 +25,8 @@ export interface Product {
   slug: string;
   description?: string;
   article: string;
+  sku: string;
+  weight: number;
   price: number;
   discountPrice?: number;
   promotionPrice?: number;
@@ -86,12 +88,7 @@ export interface Cart {
 }
 
 // Order types
-export type OrderStatus =
-  | 'PAID'
-  | 'PROCESSING'
-  | 'SHIPPED'
-  | 'DELIVERED'
-  | 'CANCELLED';
+export type OrderStatus = 'PAID' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
 
 export interface OrderItem {
   id: string;
@@ -150,11 +147,7 @@ export interface Promotion {
 }
 
 // Legal document types
-export type LegalDocumentType =
-  | 'TERMS'
-  | 'PRIVACY'
-  | 'OFFER'
-  | 'DELIVERY_PAYMENT';
+export type LegalDocumentType = 'TERMS' | 'PRIVACY' | 'OFFER' | 'DELIVERY_PAYMENT';
 
 export interface LegalDocument {
   id: string;
