@@ -54,9 +54,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content with proper spacing */}
       <main
-        className="pt-20 pb-24 px-4 max-w-7xl mx-auto w-full"
+        className="px-4 max-w-7xl mx-auto w-full"
         style={{
-          paddingTop: 'calc(4rem + env(safe-area-inset-top))',
+          paddingTop: 'calc(5rem + env(safe-area-inset-top))',
+          paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
         }}
       >
         {children}
