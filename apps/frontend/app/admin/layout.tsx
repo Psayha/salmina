@@ -1,7 +1,6 @@
 'use client';
 
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { AdminBottomNav } from '@/components/admin/AdminBottomNav';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -57,14 +56,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         className="px-4 max-w-7xl mx-auto w-full"
         style={{
           paddingTop: 'calc(5rem + env(safe-area-inset-top))',
-          paddingBottom: 'calc(5.5rem + env(safe-area-inset-bottom))',
+          paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))',
         }}
       >
         {children}
       </main>
-
-      {/* Bottom Navigation with Safe Area */}
-      <AdminBottomNav />
     </div>
   );
 }
