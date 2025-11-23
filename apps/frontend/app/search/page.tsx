@@ -33,9 +33,11 @@ function SearchPageContent() {
     async function fetchCategories() {
       try {
         const data = await categoriesApi.getCategories();
-        setCategories(data);
+        // Ensure categories is always an array
+        setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching categories:', error);
+        setCategories([]);
       }
     }
     fetchCategories();
@@ -65,14 +67,16 @@ function SearchPageContent() {
           categoryId: selectedCategory !== 'all' ? selectedCategory : undefined,
           ...getSortParams(),
         });
-        setProducts(results.items);
+        // Ensure items is always an array
+        setProducts(Array.isArray(results?.items) ? results.items : []);
       } else {
         const results = await productsApi.getProducts({
           categoryId: selectedCategory !== 'all' ? selectedCategory : undefined,
           ...getSortParams(),
           limit: 50,
         });
-        setProducts(results.items);
+        // Ensure items is always an array
+        setProducts(Array.isArray(results?.items) ? results.items : []);
       }
     } catch (error) {
       console.error('Error searching products:', error);

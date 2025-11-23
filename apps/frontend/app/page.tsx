@@ -35,10 +35,16 @@ export default function Home() {
           productsApi.getProducts(),
           categoriesApi.getCategories(),
         ]);
-        setProducts(productsResponse?.items || []); // Extract items from paginated response
-        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }, ...(categoriesResponse || [])]);
+        // Ensure products and categories are always arrays
+        setProducts(Array.isArray(productsResponse?.items) ? productsResponse.items : []);
+        setCategories([
+          { id: 'all', name: 'Все товары', slug: 'all' },
+          ...(Array.isArray(categoriesResponse) ? categoriesResponse : []),
+        ]);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+        setProducts([]);
+        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }]);
       } finally {
         setIsLoading(false);
       }

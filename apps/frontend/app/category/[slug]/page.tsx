@@ -55,7 +55,8 @@ export default function CategoryPage() {
           ...getSortParams(),
           limit: 50,
         });
-        setProducts(productsData.items);
+        // Ensure items is always an array
+        setProducts(Array.isArray(productsData?.items) ? productsData.items : []);
       } catch (error) {
         console.error('Error fetching category:', error);
         haptic.notificationOccurred('error');

@@ -35,9 +35,11 @@ export default function ProductsPage() {
     async function fetchData() {
       try {
         const response = await getProducts({ limit: 100 });
-        setData(response.items);
+        // Ensure items is always an array
+        setData(Array.isArray(response?.items) ? response.items : []);
       } catch (error) {
         console.error('Failed to fetch products:', error);
+        setData([]);
       } finally {
         setIsLoading(false);
       }
@@ -48,11 +50,12 @@ export default function ProductsPage() {
   const filteredData = useMemo(() => {
     if (!searchQuery) return data;
     const query = searchQuery.toLowerCase();
-    return data.filter(
-      (product) =>
-        product.name.toLowerCase().includes(query) ||
-        product.article.toLowerCase().includes(query)
-    );
+    // Ensure data is array before filtering
+    return Array.isArray(data)
+      ? data.filter(
+          (product) => product.name.toLowerCase().includes(query) || product.article.toLowerCase().includes(query),
+        )
+      : [];
   }, [data, searchQuery]);
 
   const handleDeleteClick = (productId: string, productName: string) => {
@@ -114,7 +117,11 @@ export default function ProductsPage() {
         header: 'Остаток',
         cell: ({ row }) => {
           const quantity = (row.original.quantity || 0) as number;
-          return <div className={`font-medium ${quantity === 0 ? 'text-red-500' : 'text-gray-600 dark:text-gray-300'}`}>{quantity} шт.</div>;
+          return (
+            <div className={`font-medium ${quantity === 0 ? 'text-red-500' : 'text-gray-600 dark:text-gray-300'}`}>
+              {quantity} шт.
+            </div>
+          );
         },
       },
       {
@@ -158,7 +165,7 @@ export default function ProductsPage() {
         },
       },
     ],
-    [router, haptic]
+    [router, haptic],
   );
 
   if (isLoading) {

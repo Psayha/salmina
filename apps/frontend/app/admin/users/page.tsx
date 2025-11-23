@@ -22,7 +22,9 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'telegramId',
     header: 'Telegram ID',
-    cell: ({ row }) => <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">{row.getValue('telegramId')}</span>,
+    cell: ({ row }) => (
+      <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">{row.getValue('telegramId')}</span>
+    ),
   },
   {
     accessorKey: 'role',
@@ -32,7 +34,9 @@ const columns: ColumnDef<User>[] = [
       return (
         <div className="flex items-center gap-1.5">
           {role === 'ADMIN' && <Shield className="w-3 h-3 text-purple-500 dark:text-purple-400" />}
-          <span className={`text-sm ${role === 'ADMIN' ? 'text-purple-600 dark:text-purple-400 font-medium' : 'text-gray-600 dark:text-gray-300'}`}>
+          <span
+            className={`text-sm ${role === 'ADMIN' ? 'text-purple-600 dark:text-purple-400 font-medium' : 'text-gray-600 dark:text-gray-300'}`}
+          >
             {role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
           </span>
         </div>
@@ -67,7 +71,9 @@ const columns: ColumnDef<User>[] = [
     accessorKey: 'createdAt',
     header: 'Дата регистрации',
     cell: ({ row: { getValue } }) => (
-      <div className="text-gray-500 dark:text-gray-400 text-sm">{new Date(getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
+      <div className="text-gray-500 dark:text-gray-400 text-sm">
+        {new Date(getValue('createdAt')).toLocaleDateString('ru-RU')}
+      </div>
     ),
   },
   {
@@ -80,9 +86,10 @@ const columns: ColumnDef<User>[] = [
 
       const handleToggleRole = async () => {
         const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
-        const confirmMessage = newRole === 'ADMIN'
-          ? `Назначить пользователя ${user.firstName} ${user.lastName} администратором?`
-          : `Снять права администратора с ${user.firstName} ${user.lastName}?`;
+        const confirmMessage =
+          newRole === 'ADMIN'
+            ? `Назначить пользователя ${user.firstName} ${user.lastName} администратором?`
+            : `Снять права администратора с ${user.firstName} ${user.lastName}?`;
 
         if (!confirm(confirmMessage)) return;
 
@@ -172,10 +179,12 @@ export default function UsersPage() {
     async function fetchData() {
       try {
         const users = await adminApi.getUsers();
-        setData(users);
+        // Ensure users is always an array
+        setData(Array.isArray(users) ? users : []);
         haptic?.notificationOccurred('success');
       } catch (error) {
         console.error('Failed to fetch users:', error);
+        setData([]);
         haptic?.notificationOccurred('error');
       } finally {
         setIsLoading(false);
