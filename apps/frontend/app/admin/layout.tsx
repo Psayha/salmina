@@ -1,7 +1,7 @@
 'use client';
 
 import { AdminHeader } from '@/components/admin/AdminHeader';
-import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminBottomNav } from '@/components/admin/AdminBottomNav';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -26,7 +26,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [isAuthenticated, user, isLoading, router]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Загрузка...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
+        <div className="text-gray-600 font-light">Загрузка...</div>
+      </div>
+    );
   }
 
   if (!isAuthenticated || user?.role !== 'ADMIN') {
@@ -37,12 +41,29 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   console.log('[AdminLayout] Rendering admin panel for user:', user.telegramId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AdminSidebar />
-      <div className="md:pl-64 flex flex-col min-h-screen transition-all duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 relative">
+      {/* Header with Safe Area */}
+      <div
+        className="fixed top-0 left-0 right-0 z-40"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
         <AdminHeader />
-        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">{children}</main>
       </div>
+
+      {/* Main Content with proper spacing */}
+      <main
+        className="pt-20 pb-24 px-4 max-w-7xl mx-auto w-full"
+        style={{
+          paddingTop: 'calc(4rem + env(safe-area-inset-top))',
+        }}
+      >
+        {children}
+      </main>
+
+      {/* Bottom Navigation with Safe Area */}
+      <AdminBottomNav />
     </div>
   );
 }
