@@ -10,6 +10,7 @@ export interface AdminStats {
   customersChange: number;
   averageCheck: number;
   checkChange: number;
+  totalProducts?: number;
 }
 
 export const adminApi = {
@@ -24,6 +25,7 @@ export const adminApi = {
       customersChange: 2.4,
       averageCheck: 3450,
       checkChange: 1.8,
+      totalProducts: 42,
     };
   },
 
