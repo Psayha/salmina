@@ -10,7 +10,7 @@ import { logger } from '../../utils/logger.js';
 /**
  * Get admin statistics
  */
-export async function getStats(req: Request, res: Response) {
+export async function getStats(_req: Request, res: Response) {
   try {
     // Run queries in parallel for performance
     const [totalOrders, totalRevenueResult, totalUsers, totalProducts, recentOrders, topProducts] = await Promise.all([

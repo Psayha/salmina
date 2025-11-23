@@ -7,7 +7,7 @@ import { Router } from 'express';
 import { upload, uploadSingle, uploadMultiple, deleteFile } from './upload.controller.js';
 import { authenticate } from '../../common/middleware/auth.middleware.js';
 
-const router = Router();
+const router: Router = Router();
 
 // All upload routes require authentication
 router.use(authenticate);

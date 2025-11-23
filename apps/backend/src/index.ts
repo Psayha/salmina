@@ -118,6 +118,7 @@ app.use('/api/promocodes', promocodesRoutes);
 app.use('/api/promotions', promotionsRoutes);
 app.use('/api/legal', legalRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/admin/stats', statsRoutes);
 app.use('/webhooks', webhooksRoutes);
 
 // 404 handler
