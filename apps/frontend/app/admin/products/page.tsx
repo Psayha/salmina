@@ -84,13 +84,13 @@ export default function ProductsPage() {
       {
         accessorKey: 'name',
         header: 'Название',
-        cell: ({ row }) => <div className="font-medium text-gray-900">{row.getValue('name')}</div>,
+        cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.getValue('name')}</div>,
       },
       {
         accessorKey: 'category',
         header: 'Категория',
         cell: ({ row }) => (
-          <span className="px-2 py-1 rounded-md bg-gray-100 text-xs font-medium text-gray-600">
+          <span className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300">
             {/* @ts-expect-error - category might be an object or string depending on API */}
             {row.original.category?.name || row.getValue('category') || 'Без категории'}
           </span>
@@ -114,7 +114,7 @@ export default function ProductsPage() {
         header: 'Остаток',
         cell: ({ row }) => {
           const quantity = (row.original.quantity || 0) as number;
-          return <div className={`font-medium ${quantity === 0 ? 'text-red-500' : 'text-gray-600'}`}>{quantity} шт.</div>;
+          return <div className={`font-medium ${quantity === 0 ? 'text-red-500' : 'text-gray-600 dark:text-gray-300'}`}>{quantity} шт.</div>;
         },
       },
       {
@@ -143,13 +143,13 @@ export default function ProductsPage() {
                   haptic?.impactOccurred('light');
                   router.push(`/admin/products/${row.original.id}`);
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleDeleteClick(row.original.id, row.original.name)}
-                className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors"
+                className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-red-500 transition-colors"
               >
                 <Trash className="w-4 h-4" />
               </button>
@@ -196,8 +196,8 @@ export default function ProductsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-light text-gray-900">Товары</h1>
-            <p className="text-sm font-light text-gray-600 mt-1">
+            <h1 className="text-2xl font-light text-gray-900 dark:text-white">Товары</h1>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
               Управление каталогом товаров ({filteredData.length} шт.)
             </p>
           </div>
@@ -213,17 +213,17 @@ export default function ProductsPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Поиск по названию или артикулу..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur-xl border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg"
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
           />
         </div>
 
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+        <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
           <DataTable columns={columns} data={filteredData} />
         </div>
       </div>

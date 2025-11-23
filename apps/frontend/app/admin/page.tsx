@@ -58,10 +58,10 @@ export default function AdminDashboard() {
     <div className="space-y-6 pb-6">
       {/* Приветствие */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-light text-gray-900">
+        <h1 className="text-3xl font-light text-gray-900 dark:text-white">
           Панель управления
         </h1>
-        <p className="text-sm font-light text-gray-600">
+        <p className="text-sm font-light text-gray-600 dark:text-gray-300">
           Выберите раздел для работы
         </p>
       </div>
@@ -92,12 +92,12 @@ export default function AdminDashboard() {
               {/* Контент */}
               <div className="relative space-y-1">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                     {module.title}
                   </h3>
-                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 group-hover:text-gray-600 transition-all" />
+                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:translate-x-1 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-all" />
                 </div>
-                <p className="text-sm font-light text-gray-600">
+                <p className="text-sm font-light text-gray-600 dark:text-gray-300">
                   {module.description}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
 
       {/* Подсказка */}
       <div className="text-center mt-8">
-        <p className="text-xs font-light text-gray-500">
+        <p className="text-xs font-light text-gray-500 dark:text-gray-400">
           Все разделы подключены к реальным данным
         </p>
       </div>

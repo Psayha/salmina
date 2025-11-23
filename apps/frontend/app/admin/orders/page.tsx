@@ -11,12 +11,12 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'orderNumber',
     header: 'Номер',
-    cell: ({ row }) => <div className="font-medium text-gray-900">{row.getValue('orderNumber')}</div>,
+    cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.getValue('orderNumber')}</div>,
   },
   {
     accessorKey: 'customerName',
     header: 'Клиент',
-    cell: ({ row }) => <div className="text-gray-600">{row.getValue('customerName')}</div>,
+    cell: ({ row }) => <div className="text-gray-600 dark:text-gray-300">{row.getValue('customerName')}</div>,
   },
   {
     accessorKey: 'totalAmount',
@@ -89,7 +89,7 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'createdAt',
     header: 'Дата',
     cell: ({ row }) => (
-      <div className="text-gray-500 text-sm">{new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
+      <div className="text-gray-500 dark:text-gray-400 text-sm">{new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
     ),
   },
 ];
@@ -124,7 +124,7 @@ export default function OrdersPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 font-light">Загрузка заказов...</div>
+        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка заказов...</div>
       </div>
     );
   }
@@ -132,13 +132,13 @@ export default function OrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-light text-gray-900">Заказы</h1>
-        <p className="text-sm font-light text-gray-600 mt-1">
+        <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказы</h1>
+        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
           Управление заказами клиентов ({data.length} шт.)
         </p>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+      <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
         <DataTable columns={columns} data={data} />
       </div>
     </div>

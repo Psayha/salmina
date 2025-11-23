@@ -80,12 +80,12 @@ export default function CategoriesPage() {
       {
         accessorKey: 'name',
         header: 'Название',
-        cell: ({ row }) => <div className="font-medium text-gray-900">{row.getValue('name')}</div>,
+        cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.getValue('name')}</div>,
       },
       {
         accessorKey: 'slug',
         header: 'Slug',
-        cell: ({ row }) => <span className="text-gray-500 font-mono text-xs">/{row.getValue('slug')}</span>,
+        cell: ({ row }) => <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">/{row.getValue('slug')}</span>,
       },
       {
         accessorKey: 'isActive',
@@ -113,13 +113,13 @@ export default function CategoriesPage() {
                   haptic?.impactOccurred('light');
                   router.push(`/admin/categories/${row.original.id}`);
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <button
                 onClick={() => handleDeleteClick(row.original.id, row.original.name)}
-                className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors"
+                className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-red-500 transition-colors"
               >
                 <Trash className="w-4 h-4" />
               </button>
@@ -166,8 +166,8 @@ export default function CategoriesPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-light text-gray-900">Категории</h1>
-            <p className="text-sm font-light text-gray-600 mt-1">
+            <h1 className="text-2xl font-light text-gray-900 dark:text-white">Категории</h1>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
               Управление категориями товаров ({filteredData.length} шт.)
             </p>
           </div>
@@ -183,17 +183,17 @@ export default function CategoriesPage() {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
           <input
             type="text"
             placeholder="Поиск по названию..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white/60 backdrop-blur-xl border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg"
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
           />
         </div>
 
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+        <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
           <DataTable columns={columns} data={filteredData} />
         </div>
       </div>

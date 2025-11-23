@@ -82,13 +82,13 @@ export default function AnalyticsPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.push('/admin')}
-          className="p-2 hover:bg-white/60 rounded-lg transition-colors"
+          className="p-2 hover:bg-white/60 dark:hover:bg-white/10 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
         </button>
         <div>
-          <h1 className="text-2xl font-light text-gray-900">Аналитика</h1>
-          <p className="text-sm font-light text-gray-600 mt-1">
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Аналитика</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
             Статистика магазина за сегодня
           </p>
         </div>
@@ -126,10 +126,10 @@ export default function AnalyticsPage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 font-light uppercase tracking-wider">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 font-light uppercase tracking-wider">
                     {stat.label}
                   </p>
-                  <h3 className="text-2xl font-light text-gray-900 mt-1">{stat.value}</h3>
+                  <h3 className="text-2xl font-light text-gray-900 dark:text-white mt-1">{stat.value}</h3>
                 </div>
               </motion.div>
             );
@@ -139,11 +139,11 @@ export default function AnalyticsPage() {
 
       {/* Info */}
       {!isLoading && stats && (
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 p-6">
+          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             Данные в реальном времени
           </h2>
-          <p className="text-sm font-light text-gray-600">
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300">
             Статистика обновляется автоматически и отображает актуальные данные из базы данных.
             Все значения рассчитываются на основе реальных заказов, пользователей и товаров.
           </p>

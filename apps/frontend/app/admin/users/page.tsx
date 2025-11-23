@@ -14,7 +14,7 @@ const columns: ColumnDef<User>[] = [
     accessorKey: 'firstName',
     header: 'Имя',
     cell: ({ row }) => (
-      <div className="font-medium text-gray-900">
+      <div className="font-medium text-gray-900 dark:text-white">
         {row.original.firstName} {row.original.lastName}
       </div>
     ),
@@ -22,7 +22,7 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'telegramId',
     header: 'Telegram ID',
-    cell: ({ row }) => <span className="text-gray-500 font-mono text-xs">{row.getValue('telegramId')}</span>,
+    cell: ({ row }) => <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">{row.getValue('telegramId')}</span>,
   },
   {
     accessorKey: 'role',
@@ -31,8 +31,8 @@ const columns: ColumnDef<User>[] = [
       const role = row.getValue('role') as string;
       return (
         <div className="flex items-center gap-1.5">
-          {role === 'ADMIN' && <Shield className="w-3 h-3 text-purple-500" />}
-          <span className={`text-sm ${role === 'ADMIN' ? 'text-purple-600 font-medium' : 'text-gray-600'}`}>
+          {role === 'ADMIN' && <Shield className="w-3 h-3 text-purple-500 dark:text-purple-400" />}
+          <span className={`text-sm ${role === 'ADMIN' ? 'text-purple-600 dark:text-purple-400 font-medium' : 'text-gray-600 dark:text-gray-300'}`}>
             {role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
           </span>
         </div>
@@ -67,7 +67,7 @@ const columns: ColumnDef<User>[] = [
     accessorKey: 'createdAt',
     header: 'Дата регистрации',
     cell: ({ row: { getValue } }) => (
-      <div className="text-gray-500 text-sm">{new Date(getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
+      <div className="text-gray-500 dark:text-gray-400 text-sm">{new Date(getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
     ),
   },
   {
@@ -134,7 +134,7 @@ const columns: ColumnDef<User>[] = [
           <button
             onClick={handleToggleRole}
             disabled={isUpdating}
-            className="p-2 hover:bg-purple-50 rounded-lg text-purple-500 transition-colors disabled:opacity-50"
+            className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg text-purple-500 dark:text-purple-400 transition-colors disabled:opacity-50"
             title={user.role === 'ADMIN' ? 'Снять права админа' : 'Назначить админом'}
           >
             <UserCog className="w-4 h-4" />
@@ -144,8 +144,8 @@ const columns: ColumnDef<User>[] = [
             disabled={isUpdating}
             className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
               user.isActive
-                ? 'hover:bg-red-50 text-red-500'
-                : 'hover:bg-green-50 text-green-500'
+                ? 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500'
+                : 'hover:bg-green-50 dark:hover:bg-green-900/30 text-green-500'
             }`}
             title={user.isActive ? 'Заблокировать' : 'Разблокировать'}
           >
@@ -187,7 +187,7 @@ export default function UsersPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 font-light">Загрузка пользователей...</div>
+        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка пользователей...</div>
       </div>
     );
   }
@@ -195,13 +195,13 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-light text-gray-900">Пользователи</h1>
-        <p className="text-sm font-light text-gray-600 mt-1">
+        <h1 className="text-2xl font-light text-gray-900 dark:text-white">Пользователи</h1>
+        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
           Управление пользователями и правами доступа ({data.length} шт.)
         </p>
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+      <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
         <DataTable columns={columns} data={data} />
       </div>
     </div>
