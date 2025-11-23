@@ -18,8 +18,11 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
   const [formData, setFormData] = useState({
     name: '',
+    slug: '',
     description: '',
     article: '',
+    sku: '',
+    weight: '',
     price: '',
     discountPrice: '',
     promotionPrice: '',
@@ -38,18 +41,18 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     async function loadData() {
       try {
-        const [productData, categoriesData] = await Promise.all([
-          getProductBySlug(params.id),
-          getCategories(),
-        ]);
+        const [productData, categoriesData] = await Promise.all([getProductBySlug(params.id), getCategories()]);
 
         setProduct(productData);
         setCategories(categoriesData);
 
         setFormData({
           name: productData.name,
+          slug: productData.slug,
           description: productData.description || '',
           article: productData.article,
+          sku: productData.sku,
+          weight: productData.weight.toString(),
           price: productData.price.toString(),
           discountPrice: productData.discountPrice?.toString() || '',
           promotionPrice: productData.promotionPrice?.toString() || '',
@@ -77,8 +80,25 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
     if (!product) return;
 
-    if (!formData.name || !formData.article || !formData.price) {
-      alert('Заполните обязательные поля: Название, Артикул, Цена');
+    // Validate required fields
+    if (
+      !formData.name ||
+      !formData.slug ||
+      !formData.description ||
+      !formData.article ||
+      !formData.sku ||
+      !formData.weight ||
+      !formData.price ||
+      !formData.categoryId
+    ) {
+      alert('Заполните все обязательные поля');
+      haptic?.notificationOccurred('error');
+      return;
+    }
+
+    // Validate article format
+    if (!/^[A-Z0-9-]+$/.test(formData.article)) {
+      alert('Артикул должен содержать только заглавные буквы, цифры и дефисы');
       haptic?.notificationOccurred('error');
       return;
     }
@@ -88,18 +108,24 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
     try {
       const images = formData.images
-        ? formData.images.split('\n').map(url => url.trim()).filter(Boolean)
+        ? formData.images
+            .split('\n')
+            .map((url) => url.trim())
+            .filter(Boolean)
         : [];
 
       await updateProduct(product.id, {
         name: formData.name,
-        description: formData.description || undefined,
-        article: formData.article,
+        slug: formData.slug,
+        description: formData.description,
+        article: formData.article.toUpperCase(),
+        sku: formData.sku,
+        weight: parseFloat(formData.weight),
         price: parseFloat(formData.price),
         discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
         promotionPrice: formData.promotionPrice ? parseFloat(formData.promotionPrice) : undefined,
         quantity: parseInt(formData.quantity),
-        categoryId: formData.categoryId || undefined,
+        categoryId: formData.categoryId,
         isActive: formData.isActive,
         hasPromotion: formData.hasPromotion,
         promotionLabel: formData.promotionLabel || undefined,
@@ -157,17 +183,37 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">Описание</label>
+            <label className="block text-sm font-light text-gray-700 mb-2">
+              URL (slug) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.slug}
+              onChange={(e) =>
+                setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })
+              }
+              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              placeholder="nazvanie-tovara"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">Используется в URL товара</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-light text-gray-700 mb-2">
+              Описание <span className="text-red-500">*</span>
+            </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
               placeholder="Введите описание товара"
               rows={4}
+              required
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-light text-gray-700 mb-2">
                 Артикул <span className="text-red-500">*</span>
@@ -175,28 +221,62 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               <input
                 type="text"
                 value={formData.article}
-                onChange={(e) => setFormData({ ...formData, article: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, article: e.target.value.toUpperCase() })}
+                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light uppercase"
+                placeholder="ART-123"
+                pattern="[A-Z0-9-]+"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">Заглавные буквы, цифры, дефисы</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-light text-gray-700 mb-2">
+                SKU <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.sku}
+                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
                 className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
-                placeholder="Артикул"
+                placeholder="SKU-001"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Категория</label>
-              <select
-                value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+              <label className="block text-sm font-light text-gray-700 mb-2">
+                Вес (г) <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.weight}
+                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                 className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
-              >
-                <option value="">Без категории</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="100"
+                required
+              />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-light text-gray-700 mb-2">
+              Категория <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={formData.categoryId}
+              onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              required
+            >
+              <option value="">Выберите категорию</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -241,7 +321,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
           <div>
             <label className="block text-sm font-light text-gray-700 mb-2">
-              URL изображений (по одному на строку)
+              URL изображений (по одному на строку) <span className="text-red-500">*</span>
             </label>
             <textarea
               value={formData.images}
@@ -249,7 +329,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light font-mono text-sm"
               placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
               rows={3}
+              required
             />
+            <p className="text-xs text-gray-500 mt-1">Минимум одно изображение</p>
           </div>
 
           <div className="flex items-center gap-4">
