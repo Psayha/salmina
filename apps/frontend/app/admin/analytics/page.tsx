@@ -5,12 +5,11 @@ import { TrendingUp, Users, ShoppingBag, DollarSign, Package, ArrowLeft } from '
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi, AdminStats } from '@/lib/api/endpoints/admin';
-import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { useTelegramBackButton } from '@/lib/telegram/useTelegram';
 import { SkeletonStats } from '@/components/ui/Skeleton';
 
 export default function AnalyticsPage() {
   const router = useRouter();
-  const haptic = useTelegramHaptic();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
