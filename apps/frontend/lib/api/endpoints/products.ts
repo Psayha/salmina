@@ -44,6 +44,14 @@ export async function searchProducts(
 }
 
 /**
+ * Get multiple products by IDs (bulk fetch for favorites)
+ */
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+  const response = await apiClient.post<ApiResponse<Product[]>>('/products/bulk', { ids });
+  return response.data.data;
+}
+
+/**
  * Get related products
  */
 export async function getRelatedProducts(productId: string): Promise<Product[]> {
