@@ -1,7 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 interface SkeletonProps {
   className?: string;
   variant?: 'text' | 'circular' | 'rectangular';
