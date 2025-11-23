@@ -36,10 +36,8 @@ export default function CategoriesPage() {
       try {
         const categories = await getCategories();
         setData(categories);
-        toast.success('Категории загружены');
       } catch (error) {
         console.error('Failed to fetch categories:', error);
-        toast.error('Ошибка при загрузке категорий');
       } finally {
         setIsLoading(false);
       }

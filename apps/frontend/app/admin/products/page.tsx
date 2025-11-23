@@ -36,10 +36,8 @@ export default function ProductsPage() {
       try {
         const response = await getProducts({ limit: 100 });
         setData(response.items);
-        toast.success('Товары загружены');
       } catch (error) {
         console.error('Failed to fetch products:', error);
-        toast.error('Ошибка при загрузке товаров');
       } finally {
         setIsLoading(false);
       }
