@@ -5,8 +5,10 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Plus, Pencil, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getCategories, deleteCategory } from '@/lib/api/endpoints/categories';
 import { Category } from '@/lib/api/types';
+import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const columns: ColumnDef<Category>[] = [
   {
@@ -65,8 +67,15 @@ const columns: ColumnDef<Category>[] = [
 ];
 
 export default function CategoriesPage() {
+  const router = useRouter();
+  const haptic = useTelegramHaptic();
   const [data, setData] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Telegram back button - возврат в dashboard
+  useTelegramBackButton(() => {
+    router.push('/admin');
+  });
 
   useEffect(() => {
     async function fetchData() {
@@ -83,26 +92,35 @@ export default function CategoriesPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-96">Загрузка...</div>;
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-gray-600 font-light">Загрузка категорий...</div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Категории</h1>
-          <p className="text-gray-500">Управление категориями товаров</p>
+          <h1 className="text-2xl font-light text-gray-900">Категории</h1>
+          <p className="text-sm font-light text-gray-600 mt-1">
+            Управление категориями товаров ({data.length} шт.)
+          </p>
         </div>
         <Link
           href="/admin/categories/new"
-          className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-xl hover:bg-pink-600 transition-colors shadow-lg shadow-pink-500/20"
+          onClick={() => haptic?.impactOccurred('light')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
         >
           <Plus className="w-5 h-5" />
-          <span>Добавить категорию</span>
+          <span>Добавить</span>
         </Link>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+        <DataTable columns={columns} data={data} />
+      </div>
     </div>
   );
 }

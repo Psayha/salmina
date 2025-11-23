@@ -4,8 +4,10 @@ import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Shield, Ban, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
 import { User } from '@/lib/api/types';
+import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const columns: ColumnDef<User>[] = [
   {
@@ -71,35 +73,52 @@ const columns: ColumnDef<User>[] = [
 ];
 
 export default function UsersPage() {
+  const router = useRouter();
+  const haptic = useTelegramHaptic();
   const [data, setData] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Telegram back button - возврат в dashboard
+  useTelegramBackButton(() => {
+    router.push('/admin');
+  });
 
   useEffect(() => {
     async function fetchData() {
       try {
         const users = await adminApi.getUsers();
         setData(users);
+        haptic?.notificationOccurred('success');
       } catch (error) {
         console.error('Failed to fetch users:', error);
+        haptic?.notificationOccurred('error');
       } finally {
         setIsLoading(false);
       }
     }
     fetchData();
-  }, []);
+  }, [haptic]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-96">Загрузка...</div>;
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-gray-600 font-light">Загрузка пользователей...</div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Пользователи</h1>
-        <p className="text-gray-500">Управление пользователями и правами доступа</p>
+        <h1 className="text-2xl font-light text-gray-900">Пользователи</h1>
+        <p className="text-sm font-light text-gray-600 mt-1">
+          Управление пользователями и правами доступа ({data.length} шт.)
+        </p>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 overflow-hidden">
+        <DataTable columns={columns} data={data} />
+      </div>
     </div>
   );
 }
