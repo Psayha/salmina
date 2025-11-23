@@ -26,6 +26,7 @@ import promocodesRoutes from './modules/promocodes/index.js';
 import promotionsRoutes from './modules/promotions/index.js';
 import legalRoutes from './modules/legal/index.js';
 import { uploadRoutes } from './modules/upload/index.js';
+import { statsRoutes } from './modules/stats/index.js';
 import webhooksRoutes from './routes/webhooks.routes.js';
 
 const app = express();
