@@ -15,18 +15,8 @@ export interface AdminStats {
 
 export const adminApi = {
   getStats: async (): Promise<AdminStats> => {
-    // Mock data for now as backend might not have this endpoint yet
-    return {
-      revenue: 1234567,
-      revenueChange: 12.5,
-      activeOrders: 45,
-      ordersChange: 5.2,
-      newCustomers: 128,
-      customersChange: 2.4,
-      averageCheck: 3450,
-      checkChange: 1.8,
-      totalProducts: 42,
-    };
+    const response = await apiClient.get<ApiResponse<AdminStats>>('/admin/stats');
+    return response.data.data;
   },
 
   getUsers: async (): Promise<User[]> => {
