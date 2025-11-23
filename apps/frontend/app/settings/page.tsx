@@ -21,7 +21,7 @@ export default function SettingsPage() {
   });
 
   const handleToggle = (key: keyof typeof settings) => {
-    haptic.impactOccurred('light');
+    haptic?.impactOccurred('light');
     setSettings((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -123,7 +123,7 @@ export default function SettingsPage() {
           <div className="space-y-3">
             <button
               onClick={() => {
-                haptic.impactOccurred('medium');
+                haptic?.impactOccurred('medium');
                 // Clear cache functionality can be implemented here
                 alert('Кэш очищен');
               }}
@@ -135,7 +135,7 @@ export default function SettingsPage() {
 
             <button
               onClick={() => {
-                haptic.impactOccurred('light');
+                haptic?.impactOccurred('light');
                 router.push('/legal');
               }}
               className="w-full text-left p-4 bg-white/30 backdrop-blur-md rounded-xl border border-white/30 hover:bg-white/40 transition-all duration-300"
