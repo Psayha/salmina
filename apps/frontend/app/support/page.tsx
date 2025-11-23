@@ -13,10 +13,10 @@ export default function SupportPage() {
       title: 'Написать в Telegram',
       description: 'Свяжитесь с нами напрямую',
       action: () => {
-        haptic.impactOccurred('medium');
+        haptic?.impactOccurred('medium');
         // Open Telegram chat - replace with actual bot/support username
         if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-          window.Telegram.WebApp.openTelegramLink('https://t.me/support');
+          window.Telegram.WebApp.openTelegramLink?.('https://t.me/support');
         }
       },
     },
@@ -25,7 +25,7 @@ export default function SupportPage() {
       title: 'Email поддержка',
       description: 'support@salminashop.ru',
       action: () => {
-        haptic.impactOccurred('light');
+        haptic?.impactOccurred('light');
         window.location.href = 'mailto:support@salminashop.ru';
       },
     },
@@ -34,7 +34,7 @@ export default function SupportPage() {
       title: 'Телефон',
       description: '+7 (999) 123-45-67',
       action: () => {
-        haptic.impactOccurred('light');
+        haptic?.impactOccurred('light');
         window.location.href = 'tel:+79991234567';
       },
     },
@@ -140,7 +140,7 @@ export default function SupportPage() {
           <div className="space-y-3">
             <button
               onClick={() => {
-                haptic.impactOccurred('light');
+                haptic?.impactOccurred('light');
                 router.push('/legal');
               }}
               className="w-full text-left p-4 bg-white/30 backdrop-blur-md rounded-xl border border-white/30 hover:bg-white/40 transition-all duration-300"
@@ -151,7 +151,7 @@ export default function SupportPage() {
 
             <button
               onClick={() => {
-                haptic.impactOccurred('light');
+                haptic?.impactOccurred('light');
                 // Navigate to delivery info page or show modal
                 alert('Информация о доставке и оплате');
               }}
@@ -163,7 +163,7 @@ export default function SupportPage() {
 
             <button
               onClick={() => {
-                haptic.impactOccurred('light');
+                haptic?.impactOccurred('light');
                 // Navigate to return policy or show modal
                 alert('Условия возврата товара');
               }}
