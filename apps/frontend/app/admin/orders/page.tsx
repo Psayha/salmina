@@ -89,7 +89,9 @@ const columns: ColumnDef<Order>[] = [
     accessorKey: 'createdAt',
     header: 'Дата',
     cell: ({ row }) => (
-      <div className="text-gray-500 dark:text-gray-400 text-sm">{new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}</div>
+      <div className="text-gray-500 dark:text-gray-400 text-sm">
+        {new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}
+      </div>
     ),
   },
 ];
@@ -109,10 +111,12 @@ export default function OrdersPage() {
     async function fetchData() {
       try {
         const orders = await ordersApi.getOrders();
-        setData(orders);
+        // Ensure orders is always an array
+        setData(Array.isArray(orders) ? orders : []);
         haptic?.notificationOccurred('success');
       } catch (error) {
         console.error('Failed to fetch orders:', error);
+        setData([]);
         haptic?.notificationOccurred('error');
       } finally {
         setIsLoading(false);
