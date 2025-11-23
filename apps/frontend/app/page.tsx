@@ -129,17 +129,44 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 pt-32 pb-20 relative z-10">
-        {/* Categories Scroll */}
+      <main className="max-w-7xl mx-auto px-3 pt-20 pb-24 relative z-10">
+        {/* Banners Section */}
         <div className="mb-8 -mx-4 px-4">
+          <div
+            className="overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+            style={{
+              padding: '0 16px',
+              margin: '0 -16px',
+            }}
+          >
+            <div className="flex gap-4 w-max">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="w-[85vw] sm:w-80 aspect-square rounded-2xl overflow-hidden relative snap-center shadow-lg"
+                >
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+                  <img
+                    src={`https://images.unsplash.com/photo-${i === 1 ? '1607082348824-0a96f2a4b9da' : i === 2 ? '1607082349566-187342175e2f' : '1607082350899-7e105aa886ae'}?auto=format&fit=crop&w=800&q=80`}
+                    alt="Promotion"
+                    className="w-full h-full object-cover relative z-10"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Scroll */}
+        <div className="mb-6 -mx-4 px-4">
           <div
             className="overflow-x-auto scrollbar-hide"
             style={{
-              padding: '16px 16px 16px 0',
-              margin: '-16px -16px -16px 0',
+              padding: '0 16px',
+              margin: '0 -16px',
             }}
           >
-            <div className="flex gap-3 pl-4">
+            <div className="flex gap-2 pl-4">
               {categories
                 .filter((c) => c.id)
                 .map((category) => (

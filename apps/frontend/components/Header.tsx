@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from './ui/Button';
-import { CartIcon, SearchIcon } from './ui/icons';
+import { Menu, Search, ShoppingBag, ChevronLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   title?: string;
@@ -12,6 +12,7 @@ interface HeaderProps {
   onMenuClick?: () => void;
   onCartClick?: () => void;
   onSearchClick?: () => void;
+  className?: string;
 }
 
 export const Header = ({
@@ -22,88 +23,64 @@ export const Header = ({
   onMenuClick,
   onCartClick,
   onSearchClick,
+  className,
 }: HeaderProps) => {
   const router = useRouter();
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <header
-      className="w-full fixed top-0 left-0 right-0 z-50 transition-colors duration-300"
+      className={cn(
+        'fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300',
+        className,
+      )}
       style={{
         paddingTop: 'var(--safe-top, 0px)',
-        paddingLeft: 'var(--safe-left, 0px)',
-        paddingRight: 'var(--safe-right, 0px)',
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 py-2">
-        {title ? (
-          // Title mode - for internal pages
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {showBackButton && (
-                <button
-                  onClick={handleBack}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  aria-label="Назад"
-                >
-                  <svg className="w-5 h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
+      <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
+        {/* Left Section: Back Button or Logo */}
+        <div className="flex items-center gap-3">
+          {showBackButton ? (
+            <button
+              onClick={() => router.back()}
+              className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-800" />
+            </button>
+          ) : (
+            <div className="font-bold text-xl text-gray-900 tracking-tight">
+              Salmina<span className="text-pink-500">.</span>
+            </div>
+          )}
+
+          {title && <h1 className="text-lg font-medium text-gray-900">{title}</h1>}
+        </div>
+
+        {/* Right Section: Actions */}
+        <div className="flex items-center gap-1">
+          {onSearchClick && (
+            <button onClick={onSearchClick} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <Search className="w-5 h-5 text-gray-700" />
+            </button>
+          )}
+
+          {showCartButton && (
+            <button onClick={onCartClick} className="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <ShoppingBag className="w-5 h-5 text-gray-700" />
+              {cartItemsCount > 0 && (
+                <span className="absolute top-1 right-0.5 w-4 h-4 bg-pink-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                  {cartItemsCount > 9 ? '9+' : cartItemsCount}
+                </span>
               )}
-              <h1 className="text-xl font-light text-foreground">{title}</h1>
-            </div>
-            {showCartButton && (
-              <div className="relative">
-                <Button
-                  variant="icon"
-                  size="sm"
-                  onClick={onCartClick}
-                  aria-label={`Корзина${cartItemsCount > 0 ? `, товаров: ${cartItemsCount}` : ''}`}
-                >
-                  <CartIcon className="w-4 h-4 text-foreground" />
-                </Button>
-                {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-pink-500 text-white text-[10px] font-medium rounded-full flex items-center justify-center">
-                    {cartItemsCount > 9 ? '9+' : cartItemsCount}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        ) : (
-          // Button mode - for main page
-          <div className="flex items-center justify-center">
-            <div className="flex items-center gap-2">
-              <Button variant="primary" size="sm" onClick={onMenuClick}>
-                Меню
-              </Button>
+            </button>
+          )}
 
-              <Button variant="icon" size="sm" onClick={onSearchClick} aria-label="Поиск">
-                <SearchIcon className="w-4 h-4 text-foreground" />
-              </Button>
-
-              <div className="relative">
-                <Button
-                  variant="icon"
-                  size="sm"
-                  onClick={onCartClick}
-                  aria-label={`Корзина${cartItemsCount > 0 ? `, товаров: ${cartItemsCount}` : ''}`}
-                >
-                  <CartIcon className="w-4 h-4 text-foreground" />
-                </Button>
-                {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-pink-500 text-white text-[10px] font-medium rounded-full flex items-center justify-center">
-                    {cartItemsCount > 9 ? '9+' : cartItemsCount}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+          {onMenuClick && !showBackButton && (
+            <button onClick={onMenuClick} className="p-2 -mr-2 hover:bg-gray-100 rounded-full transition-colors">
+              <Menu className="w-6 h-6 text-gray-800" />
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );

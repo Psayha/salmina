@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "5.22.0",
+    "@types/multer": "^2.0.0",
     "axios": "^1.13.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -26,6 +27,7 @@
     "express": "^4.19.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
     "node-telegram-bot-api": "^0.66.0",
     "redis": "^4.7.0",
     "zod": "^3.23.0"

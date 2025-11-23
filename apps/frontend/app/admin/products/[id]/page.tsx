@@ -7,6 +7,7 @@ import { getCategories } from '@/lib/api/endpoints/categories';
 import { Category, Product } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { ArrowLeft, Save } from 'lucide-react';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function EditProductPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -321,17 +322,14 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
           <div>
             <label className="block text-sm font-light text-gray-700 mb-2">
-              URL изображений (по одному на строку) <span className="text-red-500">*</span>
+              Изображения <span className="text-red-500">*</span>
             </label>
-            <textarea
-              value={formData.images}
-              onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light font-mono text-sm"
-              placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-              rows={3}
-              required
+            <ImageUpload
+              value={formData.images ? formData.images.split('\n').filter(Boolean) : []}
+              onChange={(urls) => setFormData({ ...formData, images: urls.join('\n') })}
+              maxFiles={5}
             />
-            <p className="text-xs text-gray-500 mt-1">Минимум одно изображение</p>
+            <p className="text-xs text-gray-500 mt-1">Первое изображение будет основным</p>
           </div>
 
           <div className="flex items-center gap-4">

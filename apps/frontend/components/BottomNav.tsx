@@ -2,13 +2,12 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useCartStore } from '@/store/useCartStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
-import { CartIcon, UserIcon, HeartIcon, SearchIcon } from './ui/icons';
+import { Home, LayoutGrid, Heart, User } from 'lucide-react';
 
 interface NavItem {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   label: string;
   href: string;
   showBadge?: boolean;
@@ -18,39 +17,36 @@ interface NavItem {
 export const BottomNav = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { itemsCount } = useCartStore();
   const { favoriteIds } = useFavoritesStore();
   const haptic = useTelegramHaptic();
 
   const navItems: NavItem[] = [
     {
-      icon: SearchIcon,
-      label: 'Каталог',
+      icon: Home,
+      label: 'Главная',
       href: '/',
     },
     {
-      icon: HeartIcon,
+      icon: LayoutGrid,
+      label: 'Каталог',
+      href: '/search',
+    },
+    {
+      icon: Heart,
       label: 'Избранное',
       href: '/favorites',
       showBadge: true,
       badgeCount: favoriteIds.length,
     },
     {
-      icon: CartIcon,
-      label: 'Корзина',
-      href: '/cart',
-      showBadge: true,
-      badgeCount: itemsCount,
-    },
-    {
-      icon: UserIcon,
+      icon: User,
       label: 'Профиль',
       href: '/profile',
     },
   ];
 
   const handleNavClick = (href: string) => {
-    haptic.impactOccurred('light');
+    haptic?.impactOccurred('light');
     router.push(href);
   };
 
@@ -60,7 +56,7 @@ export const BottomNav = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-0 left-0 right-0 z-40"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-gray-100"
       style={{
         paddingBottom: 'max(env(safe-area-inset-bottom), 12px)',
       }}
@@ -68,54 +64,40 @@ export const BottomNav = () => {
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <div className="mx-auto max-w-md px-4 pb-2">
-        <div className="relative flex items-center justify-around gap-2 rounded-2xl bg-card-bg/80 backdrop-blur-xl border border-card-border/50 px-4 py-2 shadow-lg">
+      <div className="mx-auto max-w-md px-6 py-2">
+        <div className="flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
 
             return (
-              <motion.button
+              <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors"
-                whileTap={{ scale: 0.95 }}
+                className="relative flex flex-col items-center gap-1 p-2 transition-colors"
               >
-                {/* Icon container */}
                 <div className="relative">
-                  <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-pink-500' : 'text-foreground/60'}`} />
-                  {/* Badge */}
+                  <Icon
+                    className={`w-6 h-6 transition-all duration-300 ${
+                      isActive ? 'text-pink-500 scale-110' : 'text-gray-400'
+                    }`}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
                   {item.showBadge && item.badgeCount! > 0 && (
-                    <motion.span
-                      className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-semibold text-white"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-                    >
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-bold text-white border-2 border-white">
                       {item.badgeCount! > 9 ? '9+' : item.badgeCount}
-                    </motion.span>
+                    </span>
                   )}
                 </div>
 
-                {/* Label */}
                 <span
                   className={`text-[10px] font-medium transition-colors ${
-                    isActive ? 'text-pink-500' : 'text-foreground/50'
+                    isActive ? 'text-pink-500' : 'text-gray-400'
                   }`}
                 >
                   {item.label}
                 </span>
-
-                {/* Active indicator */}
-                {isActive && (
-                  <motion.div
-                    className="absolute -bottom-0.5 left-1/2 h-0.5 w-8 rounded-full bg-gradient-to-r from-pink-500 to-blue-500"
-                    layoutId="activeTab"
-                    style={{ x: '-50%' }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </motion.button>
+              </button>
             );
           })}
         </div>
