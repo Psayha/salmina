@@ -64,11 +64,11 @@ export const getAllUsersQuerySchema = z.object({
   isActive: z
     .string()
     .optional()
-    .transform((val) => val === 'true'),
+    .transform((val) => val ? val === 'true' : undefined),
   hasAcceptedTerms: z
     .string()
     .optional()
-    .transform((val) => val === 'true'),
+    .transform((val) => val ? val === 'true' : undefined),
   search: z
     .string()
     .min(1)
