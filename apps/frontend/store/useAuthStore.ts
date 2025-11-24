@@ -53,15 +53,21 @@ export const useAuthStore = create<AuthState>()(
       autoLoginWithTelegram: async (initData: string) => {
         set({ isLoading: true, error: null });
         try {
+          console.log('🔄 useAuthStore: Calling loginWithTelegram API...');
           // Use the actual Telegram initData string
           const response = await authApi.loginWithTelegram({ initData });
+          console.log('✅ useAuthStore: Login response:', response);
+          console.log('✅ useAuthStore: User created/updated:', response.user);
           set({
             user: response.user,
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error: unknown) {
+        } catch (error: any) {
           const message = error instanceof Error ? error.message : 'Ошибка авторизации';
+          console.error('❌ Auto login failed:', error);
+          console.error('❌ Error response:', error?.response?.data);
+          console.error('❌ Error status:', error?.response?.status);
           set({
             error: message,
             isLoading: false,
