@@ -20,7 +20,12 @@ export const adminApi = {
   },
 
   getUsers: async (): Promise<User[]> => {
-    const response = await apiClient.get<ApiResponse<{ users: User[] }>>('/users');
+    const response = await apiClient.get<ApiResponse<{ users: User[]; pagination: any }>>('/users', {
+      params: {
+        limit: 100, // Fetch up to 100 users
+        page: 1,
+      },
+    });
     return response.data.data.users;
   },
 

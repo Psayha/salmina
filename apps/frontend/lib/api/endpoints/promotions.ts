@@ -7,6 +7,11 @@ export const promotionsApi = {
     return response.data.data;
   },
 
+  getPromotion: async (id: string) => {
+    const response = await apiClient.get<ApiResponse<Promotion>>(`/promotions/${id}`);
+    return response.data.data;
+  },
+
   getAdminPromotions: async () => {
     const response = await apiClient.get<ApiResponse<Promotion[]>>('/promotions/admin');
     return response.data.data;

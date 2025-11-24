@@ -12,6 +12,7 @@ import { productsApi, categoriesApi } from '@/lib/api';
 import { Promotion, Product, Category } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { ProductSection } from '@/components/ProductSection';
+import { Stories } from '@/components/Stories';
 // ...
 
 export default function Home() {
@@ -29,6 +30,11 @@ export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  // Stories state
+  const [showStories, setShowStories] = useState(false);
+  const [storiesStartIndex, setStoriesStartIndex] = useState(0);
+  const [viewedStories, setViewedStories] = useState<Set<string>>(new Set());
 
   // ...
 
@@ -111,27 +117,44 @@ export default function Home() {
           <div className="mb-6 px-4">
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
               <div className="flex gap-3">
-                {promotions.map((promotion) => (
-                  <div
-                    key={promotion.id}
-                    onClick={() => {
-                      haptic.impactOccurred('light');
-                      if (promotion.link) router.push(promotion.link);
-                    }}
-                    className="w-[100px] h-[100px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform shrink-0"
-                  >
-                    <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-                    {promotion.image && (
-                      <Image
-                        src={promotion.image}
-                        alt={promotion.title}
-                        fill
-                        className="object-cover relative z-10"
-                        unoptimized
-                      />
-                    )}
-                  </div>
-                ))}
+                {promotions.map((promotion, index) => {
+                  const isViewed = viewedStories.has(promotion.id);
+                  return (
+                    <div
+                      key={promotion.id}
+                      onClick={() => {
+                        haptic.impactOccurred('light');
+                        setStoriesStartIndex(index);
+                        setShowStories(true);
+                        setViewedStories((prev) => new Set([...prev, promotion.id]));
+                      }}
+                      className="relative shrink-0"
+                    >
+                      {/* Gradient border for unviewed stories */}
+                      <div
+                        className={`w-[100px] h-[100px] rounded-2xl p-[2px] ${
+                          isViewed
+                            ? 'bg-gray-300 dark:bg-gray-700'
+                            : 'bg-gradient-to-br from-pink-500 via-rose-500 to-orange-500'
+                        }`}
+                      >
+                        <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform bg-white dark:bg-gray-900"
+                        >
+                          <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+                          {promotion.image && (
+                            <Image
+                              src={promotion.image}
+                              alt={promotion.title}
+                              fill
+                              className="object-cover relative z-10"
+                              unoptimized
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -198,6 +221,15 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Stories Modal */}
+      {showStories && (
+        <Stories
+          promotions={promotions}
+          initialIndex={storiesStartIndex}
+          onClose={() => setShowStories(false)}
+        />
+      )}
     </div>
   );
 }
