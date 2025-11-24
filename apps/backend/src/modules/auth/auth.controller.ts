@@ -31,18 +31,22 @@ export class AuthController {
     next: NextFunction,
   ): Promise<void> {
     try {
+      logger.info('🚀 POST /api/auth/telegram - Controller method called');
       const { initData } = req.body;
+      logger.info(`📱 Request body received, initData length: ${initData?.length || 0}`);
 
-      logger.info('Telegram authentication request received');
-
+      logger.info('🔄 Calling authService.authenticateWithTelegram...');
       const result = await authService.authenticateWithTelegram(initData);
+      logger.info('✅ Authentication service completed successfully');
 
       res.status(200).json({
         success: true,
         data: result,
         message: 'Authentication successful',
       });
+      logger.info('📤 Response sent to client');
     } catch (error) {
+      logger.error('❌ Authentication error in controller:', error);
       next(error);
     }
   }
