@@ -49,24 +49,40 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const fetchCart = useCartStore((state) => state.fetchCart);
 
   const [showLoading, setShowLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (!isReady || !webApp) return;
+    if (!isReady || !webApp || initialized) return;
 
     async function initialize() {
       try {
+        setInitialized(true); // Prevent multiple initializations
+
         // Get Telegram initData (the raw string from Telegram)
         const initData = webApp?.initData;
-        console.log('[Providers] Initializing app...');
-        console.log('[Providers] initData exists:', !!initData);
-        console.log('[Providers] initData length:', initData?.length || 0);
+        console.log('🔐 [Providers] Initializing app...');
+        console.log('📱 [Providers] initData exists:', !!initData);
+        console.log('📱 [Providers] initData length:', initData?.length || 0);
+        console.log('📱 [Providers] initData (first 100 chars):', initData?.substring(0, 100));
 
+        // ALWAYS authenticate with Telegram if initData is available
+        // This ensures users are created in the database
         if (initData) {
-          // Auto-login with Telegram initData
-          console.log('[Providers] Attempting auto-login with Telegram initData...');
-          await autoLoginWithTelegram(initData);
-          console.log('[Providers] Auto-login completed');
+          console.log('🔄 [Providers] Authenticating with Telegram (ALWAYS in Telegram WebApp)...');
+          try {
+            await autoLoginWithTelegram(initData);
+            console.log('✅ [Providers] Telegram authentication successful!');
+          } catch (error) {
+            console.error('❌ [Providers] Telegram authentication failed:', error);
+            // Fallback: try to fetch current user if token exists
+            const hasToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
+            if (hasToken) {
+              console.log('🔄 [Providers] Falling back to fetchCurrentUser...');
+              await fetchCurrentUser();
+            }
+          }
         } else {
+          console.warn('⚠️ [Providers] No initData from Telegram WebApp');
           // Fallback: try to fetch current user if token exists
           const hasToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
           console.log('[Providers] No initData, checking for existing token:', !!hasToken);
@@ -75,7 +91,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
           }
         }
       } catch (error) {
-        console.error('[Providers] Initialization error:', error);
+        console.error('❌ [Providers] Initialization error:', error);
       }
 
       // Always fetch cart (works for both authenticated and anonymous)
@@ -87,7 +103,8 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     }
 
     initialize();
-  }, [isReady, webApp, fetchCart, fetchCurrentUser, autoLoginWithTelegram]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady, webApp]);
 
   const handleLoadingComplete = () => {
     setShowLoading(false);
