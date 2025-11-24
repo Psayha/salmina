@@ -56,8 +56,9 @@ export const BottomNav = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-6 left-4 right-4 z-40 mx-auto max-w-md bg-white/90 backdrop-blur-xl rounded-[32px] shadow-2xl"
+      className="fixed bottom-6 left-4 right-4 z-40 mx-auto max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-[32px] shadow-2xl"
       style={{
+        paddingTop: '8px',
         paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
       }}
       initial={{ y: 100 }}
@@ -79,12 +80,12 @@ export const BottomNav = () => {
                 <div className="relative">
                   <Icon
                     className={`w-6 h-6 transition-all duration-300 ${
-                      isActive ? 'text-pink-500 scale-110' : 'text-gray-400'
+                      isActive ? 'text-pink-500' : 'text-gray-400 dark:text-gray-500'
                     }`}
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                   {item.showBadge && item.badgeCount! > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-bold text-white border-2 border-white">
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-bold text-white border-2 border-white dark:border-gray-900">
                       {item.badgeCount! > 9 ? '9+' : item.badgeCount}
                     </span>
                   )}
@@ -92,7 +93,7 @@ export const BottomNav = () => {
 
                 <span
                   className={`text-[10px] font-medium transition-colors ${
-                    isActive ? 'text-pink-500' : 'text-gray-400'
+                    isActive ? 'text-pink-500' : 'text-gray-400 dark:text-gray-500'
                   }`}
                 >
                   {item.label}
