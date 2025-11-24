@@ -16,17 +16,6 @@ router.get('/', async (_req: any, res: any, next: any) => {
           { validFrom: { lte: now }, validTo: { gte: now } },
         ],
       },
-      include: {
-        products: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            price: true,
-            images: true,
-          },
-        },
-      },
       orderBy: { order: 'asc' },
     });
     res.json({ success: true, data: promotions });
