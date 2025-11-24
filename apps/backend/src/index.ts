@@ -107,6 +107,21 @@ app.get('/api', (_req, res) => {
   });
 });
 
+// Health check under /api for deployment compatibility
+app.get('/api/health', async (_req, res) => {
+  const dbConnected = await checkDatabaseConnection();
+  const redisConnected = redis.isReady();
+
+  res.json({
+    status: dbConnected && redisConnected ? 'ok' : 'degraded',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: dbConnected ? 'connected' : 'disconnected',
+      redis: redisConnected ? 'connected' : 'disconnected',
+    },
+  });
+});
+
 // Mount module routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
