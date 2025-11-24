@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -71,11 +71,11 @@ export function Toast({ toasts, removeToast }: ToastProps) {
               className={`${styles.bg} border rounded-xl shadow-lg p-4 min-w-[280px] max-w-[400px] backdrop-blur-xl pointer-events-auto`}
             >
               <div className="flex items-start gap-3">
-                <Icon className={`w-5 h-5 ${styles.icon} flex-shrink-0 mt-0.5`} />
+                <Icon className={`w-5 h-5 ${styles.icon} shrink-0 mt-0.5`} />
                 <p className={`text-sm font-light ${styles.text} flex-1`}>{toast.message}</p>
                 <button
                   onClick={() => removeToast(toast.id)}
-                  className={`${styles.icon} hover:opacity-70 transition-opacity flex-shrink-0`}
+                  className={`${styles.icon} hover:opacity-70 transition-opacity shrink-0`}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -92,8 +92,11 @@ export function Toast({ toasts, removeToast }: ToastProps) {
 export function useToast() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
+  const idCounter = useRef(0);
+
   const addToast = (type: ToastType, message: string, duration = 4000) => {
-    const id = Math.random().toString(36).substring(7);
+    idCounter.current += 1;
+    const id = `toast-${idCounter.current}`;
     const toast: ToastMessage = { id, type, message, duration };
 
     setToasts((prev) => [...prev, toast]);

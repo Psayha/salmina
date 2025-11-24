@@ -6,14 +6,15 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, Users, ShoppingBag, Package, Calendar } from 'lucide-react';
 import { apiClient } from '@/lib/api/client';
 import { useTelegramBackButton } from '@/lib/telegram/useTelegram';
+import { Order, Product } from '@/lib/api/types';
 
 interface StatsData {
   totalOrders: number;
   totalRevenue: number;
   totalUsers: number;
   totalProducts: number;
-  recentOrders: any[];
-  topProducts: any[];
+  recentOrders: Order[];
+  topProducts: Product[];
   revenueChart: { date: string; revenue: number }[];
 }
 
@@ -154,7 +155,9 @@ export default function AnalyticsPage() {
                     <div className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleDateString('ru-RU')}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-bold text-gray-900">{Number(order.total).toLocaleString()} ₽</div>
+                    <div className="text-sm font-bold text-gray-900">
+                      {Number(order.totalAmount).toLocaleString()} ₽
+                    </div>
                     <div
                       className={`text-[10px] px-2 py-0.5 rounded-full inline-block mt-1 ${
                         order.status === 'PAID'

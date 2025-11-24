@@ -32,14 +32,13 @@ console.warn = (...args) => {
 };
 
 export function DebugPanel() {
-  const [logs, setLogs] = useState<string[]>([]);
+  const [logs, setLogs] = useState<string[]>(() => [...globalLogs]);
   const [isOpen, setIsOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuthStore();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Sync global logs to component state
-    setLogs([...globalLogs]);
 
     // Update logs every 500ms
     intervalRef.current = setInterval(() => {

@@ -10,6 +10,9 @@ export interface GetProductsParams {
   maxPrice?: number;
   hasPromotion?: boolean;
   isActive?: boolean;
+  isNew?: boolean;
+  isHit?: boolean;
+  isDiscount?: boolean;
   sortBy?: 'createdAt' | 'price' | 'name';
   sortOrder?: 'asc' | 'desc';
 }

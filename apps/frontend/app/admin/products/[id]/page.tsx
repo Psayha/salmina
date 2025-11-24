@@ -32,6 +32,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     isActive: true,
     hasPromotion: false,
     promotionLabel: '',
+    isNew: false,
+    isHit: false,
+    isDiscount: false,
     images: '',
   });
 
@@ -62,6 +65,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           isActive: productData.isActive,
           hasPromotion: productData.hasPromotion,
           promotionLabel: productData.promotionLabel || '',
+          isNew: productData.isNew || false,
+          isHit: productData.isHit || false,
+          isDiscount: productData.isDiscount || false,
           images: productData.images.join('\n'),
         });
       } catch (error) {
@@ -130,6 +136,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         isActive: formData.isActive,
         hasPromotion: formData.hasPromotion,
         promotionLabel: formData.promotionLabel || undefined,
+        isNew: formData.isNew,
+        isHit: formData.isHit,
+        isDiscount: formData.isDiscount,
         images,
       });
 
@@ -352,6 +361,36 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
               />
               <span className="text-sm font-light text-gray-700">Акция</span>
             </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isNew}
+                onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
+                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+              />
+              <span className="text-sm font-light text-gray-700">Новинка</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isHit}
+                onChange={(e) => setFormData({ ...formData, isHit: e.target.checked })}
+                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+              />
+              <span className="text-sm font-light text-gray-700">Хит</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isDiscount}
+                onChange={(e) => setFormData({ ...formData, isDiscount: e.target.checked })}
+                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+              />
+              <span className="text-sm font-light text-gray-700">Скидка</span>
+            </label>
           </div>
 
           {formData.hasPromotion && (
@@ -393,7 +432,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light disabled:opacity-50"
+            className="flex-1 bg-linear-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>

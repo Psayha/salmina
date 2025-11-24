@@ -129,6 +129,7 @@ model Product {
   cartItems       CartItem[]
   orderItems      OrderItem[]
   favorites       Favorite[]
+  promotions      Promotion[]
 
   @@index([categoryId])
   @@index([slug])
@@ -139,17 +140,21 @@ model Product {
 }
 
 model Promotion {
-  id          String    @id @default(uuid())
-  title       String
-  description String?   @db.Text
-  image       String
-  link        String?
-  order       Int       @default(0)
-  isActive    Boolean   @default(true)
-  validFrom   DateTime?
-  validTo     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(uuid())
+  title           String
+  description     String?   @db.Text
+  discountPercent Int?
+  discountAmount  Decimal?  @db.Decimal(10, 2)
+  image           String
+  link            String?
+  order           Int       @default(0)
+  isActive        Boolean   @default(true)
+  validFrom       DateTime?
+  validTo         DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  products        Product[]
 
   @@index([isActive, order])
   @@index([validFrom, validTo])

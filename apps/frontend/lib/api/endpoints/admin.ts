@@ -20,8 +20,8 @@ export const adminApi = {
   },
 
   getUsers: async (): Promise<User[]> => {
-    const response = await apiClient.get<ApiResponse<User[]>>('/users');
-    return response.data.data;
+    const response = await apiClient.get<ApiResponse<{ users: User[] }>>('/users');
+    return response.data.data.users;
   },
 
   updateUserRole: async (userId: string, role: 'USER' | 'ADMIN'): Promise<User> => {
@@ -29,11 +29,13 @@ export const adminApi = {
     return response.data.data;
   },
 
-  blockUser: async (userId: string): Promise<void> => {
-    await apiClient.post(`/users/${userId}/block`);
+  blockUser: async (userId: string): Promise<User> => {
+    const response = await apiClient.delete<ApiResponse<User>>(`/users/${userId}`);
+    return response.data.data;
   },
 
-  unblockUser: async (userId: string): Promise<void> => {
-    await apiClient.post(`/users/${userId}/unblock`);
+  unblockUser: async (userId: string): Promise<User> => {
+    const response = await apiClient.post<ApiResponse<User>>(`/users/${userId}/reactivate`);
+    return response.data.data;
   },
 };

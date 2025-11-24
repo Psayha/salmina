@@ -4,7 +4,7 @@ import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { Plus, Pencil, Trash, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getProducts, deleteProduct } from '@/lib/api/endpoints/products';
 import { Product } from '@/lib/api/types';
@@ -58,10 +58,13 @@ export default function ProductsPage() {
       : [];
   }, [data, searchQuery]);
 
-  const handleDeleteClick = (productId: string, productName: string) => {
-    setDeleteModal({ isOpen: true, productId, productName });
-    haptic?.impactOccurred('light');
-  };
+  const handleDeleteClick = useCallback(
+    (productId: string, productName: string) => {
+      setDeleteModal({ isOpen: true, productId, productName });
+      haptic?.impactOccurred('light');
+    },
+    [haptic],
+  );
 
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
@@ -165,7 +168,7 @@ export default function ProductsPage() {
         },
       },
     ],
-    [router, haptic],
+    [router, haptic, handleDeleteClick],
   );
 
   if (isLoading) {
@@ -211,7 +214,7 @@ export default function ProductsPage() {
           <Link
             href="/admin/products/new"
             onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
+            className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
           >
             <Plus className="w-5 h-5" />
             <span>Добавить</span>

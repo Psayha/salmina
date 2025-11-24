@@ -1,13 +1,96 @@
 'use client';
 
 import { DataTable } from '@/components/admin/DataTable';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
 import { User } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
+
+const UserActionsCell = ({ row }: { row: Row<User> }) => {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const haptic = useTelegramHaptic();
+  const user = row.original;
+
+  const handleToggleRole = async () => {
+    const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
+    const confirmMessage =
+      newRole === 'ADMIN'
+        ? `Назначить пользователя ${user.firstName} ${user.lastName} администратором?`
+        : `Снять права администратора с ${user.firstName} ${user.lastName}?`;
+
+    if (!confirm(confirmMessage)) return;
+
+    setIsUpdating(true);
+    haptic?.impactOccurred('medium');
+
+    try {
+      await adminApi.updateUserRole(user.id, newRole);
+      haptic?.notificationOccurred('success');
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to update user role:', error);
+      haptic?.notificationOccurred('error');
+      alert('Ошибка при изменении роли');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleToggleBlock = async () => {
+    const confirmMessage = user.isActive
+      ? `Заблокировать пользователя ${user.firstName} ${user.lastName}?`
+      : `Разблокировать пользователя ${user.firstName} ${user.lastName}?`;
+
+    if (!confirm(confirmMessage)) return;
+
+    setIsUpdating(true);
+    haptic?.impactOccurred('medium');
+
+    try {
+      if (user.isActive) {
+        await adminApi.blockUser(user.id);
+      } else {
+        await adminApi.unblockUser(user.id);
+      }
+      haptic?.notificationOccurred('success');
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to toggle user block:', error);
+      haptic?.notificationOccurred('error');
+      alert('Ошибка при изменении статуса');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleToggleRole}
+        disabled={isUpdating}
+        className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg text-purple-500 dark:text-purple-400 transition-colors disabled:opacity-50"
+        title={user.role === 'ADMIN' ? 'Снять права админа' : 'Назначить админом'}
+      >
+        <UserCog className="w-4 h-4" />
+      </button>
+      <button
+        onClick={handleToggleBlock}
+        disabled={isUpdating}
+        className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
+          user.isActive
+            ? 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500'
+            : 'hover:bg-green-50 dark:hover:bg-green-900/30 text-green-500'
+        }`}
+        title={user.isActive ? 'Заблокировать' : 'Разблокировать'}
+      >
+        {user.isActive ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+};
 
 const columns: ColumnDef<User>[] = [
   {
@@ -79,88 +162,7 @@ const columns: ColumnDef<User>[] = [
   {
     id: 'actions',
     header: 'Действия',
-    cell: ({ row }) => {
-      const [isUpdating, setIsUpdating] = useState(false);
-      const haptic = useTelegramHaptic();
-      const user = row.original;
-
-      const handleToggleRole = async () => {
-        const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
-        const confirmMessage =
-          newRole === 'ADMIN'
-            ? `Назначить пользователя ${user.firstName} ${user.lastName} администратором?`
-            : `Снять права администратора с ${user.firstName} ${user.lastName}?`;
-
-        if (!confirm(confirmMessage)) return;
-
-        setIsUpdating(true);
-        haptic?.impactOccurred('medium');
-
-        try {
-          await adminApi.updateUserRole(user.id, newRole);
-          haptic?.notificationOccurred('success');
-          window.location.reload();
-        } catch (error) {
-          console.error('Failed to update user role:', error);
-          haptic?.notificationOccurred('error');
-          alert('Ошибка при изменении роли');
-        } finally {
-          setIsUpdating(false);
-        }
-      };
-
-      const handleToggleBlock = async () => {
-        const confirmMessage = user.isActive
-          ? `Заблокировать пользователя ${user.firstName} ${user.lastName}?`
-          : `Разблокировать пользователя ${user.firstName} ${user.lastName}?`;
-
-        if (!confirm(confirmMessage)) return;
-
-        setIsUpdating(true);
-        haptic?.impactOccurred('medium');
-
-        try {
-          if (user.isActive) {
-            await adminApi.blockUser(user.id);
-          } else {
-            await adminApi.unblockUser(user.id);
-          }
-          haptic?.notificationOccurred('success');
-          window.location.reload();
-        } catch (error) {
-          console.error('Failed to toggle user block:', error);
-          haptic?.notificationOccurred('error');
-          alert('Ошибка при изменении статуса');
-        } finally {
-          setIsUpdating(false);
-        }
-      };
-
-      return (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleToggleRole}
-            disabled={isUpdating}
-            className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg text-purple-500 dark:text-purple-400 transition-colors disabled:opacity-50"
-            title={user.role === 'ADMIN' ? 'Снять права админа' : 'Назначить админом'}
-          >
-            <UserCog className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleToggleBlock}
-            disabled={isUpdating}
-            className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
-              user.isActive
-                ? 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500'
-                : 'hover:bg-green-50 dark:hover:bg-green-900/30 text-green-500'
-            }`}
-            title={user.isActive ? 'Заблокировать' : 'Разблокировать'}
-          >
-            {user.isActive ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-          </button>
-        </div>
-      );
-    },
+    cell: ({ row }) => <UserActionsCell row={row} />,
   },
 ];
 

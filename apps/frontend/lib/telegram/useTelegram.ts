@@ -236,16 +236,15 @@ export function useTelegramHaptic() {
  */
 export function useTelegramTheme() {
   const { webApp } = useTelegram();
-  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+      return window.Telegram.WebApp.colorScheme;
+    }
+    return 'light';
+  });
 
   useEffect(() => {
-    if (!webApp) {
-      setColorScheme('light');
-      return;
-    }
-
-    // Set initial theme
-    setColorScheme(webApp.colorScheme);
+    if (!webApp) return;
 
     // Listen for theme changes
     const handleThemeChange = () => {

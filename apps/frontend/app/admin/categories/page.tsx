@@ -2,9 +2,10 @@
 
 import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef } from '@tanstack/react-table';
-import { Plus, Pencil, Trash, Search } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useMemo } from 'react';
+import Image from 'next/image';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCategories, deleteCategory } from '@/lib/api/endpoints/categories';
 import { Category } from '@/lib/api/types';
@@ -51,10 +52,13 @@ export default function CategoriesPage() {
     return data.filter((category) => category.name.toLowerCase().includes(query));
   }, [data, searchQuery]);
 
-  const handleDeleteClick = (categoryId: string, categoryName: string) => {
-    setDeleteModal({ isOpen: true, categoryId, categoryName });
-    haptic?.impactOccurred('light');
-  };
+  const handleDeleteClick = useCallback(
+    (category: Category) => {
+      setDeleteModal({ isOpen: true, categoryId: category.id, categoryName: category.name });
+      haptic?.impactOccurred('light');
+    },
+    [haptic],
+  );
 
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
@@ -78,57 +82,73 @@ export default function CategoriesPage() {
   const columns: ColumnDef<Category>[] = useMemo(
     () => [
       {
-        accessorKey: 'name',
-        header: 'Название',
-        cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.getValue('name')}</div>,
+        accessorKey: 'image',
+        header: 'Фото',
+        cell: ({ row }) => (
+          <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+            {row.original.image ? (
+              <Image src={row.original.image} alt={row.original.name} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <ImageIcon className="w-5 h-5" />
+              </div>
+            )}
+          </div>
+        ),
       },
       {
-        accessorKey: 'slug',
-        header: 'Slug',
-        cell: ({ row }) => <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">/{row.getValue('slug')}</span>,
+        accessorKey: 'name',
+        header: 'Название',
+        cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.original.name}</div>,
+      },
+      {
+        accessorKey: 'productsCount',
+        header: 'Товары',
+        cell: ({ row }) => (
+          <div className="text-sm text-gray-500 dark:text-gray-400">{row.original._count?.products || 0} шт.</div>
+        ),
       },
       {
         accessorKey: 'isActive',
         header: 'Статус',
-        cell: ({ row }) => {
-          const isActive = row.getValue('isActive') as boolean;
-          return (
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {isActive ? 'Активна' : 'Скрыта'}
-            </span>
-          );
-        },
+        cell: ({ row }) => (
+          <div
+            className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+              row.original.isActive
+                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'
+            }`}
+          >
+            {row.original.isActive ? 'Активна' : 'Скрыта'}
+          </div>
+        ),
       },
       {
         id: 'actions',
         cell: ({ row }) => {
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <button
                 onClick={() => {
                   haptic?.impactOccurred('light');
                   router.push(`/admin/categories/${row.original.id}`);
                 }}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 transition-colors"
               >
                 <Pencil className="w-4 h-4" />
               </button>
               <button
-                onClick={() => handleDeleteClick(row.original.id, row.original.name)}
+                onClick={() => handleDeleteClick(row.original)}
                 className="p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-red-500 transition-colors"
               >
-                <Trash className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           );
         },
       },
     ],
-    [router, haptic]
+    [handleDeleteClick, router, haptic],
   );
 
   if (isLoading) {
@@ -174,7 +194,7 @@ export default function CategoriesPage() {
           <Link
             href="/admin/categories/new"
             onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
+            className="flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
           >
             <Plus className="w-5 h-5" />
             <span>Добавить</span>

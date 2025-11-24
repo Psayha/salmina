@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 import { apiClient } from '@/lib/api/client';
 
 interface ImageUploadProps {
@@ -154,7 +155,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {value.map((url, index) => (
             <div key={index} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
-              <img src={url} alt={`Upload ${index + 1}`} className="w-full h-full object-cover" />
+              <Image src={url} alt={`Upload ${index + 1}`} fill className="object-cover" unoptimized />
 
               <button
                 type="button"

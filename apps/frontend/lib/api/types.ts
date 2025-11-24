@@ -34,6 +34,9 @@ export interface Product {
   images: string[];
   categoryId?: string;
   isActive: boolean;
+  isNew?: boolean;
+  isHit?: boolean;
+  isDiscount?: boolean;
   hasPromotion: boolean;
   promotionLabel?: string;
   createdAt: string;
@@ -54,6 +57,9 @@ export interface Category {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  _count?: {
+    products: number;
+  };
 }
 
 // Cart types
@@ -138,12 +144,18 @@ export interface Promotion {
   id: string;
   title: string;
   description?: string;
+  discountPercent?: number;
+  discountAmount?: number;
   image?: string;
   link?: string;
   order: number;
   isActive: boolean;
   validFrom?: string;
   validTo?: string;
+  products?: Product[];
+  _count?: {
+    products: number;
+  };
 }
 
 // Legal document types
@@ -175,4 +187,10 @@ export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
+}
+// Generic API response
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
 }

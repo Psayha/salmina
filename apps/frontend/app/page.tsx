@@ -2,55 +2,84 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { CategoryPill } from '@/components/ui/CategoryPill';
 import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { MenuModal } from '@/components/MenuModal';
+import { promotionsApi } from '@/lib/api/endpoints/promotions';
 import { productsApi, categoriesApi } from '@/lib/api';
-import { Product, Category } from '@/lib/api/types';
+import { Promotion, Product, Category } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
+import { ProductSection } from '@/components/ProductSection';
+// ...
 
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showMenu, setShowMenu] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+
+  // Data states
   const [categories, setCategories] = useState<Partial<Category>[]>([{ id: 'all', name: 'Все товары', slug: 'all' }]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+
+  // Product sections states
+  const [newProducts, setNewProducts] = useState<Product[]>([]);
+  const [hitProducts, setHitProducts] = useState<Product[]>([]);
+  const [discountProducts, setDiscountProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+
   const [isLoading, setIsLoading] = useState(true);
 
-  // Zustand stores
-  const { addToCart, itemsCount } = useCartStore();
+  // ...
 
-  // Telegram SDK
-  const haptic = useTelegramHaptic();
-
-  // Fetch products and categories on mount
+  // Fetch data on mount
   useEffect(() => {
     async function fetchData() {
       try {
         setIsLoading(true);
-        const [productsResponse, categoriesResponse] = await Promise.all([
-          productsApi.getProducts(),
-          categoriesApi.getCategories(),
-        ]);
-        // Ensure products and categories are always arrays
-        setProducts(Array.isArray(productsResponse?.items) ? productsResponse.items : []);
+        const [categoriesResponse, promotionsResponse, newResponse, hitResponse, discountResponse, allResponse] =
+          await Promise.all([
+            categoriesApi.getCategories(),
+            promotionsApi.getPromotions(),
+            productsApi.getProducts({ isNew: true, limit: 8 }),
+            productsApi.getProducts({ isHit: true, limit: 8 }),
+            productsApi.getProducts({ isDiscount: true, limit: 8 }),
+            productsApi.getProducts({ limit: 20 }),
+          ]);
+
         setCategories([
           { id: 'all', name: 'Все товары', slug: 'all' },
           ...(Array.isArray(categoriesResponse) ? categoriesResponse : []),
         ]);
+        setPromotions(Array.isArray(promotionsResponse) ? promotionsResponse : []);
+
+        setNewProducts(newResponse.items || []);
+        setHitProducts(hitResponse.items || []);
+        setDiscountProducts(discountResponse.items || []);
+        setAllProducts(allResponse.items || []);
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        setProducts([]);
         setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }]);
+        setPromotions([]);
+        setNewProducts([]);
+        setHitProducts([]);
+        setDiscountProducts([]);
+        setAllProducts([]);
       } finally {
         setIsLoading(false);
       }
     }
     fetchData();
   }, []);
+
+  // Zustand stores
+  const { addToCart, itemsCount } = useCartStore();
+
+  // Telegram SDK
+  const haptic = useTelegramHaptic();
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.Telegram?.WebApp) {
@@ -121,6 +150,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative z-10">
+      {/* ... Header ... */}
       <Header
         cartItemsCount={itemsCount}
         onCartClick={handleCartClick}
@@ -129,44 +159,48 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 pt-20 pb-24 relative z-10">
+      <main className="max-w-7xl mx-auto pt-20 pb-24 relative z-10">
         {/* Banners Section */}
-        <div className="mb-8 -mx-4 px-4">
-          <div
-            className="overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-            style={{
-              padding: '0 16px',
-              margin: '0 -16px',
-            }}
-          >
-            <div className="flex gap-4 w-max">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="w-[85vw] sm:w-80 aspect-square rounded-2xl overflow-hidden relative snap-center shadow-lg"
-                >
-                  <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-                  <img
-                    src={`https://images.unsplash.com/photo-${i === 1 ? '1607082348824-0a96f2a4b9da' : i === 2 ? '1607082349566-187342175e2f' : '1607082350899-7e105aa886ae'}?auto=format&fit=crop&w=800&q=80`}
-                    alt="Promotion"
-                    className="w-full h-full object-cover relative z-10"
-                  />
-                </div>
-              ))}
+        {promotions.length > 0 && (
+          <div className="mb-8 px-4">
+            <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory -mx-4 px-4">
+              <div className="flex gap-4 w-max">
+                {promotions.map((promotion) => (
+                  <div
+                    key={promotion.id}
+                    onClick={() => {
+                      haptic.impactOccurred('light');
+                      if (promotion.link) router.push(promotion.link);
+                    }}
+                    className="w-[85vw] sm:w-80 aspect-square rounded-2xl overflow-hidden relative snap-center shadow-lg cursor-pointer active:scale-95 transition-transform"
+                  >
+                    <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+                    {promotion.image && (
+                      <Image
+                        src={promotion.image}
+                        alt={promotion.title}
+                        fill
+                        className="object-cover relative z-10"
+                        unoptimized
+                      />
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-black/60 to-transparent z-20">
+                      <h3 className="text-white font-medium text-lg">{promotion.title}</h3>
+                      {promotion.description && (
+                        <p className="text-white/80 text-sm line-clamp-1">{promotion.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Categories Scroll */}
-        <div className="mb-6 -mx-4 px-4">
-          <div
-            className="overflow-x-auto scrollbar-hide"
-            style={{
-              padding: '0 16px',
-              margin: '0 -16px',
-            }}
-          >
-            <div className="flex gap-2 pl-4">
+        <div className="mb-8 px-4">
+          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+            <div className="flex gap-2">
               {categories
                 .filter((c) => c.id)
                 .map((category) => (
@@ -182,14 +216,46 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {isLoading
-            ? // Show skeleton loaders while loading
-              Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-            : products.map((product) => (
-                <ProductCard key={product.id} {...product} onAddToCart={handleAddToCart} onClick={handleProductClick} />
-              ))}
+        {/* Product Sections */}
+        <ProductSection
+          title="Новинки"
+          products={newProducts}
+          isLoading={isLoading}
+          onProductClick={handleProductClick}
+          onAddToCart={handleAddToCart}
+        />
+
+        <ProductSection
+          title="Хиты продаж"
+          products={hitProducts}
+          isLoading={isLoading}
+          onProductClick={handleProductClick}
+          onAddToCart={handleAddToCart}
+        />
+
+        <ProductSection
+          title="Скидки"
+          products={discountProducts}
+          isLoading={isLoading}
+          onProductClick={handleProductClick}
+          onAddToCart={handleAddToCart}
+        />
+
+        {/* All Products Grid */}
+        <div className="px-4">
+          <h2 className="text-xl font-light text-gray-900 mb-4">Все товары</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+              : allProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    {...product}
+                    onAddToCart={handleAddToCart}
+                    onClick={handleProductClick}
+                  />
+                ))}
+          </div>
         </div>
       </main>
 

@@ -1,22 +1,5 @@
 import { apiClient, ApiResponse } from '../client';
-
-export interface OrderItem {
-  id: string;
-  productName: string;
-  quantity: number;
-  price: number;
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerPhone: string;
-  totalAmount: number;
-  status: 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  createdAt: string;
-  items: OrderItem[];
-}
+import { Order, OrderStatus } from '../types';
 
 export interface CreateOrderInput {
   customerName: string;
@@ -26,6 +9,7 @@ export interface CreateOrderInput {
   deliveryMethod?: string;
   paymentMethod?: string;
   comment?: string;
+  items: { productId: string; quantity: number }[];
 }
 
 export const ordersApi = {
@@ -44,7 +28,7 @@ export const ordersApi = {
     return response.data.data;
   },
 
-  updateStatus: async (id: string, status: Order['status']): Promise<Order> => {
+  updateStatus: async (id: string, status: OrderStatus): Promise<Order> => {
     const response = await apiClient.patch<ApiResponse<Order>>(`/orders/${id}/status`, { status });
     return response.data.data;
   },

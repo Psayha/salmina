@@ -8,9 +8,9 @@ export function Eruda() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/eruda';
     script.onload = () => {
-      // @ts-ignore
+      // @ts-expect-error -- Eruda is loaded dynamically
       if (window.eruda) {
-        // @ts-ignore
+        // @ts-expect-error -- Eruda is loaded dynamically
         window.eruda.init();
         console.log('[Eruda] DevTools loaded');
       }

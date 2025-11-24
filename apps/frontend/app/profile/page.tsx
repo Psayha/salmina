@@ -30,7 +30,12 @@ export default function ProfilePage() {
     }
   };
 
-  const menuItems = [
+  const menuItems: {
+    label: string;
+    description: string;
+    onClick: () => void;
+    isAdmin?: boolean;
+  }[] = [
     ...(user?.role === 'ADMIN'
       ? [
           {
@@ -143,8 +148,8 @@ export default function ProfilePage() {
               key={index}
               onClick={item.onClick}
               className={`w-full backdrop-blur-md rounded-2xl p-5 border shadow-lg hover:bg-white/50 transition-all duration-300 text-left ${
-                (item as any).isAdmin
-                  ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30'
+                item.isAdmin
+                  ? 'bg-linear-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30'
                   : 'bg-white/40 border-white/30'
               }`}
             >

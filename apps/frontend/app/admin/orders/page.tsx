@@ -1,11 +1,83 @@
 'use client';
 
 import { DataTable } from '@/components/admin/DataTable';
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ordersApi, Order } from '@/lib/api/endpoints/orders';
+import { ordersApi } from '@/lib/api/endpoints/orders';
+import { Order } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { Eye } from 'lucide-react';
+
+const OrderStatusCell = ({ row }: { row: Row<Order> }) => {
+  const [status, setStatus] = useState(row.getValue('status') as Order['status']);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const haptic = useTelegramHaptic();
+
+  const handleStatusChange = async (newStatus: Order['status']) => {
+    if (newStatus === status) return;
+
+    setIsUpdating(true);
+    haptic?.impactOccurred('medium');
+
+    try {
+      await ordersApi.updateStatus(row.original.id, newStatus);
+      setStatus(newStatus);
+      haptic?.notificationOccurred('success');
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+      haptic?.notificationOccurred('error');
+      alert('Ошибка при обновлении статуса');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const styles = {
+    PAID: 'bg-green-100 text-green-700 border-green-200',
+    PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    PROCESSING: 'bg-orange-100 text-orange-700 border-orange-200',
+    SHIPPED: 'bg-blue-100 text-blue-700 border-blue-200',
+    DELIVERED: 'bg-purple-100 text-purple-700 border-purple-200',
+    CANCELLED: 'bg-red-100 text-red-700 border-red-200',
+  };
+
+  return (
+    <select
+      value={status}
+      onChange={(e) => handleStatusChange(e.target.value as Order['status'])}
+      disabled={isUpdating}
+      className={`px-2 py-1 rounded-lg text-xs font-medium border cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 ${
+        styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700 border-gray-200'
+      }`}
+    >
+      <option value="PAID">Оплачен</option>
+      <option value="PROCESSING">В обработке</option>
+      <option value="SHIPPED">Отправлен</option>
+      <option value="DELIVERED">Доставлен</option>
+      <option value="CANCELLED">Отменен</option>
+    </select>
+  );
+};
+
+const OrderActionsCell = ({ row }: { row: Row<Order> }) => {
+  const router = useRouter();
+  const haptic = useTelegramHaptic();
+
+  return (
+    <div className="flex items-center justify-end gap-2">
+      <button
+        onClick={() => {
+          haptic?.impactOccurred('light');
+          router.push(`/admin/orders/${row.original.id}`);
+        }}
+        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 transition-colors"
+      >
+        <Eye className="w-4 h-4" />
+      </button>
+    </div>
+  );
+};
 
 const columns: ColumnDef<Order>[] = [
   {
@@ -34,56 +106,7 @@ const columns: ColumnDef<Order>[] = [
   {
     accessorKey: 'status',
     header: 'Статус',
-    cell: ({ row }) => {
-      const [status, setStatus] = useState(row.getValue('status') as Order['status']);
-      const [isUpdating, setIsUpdating] = useState(false);
-      const haptic = useTelegramHaptic();
-
-      const handleStatusChange = async (newStatus: Order['status']) => {
-        if (newStatus === status) return;
-
-        setIsUpdating(true);
-        haptic?.impactOccurred('medium');
-
-        try {
-          await ordersApi.updateStatus(row.original.id, newStatus);
-          setStatus(newStatus);
-          haptic?.notificationOccurred('success');
-        } catch (error) {
-          console.error('Failed to update order status:', error);
-          haptic?.notificationOccurred('error');
-          alert('Ошибка при обновлении статуса');
-        } finally {
-          setIsUpdating(false);
-        }
-      };
-
-      const styles = {
-        PAID: 'bg-green-100 text-green-700 border-green-200',
-        PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-        PROCESSING: 'bg-orange-100 text-orange-700 border-orange-200',
-        SHIPPED: 'bg-blue-100 text-blue-700 border-blue-200',
-        DELIVERED: 'bg-purple-100 text-purple-700 border-purple-200',
-        CANCELLED: 'bg-red-100 text-red-700 border-red-200',
-      };
-
-      return (
-        <select
-          value={status}
-          onChange={(e) => handleStatusChange(e.target.value as Order['status'])}
-          disabled={isUpdating}
-          className={`px-2 py-1 rounded-lg text-xs font-medium border cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 ${
-            styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700 border-gray-200'
-          }`}
-        >
-          <option value="PAID">Оплачен</option>
-          <option value="PROCESSING">В обработке</option>
-          <option value="SHIPPED">Отправлен</option>
-          <option value="DELIVERED">Доставлен</option>
-          <option value="CANCELLED">Отменен</option>
-        </select>
-      );
-    },
+    cell: ({ row }) => <OrderStatusCell row={row} />,
   },
   {
     accessorKey: 'createdAt',
@@ -93,6 +116,10 @@ const columns: ColumnDef<Order>[] = [
         {new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}
       </div>
     ),
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <OrderActionsCell row={row} />,
   },
 ];
 
