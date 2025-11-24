@@ -7,19 +7,12 @@ const router: any = Router();
 // GET /api/promotions - Active promotions (public)
 router.get('/', async (_req: any, res: any, next: any) => {
   try {
-    const now = new Date();
     const promotions = await prisma.promotion.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          { validFrom: null, validTo: null },
-          { validFrom: { lte: now }, validTo: { gte: now } },
-        ],
-      },
       orderBy: { order: 'asc' },
     });
     res.json({ success: true, data: promotions });
   } catch (error) {
+    console.error('Promotions error:', error);
     next(error);
   }
 });
