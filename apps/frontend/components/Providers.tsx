@@ -58,24 +58,21 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const fetchCart = useCartStore((state) => state.fetchCart);
 
   const [showLoading, setShowLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
 
-  console.log('💥 Before useEffect - showLoading:', showLoading, 'initialized:', initialized);
+  console.log('💥 Before useEffect - showLoading:', showLoading);
 
   useEffect(() => {
     console.log('🎯 [AppInitializer] useEffect triggered!');
     console.log('🎯 [AppInitializer] isReady:', isReady);
     console.log('🎯 [AppInitializer] webApp:', !!webApp);
-    console.log('🎯 [AppInitializer] initialized:', initialized);
 
-    if (!isReady || !webApp || initialized) {
-      console.log('⏭️ [AppInitializer] Skipping initialization - condition not met');
+    if (!isReady || !webApp) {
+      console.log('⏭️ [AppInitializer] Skipping initialization - Telegram not ready');
       return;
     }
 
     async function initialize() {
       try {
-        setInitialized(true); // Prevent multiple initializations
 
         // Get Telegram initData (the raw string from Telegram)
         const initData = webApp?.initData;
