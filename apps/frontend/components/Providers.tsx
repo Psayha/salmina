@@ -52,7 +52,15 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    if (!isReady || !webApp || initialized) return;
+    console.log('🎯 [AppInitializer] useEffect triggered!');
+    console.log('🎯 [AppInitializer] isReady:', isReady);
+    console.log('🎯 [AppInitializer] webApp:', !!webApp);
+    console.log('🎯 [AppInitializer] initialized:', initialized);
+
+    if (!isReady || !webApp || initialized) {
+      console.log('⏭️ [AppInitializer] Skipping initialization - condition not met');
+      return;
+    }
 
     async function initialize() {
       try {
