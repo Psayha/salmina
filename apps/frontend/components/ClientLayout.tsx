@@ -49,7 +49,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       <AnimatePresence mode="wait" initial={false}>
         <motion.main
           key={pathname}
-          className="pt-20"
+          className="pt-24"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
