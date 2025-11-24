@@ -120,7 +120,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady, webApp]);
+  }, []); // Run once on mount, not dependent on isReady/webApp changes
 
   const handleLoadingComplete = () => {
     setShowLoading(false);
