@@ -127,7 +127,7 @@ function SearchPageContent() {
   return (
     <div className="min-h-screen relative z-10 pb-24">
       {/* Header with Search */}
-      <div className="sticky top-20 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+      <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
         <div className="px-6 py-4 space-y-4">
           <h1 className="text-2xl font-light text-gray-900">Поиск</h1>
 
