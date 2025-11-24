@@ -180,12 +180,17 @@ export default function UsersPage() {
   useEffect(() => {
     async function fetchData() {
       try {
+        console.log('Fetching users...');
         const users = await adminApi.getUsers();
+        console.log('Users received:', users, 'Count:', users?.length);
         // Ensure users is always an array
         setData(Array.isArray(users) ? users : []);
-        haptic?.notificationOccurred('success');
-      } catch (error) {
+        if (users && users.length > 0) {
+          haptic?.notificationOccurred('success');
+        }
+      } catch (error: any) {
         console.error('Failed to fetch users:', error);
+        console.error('Error response:', error?.response?.data);
         setData([]);
         haptic?.notificationOccurred('error');
       } finally {
