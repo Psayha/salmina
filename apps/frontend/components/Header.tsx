@@ -39,6 +39,18 @@ export const Header = ({ cartItemsCount = 0, onMenuClick, onCartClick }: HeaderP
           )}
         </button>
       </div>
+
+      {/* Gradient blur overlay for content below */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.95) 100%)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          maskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 100%)',
+        }}
+      />
     </header>
   );
 };
