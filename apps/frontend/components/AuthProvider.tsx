@@ -8,6 +8,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const authAttempted = useRef(false);
 
   useEffect(() => {
+    console.log('🎯 AuthProvider useEffect triggered');
+    console.log('🎯 authAttempted.current:', authAttempted.current);
+
     // Prevent multiple authentication attempts
     if (authAttempted.current) {
       console.log('⏭️ Auth already attempted, skipping...');
