@@ -17,6 +17,30 @@ router.get('/', async (_req: any, res: any, next: any) => {
   }
 });
 
+// GET /api/promotions/:id - Get single promotion (public)
+router.get('/:id', async (req: any, res: any, next: any) => {
+  try {
+    const promotion = await prisma.promotion.findUnique({
+      where: { id: req.params.id },
+      include: {
+        products: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
+
+    if (!promotion) {
+      return res.status(404).json({ success: false, message: 'Promotion not found' });
+    }
+
+    res.json({ success: true, data: promotion });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/promotions/admin - All promotions (admin)
 router.get('/admin', authenticate, requireAdmin, async (_req: any, res: any, next: any) => {
   try {

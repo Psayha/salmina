@@ -116,7 +116,7 @@ export default function Home() {
                     key={promotion.id}
                     onClick={() => {
                       haptic.impactOccurred('light');
-                      if (promotion.link) router.push(promotion.link);
+                      router.push(`/promotion/${promotion.id}`);
                     }}
                     className="w-[100px] h-[100px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform shrink-0"
                   >
