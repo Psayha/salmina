@@ -78,34 +78,6 @@ export default function Home() {
   // Telegram SDK
   const haptic = useTelegramHaptic();
 
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.Telegram?.WebApp) {
-      return;
-    }
-
-    const tg = window.Telegram.WebApp;
-    const setHeaderColor = tg.setHeaderColor;
-
-    if (!setHeaderColor) {
-      return;
-    }
-
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-      if (scrollTop > 0) {
-        // При прокрутке - скрываем статус бар
-        setHeaderColor('#00000000'); // Прозрачный цвет
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   const handleAddToCart = async (productId: string) => {
     try {
       await addToCart(productId, 1);
