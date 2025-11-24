@@ -3,12 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Header } from '@/components/Header';
 import { CategoryPill } from '@/components/ui/CategoryPill';
 import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
-import { MenuModal } from '@/components/MenuModal';
 import { promotionsApi } from '@/lib/api/endpoints/promotions';
 import { productsApi, categoriesApi } from '@/lib/api';
 import { Promotion, Product, Category } from '@/lib/api/types';
@@ -19,7 +17,6 @@ import { ProductSection } from '@/components/ProductSection';
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showMenu, setShowMenu] = useState(false);
 
   // Data states
   const [categories, setCategories] = useState<Partial<Category>[]>([{ id: 'all', name: 'Все товары', slug: 'all' }]);
@@ -76,7 +73,7 @@ export default function Home() {
   }, []);
 
   // Zustand stores
-  const { addToCart, itemsCount } = useCartStore();
+  const { addToCart } = useCartStore();
 
   // Telegram SDK
   const haptic = useTelegramHaptic();
@@ -124,21 +121,6 @@ export default function Home() {
     router.push(`/product/${productId}`);
   };
 
-  const handleCartClick = () => {
-    haptic.impactOccurred('light');
-    router.push('/cart');
-  };
-
-  const handleMenuClick = () => {
-    haptic.impactOccurred('light');
-    setShowMenu(true);
-  };
-
-  const handleSearchClick = () => {
-    haptic.impactOccurred('light');
-    router.push('/search');
-  };
-
   const handleCategoryChange = (categoryId: string) => {
     haptic.selectionChanged();
     if (categoryId === 'all') {
@@ -150,16 +132,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative z-10">
-      {/* ... Header ... */}
-      <Header
-        cartItemsCount={itemsCount}
-        onCartClick={handleCartClick}
-        onMenuClick={handleMenuClick}
-        onSearchClick={handleSearchClick}
-      />
-
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto pt-20 pb-24 relative z-10">
+      <main className="max-w-7xl mx-auto pb-24 relative z-10">
         {/* Banners Section */}
         {promotions.length > 0 && (
           <div className="mb-8 px-4">
@@ -258,9 +232,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-
-      {/* Menu Modal */}
-      <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />
     </div>
   );
 }

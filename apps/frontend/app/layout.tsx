@@ -2,7 +2,7 @@ import Script from 'next/script';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from '@/components/Providers';
-import { BottomNav } from '@/components/BottomNav';
+import { ClientLayout } from '@/components/ClientLayout';
 import { DebugPanel } from '@/components/DebugPanel';
 import { Eruda } from '@/components/Eruda';
 import './globals.css';
@@ -41,8 +41,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          {children}
-          <BottomNav />
+          <ClientLayout>{children}</ClientLayout>
           <DebugPanel />
           <Eruda />
         </Providers>
