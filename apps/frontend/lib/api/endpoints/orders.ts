@@ -1,6 +1,8 @@
 import { apiClient, ApiResponse } from '../client';
 import { Order, OrderStatus } from '../types';
 
+export type { Order, OrderStatus };
+
 export interface CreateOrderInput {
   customerName: string;
   customerPhone: string;

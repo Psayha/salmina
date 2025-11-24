@@ -2,7 +2,8 @@
  * API client exports
  */
 
-export * from './client';
+export { apiClient } from './client';
+export type { ApiResponse } from './client';
 export * from './types';
 export * as authApi from './endpoints/auth';
 export * as productsApi from './endpoints/products';

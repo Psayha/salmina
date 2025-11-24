@@ -99,6 +99,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!cart) {
+      haptic.notificationOccurred('error');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -114,6 +119,10 @@ export default function CheckoutPage() {
         deliveryMethod: formData.deliveryMethod,
         paymentMethod: formData.paymentMethod,
         comment: formData.comment || undefined,
+        items: cart.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+        })),
       });
 
       haptic.notificationOccurred('success');
@@ -147,14 +156,10 @@ export default function CheckoutPage() {
       <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
         {/* Contact Information */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-            Контактные данные
-          </h2>
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Контактные данные</h2>
 
           <div>
-            <label className="block text-sm font-light text-gray-600 mb-2">
-              Имя и фамилия *
-            </label>
+            <label className="block text-sm font-light text-gray-600 mb-2">Имя и фамилия *</label>
             <input
               type="text"
               value={formData.fullName}
@@ -162,15 +167,11 @@ export default function CheckoutPage() {
               className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
               placeholder="Иван Иванов"
             />
-            {errors.fullName && (
-              <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>
-            )}
+            {errors.fullName && <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-600 mb-2">
-              Телефон *
-            </label>
+            <label className="block text-sm font-light text-gray-600 mb-2">Телефон *</label>
             <input
               type="tel"
               value={formData.phone}
@@ -195,9 +196,7 @@ export default function CheckoutPage() {
 
         {/* Delivery Method */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-            Способ доставки
-          </h2>
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Способ доставки</h2>
 
           <div className="space-y-3">
             {[
@@ -218,9 +217,7 @@ export default function CheckoutPage() {
                   name="deliveryMethod"
                   value={method.value}
                   checked={formData.deliveryMethod === method.value}
-                  onChange={(e) =>
-                    handleInputChange('deliveryMethod', e.target.value)
-                  }
+                  onChange={(e) => handleInputChange('deliveryMethod', e.target.value)}
                   className="mt-1"
                 />
                 <div className="flex-1">
@@ -235,9 +232,7 @@ export default function CheckoutPage() {
         {/* Delivery Address */}
         {formData.deliveryMethod !== 'pickup' && (
           <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-              Адрес доставки
-            </h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Адрес доставки</h2>
 
             <div>
               <label className="block text-sm font-light text-gray-600 mb-2">Город *</label>
@@ -253,9 +248,7 @@ export default function CheckoutPage() {
 
             {formData.deliveryMethod === 'courier' && (
               <div>
-                <label className="block text-sm font-light text-gray-600 mb-2">
-                  Адрес *
-                </label>
+                <label className="block text-sm font-light text-gray-600 mb-2">Адрес *</label>
                 <input
                   type="text"
                   value={formData.address}
@@ -263,17 +256,13 @@ export default function CheckoutPage() {
                   className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
                   placeholder="ул. Примерная, д. 1, кв. 1"
                 />
-                {errors.address && (
-                  <p className="text-xs text-red-600 mt-1">{errors.address}</p>
-                )}
+                {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
               </div>
             )}
 
             {formData.deliveryMethod === 'post' && (
               <div>
-                <label className="block text-sm font-light text-gray-600 mb-2">
-                  Почтовый индекс *
-                </label>
+                <label className="block text-sm font-light text-gray-600 mb-2">Почтовый индекс *</label>
                 <input
                   type="text"
                   value={formData.postalCode}
@@ -281,9 +270,7 @@ export default function CheckoutPage() {
                   className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
                   placeholder="123456"
                 />
-                {errors.postalCode && (
-                  <p className="text-xs text-red-600 mt-1">{errors.postalCode}</p>
-                )}
+                {errors.postalCode && <p className="text-xs text-red-600 mt-1">{errors.postalCode}</p>}
               </div>
             )}
           </div>
@@ -291,9 +278,7 @@ export default function CheckoutPage() {
 
         {/* Payment Method */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">
-            Способ оплаты
-          </h2>
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Способ оплаты</h2>
 
           <div className="space-y-3">
             {[
@@ -328,9 +313,7 @@ export default function CheckoutPage() {
 
         {/* Comment */}
         <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-          <label className="block text-sm font-light text-gray-600 mb-2">
-            Комментарий к заказу
-          </label>
+          <label className="block text-sm font-light text-gray-600 mb-2">Комментарий к заказу</label>
           <textarea
             value={formData.comment}
             onChange={(e) => handleInputChange('comment', e.target.value)}
@@ -346,17 +329,10 @@ export default function CheckoutPage() {
         <div className="px-6 py-4 space-y-3">
           <div className="flex justify-between items-center">
             <span className="text-base font-light text-gray-900">Итого к оплате:</span>
-            <span className="text-2xl font-light text-gray-900">
-              {cart.totals.total.toLocaleString('ru-RU')} ₽
-            </span>
+            <span className="text-2xl font-light text-gray-900">{cart.totals.total.toLocaleString('ru-RU')} ₽</span>
           </div>
 
-          <Button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="w-full py-4 text-base"
-          >
+          <Button type="submit" onClick={handleSubmit} disabled={isSubmitting} className="w-full py-4 text-base">
             {isSubmitting ? 'Оформление...' : 'Подтвердить заказ'}
           </Button>
         </div>
