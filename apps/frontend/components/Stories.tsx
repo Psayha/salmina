@@ -18,7 +18,7 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const haptic = useTelegramHaptic();
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const startTimeRef = useRef<number>(Date.now());
   const progressRef = useRef<number>(0);
 
