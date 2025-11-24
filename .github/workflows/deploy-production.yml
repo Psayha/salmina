@@ -62,7 +62,7 @@ jobs:
             sleep 5
 
             # Check backend health
-            curl -f https://app.salminashop.ru/health || exit 1
+            curl -f https://app.salminashop.ru/api/health || exit 1
 
             # Check frontend
             curl -f https://salminashop.ru || exit 1
