@@ -83,7 +83,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Модули */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {modules.map((module, index) => {
           const Icon = module.icon;
           return (
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               onClick={() => handleModuleClick(module.href)}
-              className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group bg-gradient-to-br ${module.gradient} border border-white/50 shadow-lg`}
+              className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group bg-gradient-to-br ${module.gradient} dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 border border-white/50 dark:border-white/10 shadow-lg`}
             >
               {/* Фоновый градиент при ховере */}
               <div className={`absolute inset-0 bg-gradient-to-br ${module.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />

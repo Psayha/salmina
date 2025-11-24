@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Tag, Percent } from 'lucide-react';
 import { Promotion } from '@/lib/api/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { useTelegramHaptic, useTelegramBackButton } from '@/lib/telegram/useTelegram';
 
 interface StoriesProps {
   promotions: Promotion[];
@@ -22,8 +22,13 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
   const startTimeRef = useRef<number>(Date.now());
   const progressRef = useRef<number>(0);
 
-  const STORY_DURATION = 5000; // 5 seconds per story
+  const STORY_DURATION = 10000; // 10 seconds per story
   const currentPromotion = promotions[currentIndex];
+
+  // Telegram BackButton closes stories
+  useTelegramBackButton(() => {
+    onClose();
+  });
 
   // Progress animation
   useEffect(() => {
@@ -107,7 +112,7 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black"
+        className="fixed inset-0 z-[100] bg-black"
         onTouchStart={handleTouchStart}
         onMouseDown={() => setIsPaused(true)}
         onMouseUp={() => setIsPaused(false)}
