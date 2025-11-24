@@ -108,9 +108,9 @@ export default function Home() {
       <main className="max-w-7xl mx-auto pb-24 relative z-10">
         {/* Banners Section */}
         {promotions.length > 0 && (
-          <div className="mb-8 px-4">
-            <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory -mx-4 px-4">
-              <div className="flex gap-4 w-max">
+          <div className="mb-6 px-4">
+            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+              <div className="flex gap-2">
                 {promotions.map((promotion) => (
                   <div
                     key={promotion.id}
@@ -118,7 +118,7 @@ export default function Home() {
                       haptic.impactOccurred('light');
                       if (promotion.link) router.push(promotion.link);
                     }}
-                    className="w-[85vw] sm:w-80 aspect-square rounded-2xl overflow-hidden relative snap-center shadow-lg cursor-pointer active:scale-95 transition-transform"
+                    className="w-12 h-12 rounded-xl overflow-hidden relative shadow-md cursor-pointer active:scale-95 transition-transform shrink-0"
                   >
                     <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                     {promotion.image && (
@@ -130,12 +130,6 @@ export default function Home() {
                         unoptimized
                       />
                     )}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-black/60 to-transparent z-20">
-                      <h3 className="text-white font-medium text-lg">{promotion.title}</h3>
-                      {promotion.description && (
-                        <p className="text-white/80 text-sm line-clamp-1">{promotion.description}</p>
-                      )}
-                    </div>
                   </div>
                 ))}
               </div>
