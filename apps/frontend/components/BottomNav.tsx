@@ -56,15 +56,15 @@ export const BottomNav = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-xl border-t border-gray-100"
+      className="fixed bottom-6 left-4 right-4 z-40 mx-auto max-w-md bg-white/90 backdrop-blur-xl rounded-[32px] shadow-2xl"
       style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom), 12px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
       }}
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <div className="mx-auto max-w-md px-6 py-2">
+      <div className="px-6 py-3">
         <div className="flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
