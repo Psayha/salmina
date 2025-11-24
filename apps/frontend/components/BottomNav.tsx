@@ -64,7 +64,7 @@ export const BottomNav = () => {
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <div className="px-6 py-3">
+      <div className="px-4 py-2">
         <div className="flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -74,7 +74,7 @@ export const BottomNav = () => {
               <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="relative flex flex-col items-center gap-1 p-2 transition-colors"
+                className="relative flex flex-col items-center gap-1 p-1.5 transition-colors"
               >
                 <div className="relative">
                   <Icon
