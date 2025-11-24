@@ -48,13 +48,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
  * Initialize app on mount with loading screen
  */
 function AppInitializer({ children }: { children: React.ReactNode }) {
+  console.log('💥 AppInitializer function called!');
+
   const { webApp, isReady } = useTelegram();
+  console.log('💥 After useTelegram - isReady:', isReady, 'webApp:', !!webApp);
+
   const autoLoginWithTelegram = useAuthStore((state) => state.autoLoginWithTelegram);
   const fetchCurrentUser = useAuthStore((state) => state.fetchCurrentUser);
   const fetchCart = useCartStore((state) => state.fetchCart);
 
   const [showLoading, setShowLoading] = useState(true);
   const [initialized, setInitialized] = useState(false);
+
+  console.log('💥 Before useEffect - showLoading:', showLoading, 'initialized:', initialized);
 
   useEffect(() => {
     console.log('🎯 [AppInitializer] useEffect triggered!');
