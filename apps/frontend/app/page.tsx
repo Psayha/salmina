@@ -110,7 +110,7 @@ export default function Home() {
         {promotions.length > 0 && (
           <div className="mb-6 px-4">
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {promotions.map((promotion) => (
                   <div
                     key={promotion.id}
@@ -118,7 +118,7 @@ export default function Home() {
                       haptic.impactOccurred('light');
                       if (promotion.link) router.push(promotion.link);
                     }}
-                    className="w-12 h-12 rounded-xl overflow-hidden relative shadow-md cursor-pointer active:scale-95 transition-transform shrink-0"
+                    className="w-[150px] h-[150px] rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform shrink-0"
                   >
                     <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                     {promotion.image && (
