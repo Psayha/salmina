@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight, Tag, Percent } from 'lucide-react';
 import { Promotion } from '@/lib/api/types';
@@ -25,10 +25,21 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
   const STORY_DURATION = 10000; // 10 seconds per story
   const currentPromotion = promotions[currentIndex];
 
-  // Telegram BackButton closes stories
-  useTelegramBackButton(() => {
+  // Stable callback for BackButton
+  const handleBackButtonClick = useCallback(() => {
     onClose();
-  });
+  }, [onClose]);
+
+  // Telegram BackButton closes stories
+  useTelegramBackButton(handleBackButtonClick);
+
+  // Hide UI elements when stories are open
+  useEffect(() => {
+    document.body.classList.add('stories-open');
+    return () => {
+      document.body.classList.remove('stories-open');
+    };
+  }, []);
 
   // Progress animation
   useEffect(() => {

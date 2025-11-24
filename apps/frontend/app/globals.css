@@ -102,3 +102,9 @@ html.tg-viewport body {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+/* Hide UI elements when stories are open */
+body.stories-open nav,
+body.stories-open header {
+  display: none !important;
+}
