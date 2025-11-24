@@ -38,6 +38,9 @@ export default function RootLayout({
     <html lang="ru">
       <head>
         <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
+        <Script id="version-check" strategy="beforeInteractive">
+          {`console.log('🔥🔥🔥 BUILD VERSION: ApL_RI-K4knv9K9AI_zyt - NEW CODE LOADED! 🔥🔥🔥');`}
+        </Script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
