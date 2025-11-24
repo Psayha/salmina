@@ -45,7 +45,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
         onMenuClick={handleMenuClick}
         onSearchClick={handleSearchClick}
       />
-      <main className="pt-24">{children}</main>
+      <main className="pt-32">{children}</main>
       <BottomNav />
       <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />
     </>
