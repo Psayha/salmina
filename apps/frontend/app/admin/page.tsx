@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -38,6 +38,14 @@ export default function AdminDashboard() {
       href: '/admin/categories',
       color: 'from-orange-500 to-amber-600',
       gradient: 'from-orange-50 to-amber-50',
+    },
+    {
+      title: 'Акции',
+      description: 'Создание акций и специальных предложений',
+      icon: Megaphone,
+      href: '/admin/promotions',
+      color: 'from-red-500 to-pink-600',
+      gradient: 'from-red-50 to-pink-50',
     },
     {
       title: 'Заказы',
