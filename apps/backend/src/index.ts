@@ -72,7 +72,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+      if (!origin) {return callback(null, true);}
 
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
@@ -167,7 +167,7 @@ async function startServer(): Promise<void> {
       logger.info(`📝 Environment: ${env.NODE_ENV}`);
       logger.info(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
       logger.info(`📚 API Documentation: http://localhost:${env.PORT}/api`);
-      logger.info(`💪 Optimizations enabled: compression, rate limiting, request tracing`);
+      logger.info('💪 Optimizations enabled: compression, rate limiting, request tracing');
     });
 
     // Setup graceful shutdown

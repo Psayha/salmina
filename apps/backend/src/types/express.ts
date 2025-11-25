@@ -62,7 +62,7 @@ export interface ValidationSchemas {
  * Usage: router.get('/path', asyncHandler(async (req, res) => { ... }))
  */
 export const asyncHandler = <TBody = any, TParams = any, TQuery = any>(
-  fn: AsyncHandler<TBody, TParams, TQuery>
+  fn: AsyncHandler<TBody, TParams, TQuery>,
 ): AsyncHandler<TBody, TParams, TQuery> => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);

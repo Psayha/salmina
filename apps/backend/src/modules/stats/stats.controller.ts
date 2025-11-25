@@ -84,7 +84,7 @@ export async function getStats(_req: Request, res: Response) {
 
     // Format revenue data for chart (simplified)
     // In a real app, we'd fill in missing days with 0
-    const revenueChart = revenueByDay.map((item) => ({
+    const revenueChart = revenueByDay.map((item: { createdAt: Date; _sum: { total: number | null } }) => ({
       date: item.createdAt.toISOString().split('T')[0],
       revenue: item._sum.total || 0,
     }));

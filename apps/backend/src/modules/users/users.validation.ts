@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../auth/auth.types.js';
 
 /**
  * Update user profile schema
@@ -65,14 +65,14 @@ export const getAllUsersQuerySchema = z.object({
     .string()
     .optional()
     .transform((val: string | undefined): boolean | undefined => {
-      if (!val) return undefined;
+      if (!val) {return undefined;}
       return val === 'true';
     }),
   hasAcceptedTerms: z
     .string()
     .optional()
     .transform((val: string | undefined): boolean | undefined => {
-      if (!val) return undefined;
+      if (!val) {return undefined;}
       return val === 'true';
     }),
   search: z

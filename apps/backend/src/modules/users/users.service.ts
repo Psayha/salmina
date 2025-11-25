@@ -5,9 +5,9 @@
  * @created 2024-11-13
  */
 
-import { UserRole, Prisma } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { NotFoundError, ForbiddenError, BadRequestError } from '../../common/errors/AppError.js';
+import { UserRole } from '../auth/auth.types.js';
 import {
   UserDTO,
   UpdateUserProfileDTO,
@@ -143,7 +143,7 @@ export class UserService {
     const { role, isActive, hasAcceptedTerms, search } = filters;
 
     // Build where clause
-    const where: Prisma.UserWhereInput = {};
+    const where: any = {};
 
     if (role !== undefined) {
       where.role = role;

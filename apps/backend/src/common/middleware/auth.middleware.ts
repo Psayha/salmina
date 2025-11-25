@@ -8,7 +8,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError, ForbiddenError } from '../errors/AppError.js';
 import { verifyAccessToken, JWTPayload } from '../utils/crypto.js';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../modules/auth/auth.types.js';
 
 /**
  * Extended Request interface with user data
@@ -116,6 +116,7 @@ export const requireOwnership = (getUserIdFromParams: (req: AuthRequest) => stri
     const currentUserId = req.user.userId;
 
     // Admin can access any resource
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (req.user.role === UserRole.ADMIN) {
       return next();
     }

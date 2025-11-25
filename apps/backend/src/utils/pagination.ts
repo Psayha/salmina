@@ -47,7 +47,7 @@ export async function paginate<T>(
   params: PaginationParams,
   where?: any,
   include?: any,
-  orderBy?: any
+  orderBy?: any,
 ): Promise<PaginatedResponse<T>> {
   const { page, limit } = parsePaginationParams(params);
   const skip = (page - 1) * limit;
@@ -86,7 +86,7 @@ export async function paginate<T>(
 export const createPaginationMeta = (
   total: number,
   page: number,
-  limit: number
+  limit: number,
 ): PaginationMeta => {
   const totalPages = Math.ceil(total / limit);
 

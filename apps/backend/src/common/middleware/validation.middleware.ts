@@ -6,7 +6,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import { AnyZodObject, ZodError, ZodIssue } from 'zod';
 import { ValidationError } from '../errors/AppError.js';
 
 /**
@@ -23,7 +23,7 @@ export const validate = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const details = error.errors.map((err) => ({
+        const details = error.errors.map((err: ZodIssue) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
@@ -45,7 +45,7 @@ export const validateBody = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const details = error.errors.map((err) => ({
+        const details = error.errors.map((err: ZodIssue) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
@@ -67,7 +67,7 @@ export const validateQuery = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const details = error.errors.map((err) => ({
+        const details = error.errors.map((err: ZodIssue) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
@@ -89,7 +89,7 @@ export const validateParams = (schema: AnyZodObject) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const details = error.errors.map((err) => ({
+        const details = error.errors.map((err: ZodIssue) => ({
           field: err.path.join('.'),
           message: err.message,
         }));

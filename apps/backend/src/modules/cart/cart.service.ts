@@ -63,6 +63,7 @@ class CartService {
       logger.info(`Cart created: ${cart.id}`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return cart;
   }
 
