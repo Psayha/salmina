@@ -99,6 +99,7 @@ describe('AuthService', () => {
         TELEGRAM_BOT_TOKEN: 'test-token',
         REDIS_URL: 'redis://localhost:6379',
         PRODAMUS_SECRET_KEY: 'test-secret',
+        ADMIN_TELEGRAM_IDS: '999999999',
       },
     }));
 
