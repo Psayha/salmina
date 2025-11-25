@@ -32,12 +32,14 @@ const log = (level: LogLevel, message: string, context?: LogContext): void => {
 
   // In production, output structured JSON for log aggregation
   if (!isDevelopment) {
-    const logEntry = {
+    const logEntry: Record<string, unknown> = {
       timestamp,
       level: level.toUpperCase(),
       message,
-      ...(context && { context }),
     };
+    if (context !== undefined) {
+      logEntry.context = context;
+    }
     console.log(JSON.stringify(logEntry));
     return;
   }
@@ -87,7 +89,11 @@ export const logger = {
    */
   query: (query: string, duration: number, context?: LogContext) => {
     if (isDevelopment) {
-      log('debug', `Query executed in ${duration}ms`, { query, ...context });
+      const queryContext: Record<string, unknown> = { query };
+      if (context && typeof context === 'object' && !Array.isArray(context)) {
+        Object.assign(queryContext, context);
+      }
+      log('debug', `Query executed in ${duration}ms`, queryContext);
     }
   },
 };

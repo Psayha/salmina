@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
-import { logger } from '../../utils/logger.js';
 import { paginate } from '../../utils/pagination.js';
 
 const router = Router();
@@ -46,7 +45,8 @@ router.get('/:id', asyncHandler(async (req: TypedRequest<never, { id: string }>,
   });
 
   if (!promotion) {
-    return res.status(404).json({ success: false, message: 'Promotion not found' });
+    res.status(404).json({ success: false, message: 'Promotion not found' });
+    return;
   }
 
   res.json({ success: true, data: promotion });
