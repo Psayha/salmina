@@ -15,7 +15,7 @@ import {
   removeCartItemSchema,
 } from './cart.validation.js';
 
-const router: any = Router();
+const router = Router();
 
 /**
  * All cart routes support both:
