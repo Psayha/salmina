@@ -6,6 +6,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../database/prisma.service.js';
 import { logger } from '../../utils/logger.js';
+import { Decimal } from '@prisma/client/runtime/library';
 
 /**
  * Get admin statistics
@@ -84,16 +85,16 @@ export async function getStats(_req: Request, res: Response) {
 
     // Format revenue data for chart (simplified)
     // In a real app, we'd fill in missing days with 0
-    const revenueChart = revenueByDay.map((item: { createdAt: Date; _sum: { total: number | null } }) => ({
+    const revenueChart = revenueByDay.map((item: { createdAt: Date; _sum: { total: Decimal | null } }) => ({
       date: item.createdAt.toISOString().split('T')[0],
-      revenue: item._sum.total || 0,
+      revenue: Number(item._sum.total || 0),
     }));
 
     res.json({
       success: true,
       data: {
         totalOrders,
-        totalRevenue: totalRevenueResult._sum.total || 0,
+        totalRevenue: Number(totalRevenueResult._sum.total || 0),
         totalUsers,
         totalProducts,
         recentOrders,
