@@ -3,13 +3,13 @@
 import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
 import { User } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
-const UserActionsCell = ({ row }: { row: Row<User> }) => {
+const UserActionsCell = ({ row, onUpdate }: { row: Row<User>; onUpdate: () => void }) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const haptic = useTelegramHaptic();
   const user = row.original;
@@ -29,7 +29,7 @@ const UserActionsCell = ({ row }: { row: Row<User> }) => {
     try {
       await adminApi.updateUserRole(user.id, newRole);
       haptic?.notificationOccurred('success');
-      window.location.reload();
+      onUpdate();
     } catch (error) {
       console.error('Failed to update user role:', error);
       haptic?.notificationOccurred('error');
@@ -56,7 +56,7 @@ const UserActionsCell = ({ row }: { row: Row<User> }) => {
         await adminApi.unblockUser(user.id);
       }
       haptic?.notificationOccurred('success');
-      window.location.reload();
+      onUpdate();
     } catch (error) {
       console.error('Failed to toggle user block:', error);
       haptic?.notificationOccurred('error');
@@ -92,7 +92,7 @@ const UserActionsCell = ({ row }: { row: Row<User> }) => {
   );
 };
 
-const columns: ColumnDef<User>[] = [
+const createColumns = (onUpdate: () => void): ColumnDef<User>[] => [
   {
     accessorKey: 'firstName',
     header: 'Имя',
@@ -162,7 +162,7 @@ const columns: ColumnDef<User>[] = [
   {
     id: 'actions',
     header: 'Действия',
-    cell: ({ row }) => <UserActionsCell row={row} />,
+    cell: ({ row }) => <UserActionsCell row={row} onUpdate={onUpdate} />,
   },
 ];
 
@@ -177,28 +177,31 @@ export default function UsersPage() {
     router.push('/admin');
   });
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log('Fetching users...');
-        const users = await adminApi.getUsers();
-        console.log('Users received:', users, 'Count:', users?.length);
-        // Ensure users is always an array
-        setData(Array.isArray(users) ? users : []);
-        if (users && users.length > 0) {
-          haptic?.notificationOccurred('success');
-        }
-      } catch (error: any) {
-        console.error('Failed to fetch users:', error);
-        console.error('Error response:', error?.response?.data);
-        setData([]);
-        haptic?.notificationOccurred('error');
-      } finally {
-        setIsLoading(false);
+  const fetchData = useCallback(async () => {
+    try {
+      console.log('Fetching users...');
+      const users = await adminApi.getUsers();
+      console.log('Users received:', users, 'Count:', users?.length);
+      // Ensure users is always an array
+      setData(Array.isArray(users) ? users : []);
+      if (users && users.length > 0) {
+        haptic?.notificationOccurred('success');
       }
+    } catch (error: any) {
+      console.error('Failed to fetch users:', error);
+      console.error('Error response:', error?.response?.data);
+      setData([]);
+      haptic?.notificationOccurred('error');
+    } finally {
+      setIsLoading(false);
     }
-    fetchData();
   }, [haptic]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const columns = useMemo(() => createColumns(fetchData), [fetchData]);
 
   if (isLoading) {
     return (
