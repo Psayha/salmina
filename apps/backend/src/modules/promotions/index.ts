@@ -4,7 +4,7 @@ import { authenticate, requireAdmin } from '../../common/middleware/auth.middlew
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { paginate } from '../../utils/pagination.js';
 
-const router = Router();
+const router: Router = Router();
 
 // GET /api/promotions - Active promotions (public)
 router.get('/', asyncHandler(async (_req: TypedRequest, res) => {

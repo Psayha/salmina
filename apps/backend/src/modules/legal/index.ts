@@ -4,7 +4,7 @@ import { authenticate, requireAdmin } from '../../common/middleware/auth.middlew
 import { LegalDocumentType } from '@prisma/client';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 
-const router = Router();
+const router: Router = Router();
 
 interface LegalDocumentBody {
   type: LegalDocumentType;

@@ -168,3 +168,6 @@ export function getErrorMessage(error: unknown): string {
 
   return 'Произошла неизвестная ошибка';
 }
+
+// Default export for convenience
+export default apiClient;

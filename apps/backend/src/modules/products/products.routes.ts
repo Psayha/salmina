@@ -20,7 +20,7 @@ import {
   updateStockSchema,
 } from './products.validation.js';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * Public routes (no authentication required)

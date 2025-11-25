@@ -10,7 +10,7 @@ import { asyncHandler } from '../types/express.js';
 import { prisma } from '../database/prisma.service.js';
 import { redis } from '../database/redis.service.js';
 
-const router = Router();
+const router: Router = Router();
 
 interface HealthCheck {
   status: 'ok' | 'degraded' | 'error';
