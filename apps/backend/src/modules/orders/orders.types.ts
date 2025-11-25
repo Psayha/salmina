@@ -5,11 +5,26 @@
  * @created 2024-11-13
  */
 
-import { OrderStatus, PaymentMethod, PaymentStatus } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
-// Re-export enums for convenience
-export { OrderStatus, PaymentMethod, PaymentStatus };
+export enum OrderStatus {
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  SHIPPED = 'SHIPPED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum PaymentMethod {
+  ONLINE = 'ONLINE',
+  SBP = 'SBP',
+  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY',
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  FAILED = 'FAILED',
+}
 
 /**
  * Order model interface

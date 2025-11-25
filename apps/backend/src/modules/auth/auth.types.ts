@@ -5,10 +5,10 @@
  * @created 2024-11-13
  */
 
-import { UserRole } from '@prisma/client';
-
-// Re-export UserRole for convenience
-export { UserRole };
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
 
 export interface User {
   id: string;
