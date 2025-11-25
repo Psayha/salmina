@@ -37,6 +37,9 @@ export function DebugPanel() {
   const { user, isAuthenticated, isLoading } = useAuthStore();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Only show for admins
+  const isAdmin = user?.role === 'ADMIN';
+
   useEffect(() => {
     // Sync global logs to component state
 
@@ -71,6 +74,9 @@ export function DebugPanel() {
     hasAccessToken: typeof window !== 'undefined' ? !!localStorage.getItem('accessToken') : false,
     hasRefreshToken: typeof window !== 'undefined' ? !!localStorage.getItem('refreshToken') : false,
   };
+
+  // Don't render anything if not admin
+  if (!isAdmin) return null;
 
   return (
     <>

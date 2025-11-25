@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -48,6 +48,14 @@ export default function AdminDashboard() {
       gradient: 'from-red-50 to-pink-50',
     },
     {
+      title: 'Промокоды',
+      description: 'Управление промокодами и скидками',
+      icon: Ticket,
+      href: '/admin/promocodes',
+      color: 'from-cyan-500 to-teal-600',
+      gradient: 'from-cyan-50 to-teal-50',
+    },
+    {
       title: 'Заказы',
       description: 'Просмотр и управление заказами',
       icon: ShoppingCart,
@@ -62,6 +70,14 @@ export default function AdminDashboard() {
       href: '/admin/users',
       color: 'from-green-500 to-emerald-600',
       gradient: 'from-green-50 to-emerald-50',
+    },
+    {
+      title: 'Юридические документы',
+      description: 'Документы и правовая информация',
+      icon: Scale,
+      href: '/admin/legal',
+      color: 'from-slate-500 to-gray-600',
+      gradient: 'from-slate-50 to-gray-50',
     },
   ];
 
