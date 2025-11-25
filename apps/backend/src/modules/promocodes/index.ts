@@ -6,7 +6,7 @@ import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { DiscountType } from '@prisma/client';
 import { paginate } from '../../utils/pagination.js';
 
-const router = Router();
+const router: Router = Router();
 
 interface CreatePromocodeBody {
   code: string;

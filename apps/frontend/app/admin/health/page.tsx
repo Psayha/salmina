@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package } from 'lucide-react';
 import { healthApi, HealthCheckResponse } from '@/lib/api/endpoints/health';
-import { useHaptic } from '@/hooks/useHaptic';
+import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 export default function HealthPage() {
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
@@ -11,7 +11,7 @@ export default function HealthPage() {
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
-  const haptic = useHaptic();
+  const haptic = useTelegramHaptic();
 
   const fetchHealth = async () => {
     try {
@@ -34,10 +34,10 @@ export default function HealthPage() {
     fetchHealth();
 
     // Auto-refresh every 10 seconds if enabled
-    if (autoRefresh) {
-      const interval = setInterval(fetchHealth, 10000);
-      return () => clearInterval(interval);
-    }
+    if (!autoRefresh) return;
+
+    const interval = setInterval(fetchHealth, 10000);
+    return () => clearInterval(interval);
   }, [autoRefresh]);
 
   const handleRefresh = () => {

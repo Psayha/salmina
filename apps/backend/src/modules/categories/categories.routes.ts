@@ -16,7 +16,7 @@ import {
   deleteCategorySchema,
 } from './categories.validation.js';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * Public routes
