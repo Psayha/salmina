@@ -198,7 +198,7 @@ export default function NewPromotionPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-linear-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>
