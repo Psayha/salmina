@@ -86,6 +86,22 @@ describe('AuthService', () => {
       debug: jest.fn(),
     };
 
+    // Mock env module with valid test values
+    jest.unstable_mockModule('../../../config/env.js', () => ({
+      env: {
+        NODE_ENV: 'test',
+        PORT: 3001,
+        DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+        JWT_SECRET: 'test-jwt-secret-at-least-32-characters-long',
+        JWT_REFRESH_SECRET: 'test-jwt-refresh-secret-at-least-32-characters-long',
+        JWT_EXPIRES_IN: '15m',
+        JWT_REFRESH_EXPIRES_IN: '7d',
+        TELEGRAM_BOT_TOKEN: 'test-token',
+        REDIS_URL: 'redis://localhost:6379',
+        PRODAMUS_SECRET_KEY: 'test-secret',
+      },
+    }));
+
     // Mock modules
     jest.unstable_mockModule('../../../database/prisma.service.js', () => ({
       prisma: prismaMock,
