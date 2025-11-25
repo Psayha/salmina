@@ -15,6 +15,7 @@ interface ImageUploadProps {
 export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = async (files: FileList | null) => {
@@ -47,11 +48,15 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
     if (validFiles.length === 0) return;
 
     setUploading(true);
+    setUploadProgress({ current: 0, total: validFiles.length });
 
     try {
       const uploadedUrls: string[] = [];
 
-      for (const file of validFiles) {
+      for (let i = 0; i < validFiles.length; i++) {
+        const file = validFiles[i];
+        setUploadProgress({ current: i + 1, total: validFiles.length });
+
         const formData = new FormData();
         formData.append('file', file);
 
@@ -59,6 +64,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 60000, // 60 seconds for file uploads
         });
 
         if (response.data.success && response.data.data.url) {
@@ -74,6 +80,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
       alert('Ошибка загрузки изображений');
     } finally {
       setUploading(false);
+      setUploadProgress({ current: 0, total: 0 });
     }
   };
 
@@ -149,6 +156,31 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
           </p>
         </div>
       </div>
+
+      {/* Upload Progress Bar */}
+      {uploading && uploadProgress.total > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Загрузка изображений...
+            </span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {uploadProgress.current} / {uploadProgress.total}
+            </span>
+          </div>
+
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-pink-500 to-pink-600 transition-all duration-300 ease-out"
+              style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+            />
+          </div>
+
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            Пожалуйста, подождите. Не закрывайте страницу...
+          </p>
+        </div>
+      )}
 
       {/* Preview Grid */}
       {value.length > 0 && (
