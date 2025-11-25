@@ -20,9 +20,10 @@ export function ProductSelector({ selectedIds, onChange }: ProductSelectorProps)
     const fetchProducts = async () => {
       try {
         const data = await productsApi.getProducts({ limit: 100 }); // Fetch more products
-        setProducts(data.items);
+        setProducts(data?.items || []);
       } catch (error) {
         console.error('Failed to fetch products:', error);
+        setProducts([]);
       } finally {
         setIsLoading(false);
       }

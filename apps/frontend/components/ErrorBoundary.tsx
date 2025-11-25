@@ -39,10 +39,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen relative z-10 flex items-center justify-center p-6">
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-12 border border-white/30 shadow-lg text-center max-w-md">
-            <div className="w-24 h-24 mx-auto mb-6 bg-red-500/20 backdrop-blur-md rounded-full border border-red-500/30 flex items-center justify-center">
+          <div className="bg-white/40 dark:bg-gray-900/40 backdrop-blur-md rounded-2xl p-12 border border-white/30 dark:border-gray-700/30 shadow-lg text-center max-w-md">
+            <div className="w-24 h-24 mx-auto mb-6 bg-red-500/20 backdrop-blur-md rounded-full border border-red-500/30 dark:border-red-400/30 flex items-center justify-center">
               <svg
-                className="w-12 h-12 text-red-600"
+                className="w-12 h-12 text-red-600 dark:text-red-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -56,18 +56,18 @@ export class ErrorBoundary extends Component<Props, State> {
               </svg>
             </div>
 
-            <h1 className="text-2xl font-light text-gray-900 mb-3">Что-то пошло не так</h1>
+            <h1 className="text-2xl font-light text-gray-900 dark:text-white mb-3">Что-то пошло не так</h1>
 
-            <p className="text-sm font-light text-gray-600 mb-6">
+            <p className="text-sm font-light text-gray-600 dark:text-gray-300 mb-6">
               Произошла ошибка при загрузке приложения. Попробуйте обновить страницу.
             </p>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mb-6 text-left">
-                <summary className="text-sm font-light text-gray-700 cursor-pointer hover:text-gray-900">
+                <summary className="text-sm font-light text-gray-700 dark:text-gray-200 cursor-pointer hover:text-gray-900 dark:hover:text-white">
                   Показать детали ошибки
                 </summary>
-                <pre className="mt-3 p-4 bg-white/30 rounded-xl text-xs overflow-auto max-h-40">
+                <pre className="mt-3 p-4 bg-white/30 dark:bg-gray-800/30 rounded-xl text-xs text-gray-800 dark:text-gray-200 overflow-auto max-h-40">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack}
@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </Button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="px-6 py-2.5 bg-white/30 backdrop-blur-md rounded-full border border-white/30 text-xs font-light text-gray-700 hover:bg-white/40 transition-all duration-300"
+                className="px-6 py-2.5 bg-white/30 dark:bg-gray-800/30 backdrop-blur-md rounded-full border border-white/30 dark:border-gray-700/30 text-xs font-light text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-800/40 transition-all duration-300"
               >
                 На главную
               </button>

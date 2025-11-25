@@ -7,6 +7,7 @@ import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTele
 import { ArrowLeft, Save } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import { ProductSelector } from '@/components/admin/ProductSelector';
+import { generateSlug } from '@/lib/utils';
 
 export default function NewPromotionPage() {
   const router = useRouter();
@@ -93,7 +94,14 @@ export default function NewPromotionPage() {
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) => {
+                const title = e.target.value;
+                setFormData({
+                  ...formData,
+                  title,
+                  link: formData.link || generateSlug(title, 15)
+                });
+              }}
               className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
               placeholder="Например: Летняя распродажа"
               required

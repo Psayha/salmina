@@ -104,7 +104,7 @@ app.use((req, _res, next) => {
 });
 
 // Health check routes (no rate limiting)
-app.use('/', healthRoutes);
+app.use('/api', healthRoutes);
 
 // API root
 app.get('/api', (_req, res) => {
