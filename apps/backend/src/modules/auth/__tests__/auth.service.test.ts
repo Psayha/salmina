@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, jest, afterEach } from '@jest/globals';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../../generated-enums.js';
 import { UnauthorizedError, BadRequestError } from '../../../common/errors/AppError.js';
 
 describe('AuthService', () => {

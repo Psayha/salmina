@@ -1,14 +1,12 @@
 import { Router } from 'express';
+import { DiscountType } from '../../generated-enums.js';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { NotFoundError } from '../../common/errors/AppError.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { paginate } from '../../utils/pagination.js';
 
-export enum DiscountType {
-  PERCENT = 'PERCENT',
-  FIXED = 'FIXED',
-}
+export { DiscountType };
 
 const router: Router = Router();
 

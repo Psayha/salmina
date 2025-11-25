@@ -1,14 +1,10 @@
 import { Router } from 'express';
+import { LegalDocumentType } from '../../generated-enums.js';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 
-export enum LegalDocumentType {
-  TERMS = 'TERMS',
-  PRIVACY = 'PRIVACY',
-  OFFER = 'OFFER',
-  DELIVERY_PAYMENT = 'DELIVERY_PAYMENT',
-}
+export { LegalDocumentType };
 
 const router: Router = Router();
 

@@ -5,35 +5,11 @@
  * @created 2024-11-13
  */
 
+import { OrderStatus, PaymentMethod, PaymentStatus } from '../../generated-enums.js';
 import { Decimal } from '@prisma/client/runtime/library';
 
-/**
- * Order status enum
- */
-export enum OrderStatus {
-  PAID = 'PAID',
-  PROCESSING = 'PROCESSING',
-  SHIPPED = 'SHIPPED',
-  CANCELLED = 'CANCELLED',
-}
-
-/**
- * Payment method enum
- */
-export enum PaymentMethod {
-  ONLINE = 'ONLINE',
-  SBP = 'SBP',
-  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY',
-}
-
-/**
- * Payment status enum
- */
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-  FAILED = 'FAILED',
-}
+// Re-export enums for convenience
+export { OrderStatus, PaymentMethod, PaymentStatus };
 
 /**
  * Order model interface

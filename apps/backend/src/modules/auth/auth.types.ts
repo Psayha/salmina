@@ -5,10 +5,10 @@
  * @created 2024-11-13
  */
 
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-}
+import { UserRole } from '../../generated-enums.js';
+
+// Re-export UserRole for convenience
+export { UserRole };
 
 export interface User {
   id: string;
