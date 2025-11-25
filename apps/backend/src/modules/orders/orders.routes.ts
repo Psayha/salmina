@@ -8,7 +8,7 @@ import { authenticate, requireAdmin } from '../../common/middleware/auth.middlew
 import { validate } from '../../common/middleware/validation.middleware.js';
 import { createOrderSchema, updateOrderStatusSchema, getOrderSchema, getOrdersSchema } from './orders.validation.js';
 
-const router: any = Router();
+const router = Router();
 
 router.post('/', authenticate, validate(createOrderSchema), ordersController.createOrder.bind(ordersController));
 router.get('/', authenticate, validate(getOrdersSchema), ordersController.getUserOrders.bind(ordersController));
