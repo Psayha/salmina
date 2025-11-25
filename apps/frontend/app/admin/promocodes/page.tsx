@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/admin/DataTable';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { Edit, Trash, Plus, Percent, Copy } from 'lucide-react';
+import { Edit, Trash, Plus, Copy } from 'lucide-react';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { promocodesApi, Promocode, DiscountType } from '@/lib/api/endpoints/promocodes';
