@@ -142,8 +142,6 @@ export class UserService {
     const { page, limit } = pagination;
     const { role, isActive, hasAcceptedTerms, search } = filters;
 
-    logger.info(`🔍 getAllUsers called with pagination:`, { page, limit, filters });
-
     // Build where clause
     const where: Prisma.UserWhereInput = {};
 
@@ -170,8 +168,6 @@ export class UserService {
       ];
     }
 
-    logger.info(`📋 Where clause:`, where);
-
     // Calculate skip
     const skip = (page - 1) * limit;
 
@@ -189,18 +185,7 @@ export class UserService {
     // Calculate total pages
     const totalPages = Math.ceil(total / limit);
 
-    logger.info(`✅ Retrieved ${users.length} users out of ${total} total (page ${page}/${totalPages})`);
-
-    if (users.length > 0) {
-      logger.info(`👤 First user example:`, {
-        id: users[0].id,
-        telegramId: users[0].telegramId,
-        firstName: users[0].firstName,
-        role: users[0].role,
-      });
-    } else {
-      logger.warn(`⚠️ No users found in database!`);
-    }
+    logger.info(`Retrieved ${users.length} users out of ${total} total (page ${page}/${totalPages})`);
 
     return {
       users: toUserDTOList(users),
