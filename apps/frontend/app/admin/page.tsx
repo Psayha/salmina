@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket, Activity } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -78,6 +78,14 @@ export default function AdminDashboard() {
       href: '/admin/legal',
       color: 'from-slate-500 to-gray-600',
       gradient: 'from-slate-50 to-gray-50',
+    },
+    {
+      title: 'Мониторинг системы',
+      description: 'Состояние системы и health checks',
+      icon: Activity,
+      href: '/admin/health',
+      color: 'from-emerald-500 to-green-600',
+      gradient: 'from-emerald-50 to-green-50',
     },
   ];
 
