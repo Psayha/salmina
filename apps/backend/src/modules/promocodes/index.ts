@@ -4,6 +4,7 @@ import { authenticate, requireAdmin } from '../../common/middleware/auth.middlew
 import { NotFoundError } from '../../common/errors/AppError.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { DiscountType } from '@prisma/client';
+import { paginate } from '../../utils/pagination.js';
 
 const router = Router();
 
@@ -18,10 +19,16 @@ interface CreatePromocodeBody {
   validTo: string;
 }
 
-// GET /api/promocodes - List all (admin)
-router.get('/', authenticate, requireAdmin, asyncHandler(async (_req: TypedRequest, res) => {
-  const promocodes = await prisma.promocode.findMany({ orderBy: { createdAt: 'desc' } });
-  res.json({ success: true, data: promocodes });
+// GET /api/promocodes - List all (admin) with pagination
+router.get('/', authenticate, requireAdmin, asyncHandler(async (req: TypedRequest, res) => {
+  const result = await paginate(
+    prisma.promocode,
+    { page: Number(req.query.page), limit: Number(req.query.limit) },
+    undefined,
+    undefined,
+    { createdAt: 'desc' }
+  );
+  res.json({ success: true, ...result });
 }));
 
 // POST /api/promocodes - Create (admin)

@@ -8,14 +8,19 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { env } from './config/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFoundHandler } from './middleware/notFound.js';
+import { requestIdMiddleware } from './middleware/requestId.js';
+import { apiLimiter, authLimiter, orderLimiter } from './middleware/rateLimit.js';
+import { sanitizeBody } from './middleware/sanitize.js';
 import { logger } from './utils/logger.js';
 import { prisma } from './database/prisma.service.js';
 import { redis } from './database/redis.service.js';
+import { setupGracefulShutdown } from './utils/gracefulShutdown.js';
 
 // Import module routes
 import { authRoutes } from './modules/auth/index.js';
@@ -30,6 +35,7 @@ import legalRoutes from './modules/legal/index.js';
 import { uploadRoutes } from './modules/upload/index.js';
 import { statsRoutes } from './modules/stats/index.js';
 import webhooksRoutes from './routes/webhooks.routes.js';
+import healthRoutes from './routes/health.routes.js';
 
 const app = express();
 
@@ -39,6 +45,20 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(helmet());
+
+// Compression middleware for response compression (gzip)
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  level: 6, // Balance between speed and compression ratio
+}));
+
+// Request ID middleware for tracing
+app.use(requestIdMiddleware);
 
 // CORS configuration with multiple allowed origins
 const allowedOrigins = [
@@ -71,6 +91,9 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Apply rate limiting to all API routes
+app.use('/api', apiLimiter);
+
 // Request logging
 app.use((req, _res, next) => {
   logger.info(`${req.method} ${req.path}`, {
@@ -80,20 +103,8 @@ app.use((req, _res, next) => {
   next();
 });
 
-// Health check
-app.get('/health', async (_req, res) => {
-  const dbConnected = await checkDatabaseConnection();
-  const redisConnected = redis.isReady();
-
-  res.json({
-    status: dbConnected && redisConnected ? 'ok' : 'degraded',
-    timestamp: new Date().toISOString(),
-    services: {
-      database: dbConnected ? 'connected' : 'disconnected',
-      redis: redisConnected ? 'connected' : 'disconnected',
-    },
-  });
-});
+// Health check routes (no rate limiting)
+app.use('/', healthRoutes);
 
 // API root
 app.get('/api', (_req, res) => {
@@ -116,31 +127,18 @@ app.get('/api', (_req, res) => {
   });
 });
 
-// Health check under /api for deployment compatibility
-app.get('/api/health', async (_req, res) => {
-  const dbConnected = await checkDatabaseConnection();
-  const redisConnected = redis.isReady();
+// Mount module routes with specific rate limits and sanitization
 
-  res.json({
-    status: dbConnected && redisConnected ? 'ok' : 'degraded',
-    timestamp: new Date().toISOString(),
-    services: {
-      database: dbConnected ? 'connected' : 'disconnected',
-      redis: redisConnected ? 'connected' : 'disconnected',
-    },
-  });
-});
-
-// Mount module routes
-app.use('/api/auth', authRoutes);
+// Auth routes with strict rate limiting
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/products', productsRoutes);
-app.use('/api/categories', categoriesRoutes);
+app.use('/api/products', sanitizeBody, productsRoutes);
+app.use('/api/categories', sanitizeBody, categoriesRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/orders', ordersRoutes);
+app.use('/api/orders', orderLimiter, ordersRoutes);
 app.use('/api/promocodes', promocodesRoutes);
-app.use('/api/promotions', promotionsRoutes);
-app.use('/api/legal', legalRoutes);
+app.use('/api/promotions', sanitizeBody, promotionsRoutes);
+app.use('/api/legal', sanitizeBody, legalRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/stats', statsRoutes);
 app.use('/webhooks', webhooksRoutes);
@@ -150,39 +148,6 @@ app.use(notFoundHandler);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
-
-/**
- * Check database connection
- */
-async function checkDatabaseConnection(): Promise<boolean> {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Graceful shutdown handler
- */
-async function gracefulShutdown(signal: string): Promise<void> {
-  logger.info(`${signal} received, starting graceful shutdown...`);
-
-  // Close database connection
-  await prisma.$disconnect();
-  logger.info('Database connection closed');
-
-  // Close Redis connection
-  await redis.disconnect();
-  logger.info('Redis connection closed');
-
-  process.exit(0);
-}
-
-// Register shutdown handlers
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 /**
  * Start server
@@ -196,12 +161,16 @@ async function startServer(): Promise<void> {
     await redis.getClient();
 
     // Start listening
-    app.listen(env.PORT, () => {
+    const server = app.listen(env.PORT, () => {
       logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
       logger.info(`📝 Environment: ${env.NODE_ENV}`);
       logger.info(`🌐 Frontend URL: ${env.FRONTEND_URL}`);
       logger.info(`📚 API Documentation: http://localhost:${env.PORT}/api`);
+      logger.info(`💪 Optimizations enabled: compression, rate limiting, request tracing`);
     });
+
+    // Setup graceful shutdown
+    setupGracefulShutdown(server);
   } catch (error) {
     logger.error('Failed to start server:', error);
     process.exit(1);

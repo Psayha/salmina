@@ -3,6 +3,7 @@ import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { logger } from '../../utils/logger.js';
+import { paginate } from '../../utils/pagination.js';
 
 const router = Router();
 
@@ -14,18 +15,21 @@ router.get('/', asyncHandler(async (_req: TypedRequest, res) => {
   res.json({ success: true, data: promotions });
 }));
 
-// GET /api/promotions/admin - All promotions (admin)
+// GET /api/promotions/admin - All promotions (admin) with pagination
 // MUST be before /:id route to avoid matching "admin" as an ID
-router.get('/admin', authenticate, requireAdmin, asyncHandler(async (_req: TypedRequest, res) => {
-  const promotions = await prisma.promotion.findMany({
-    include: {
+router.get('/admin', authenticate, requireAdmin, asyncHandler(async (req: TypedRequest, res) => {
+  const result = await paginate(
+    prisma.promotion,
+    { page: Number(req.query.page), limit: Number(req.query.limit) },
+    undefined,
+    {
       _count: {
         select: { products: true },
       },
     },
-    orderBy: { createdAt: 'desc' },
-  });
-  res.json({ success: true, data: promotions });
+    { createdAt: 'desc' }
+  );
+  res.json({ success: true, ...result });
 }));
 
 // GET /api/promotions/:id - Get single promotion (public)
