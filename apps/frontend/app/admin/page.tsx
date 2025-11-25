@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -62,6 +62,14 @@ export default function AdminDashboard() {
       href: '/admin/users',
       color: 'from-green-500 to-emerald-600',
       gradient: 'from-green-50 to-emerald-50',
+    },
+    {
+      title: 'Юридические документы',
+      description: 'Документы и правовая информация',
+      icon: Scale,
+      href: '/admin/legal',
+      color: 'from-slate-500 to-gray-600',
+      gradient: 'from-slate-50 to-gray-50',
     },
   ];
 
