@@ -42,4 +42,9 @@ export const legalApi = {
     const response = await apiClient.patch<ApiResponse<LegalDocument>>(`/legal/${id}`, data);
     return response.data.data;
   },
+
+  deleteDocument: async (id: string) => {
+    const response = await apiClient.delete<ApiResponse<void>>(`/legal/${id}`);
+    return response.data;
+  },
 };
