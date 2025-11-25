@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Save, Eye, EyeOff } from 'lucide-react';
+import { Save, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
 
@@ -88,6 +88,28 @@ export default function LegalDocumentEditPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!document) return;
+
+    const confirmed = confirm(
+      `Вы уверены, что хотите удалить документ "${title}"? Это действие нельзя отменить.`
+    );
+
+    if (!confirmed) return;
+
+    haptic?.impactOccurred('medium');
+
+    try {
+      await legalApi.deleteDocument(document.id);
+      haptic?.notificationOccurred('success');
+      router.push('/admin/legal');
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+      haptic?.notificationOccurred('error');
+      alert('Ошибка при удалении документа');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -107,14 +129,25 @@ export default function LegalDocumentEditPage() {
             {document ? 'Редактирование документа' : 'Создание нового документа'}
           </p>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={isSaving || !title || !content}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-500 to-gray-600 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Save className="w-5 h-5" />
-          <span>{isSaving ? 'Сохранение...' : 'Сохранить'}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          {document && (
+            <button
+              onClick={handleDelete}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl hover:shadow-lg transition-all"
+            >
+              <Trash2 className="w-5 h-5" />
+              <span>Удалить</span>
+            </button>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={isSaving || !title || !content}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-500 to-gray-600 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Save className="w-5 h-5" />
+            <span>{isSaving ? 'Сохранение...' : 'Сохранить'}</span>
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">

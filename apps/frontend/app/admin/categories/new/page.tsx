@@ -7,6 +7,7 @@ import { Category } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { ArrowLeft, Save } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { generateSlug } from '@/lib/utils';
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -102,7 +103,14 @@ export default function NewCategoryPage() {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) => {
+                const name = e.target.value;
+                setFormData({
+                  ...formData,
+                  name,
+                  slug: formData.slug || generateSlug(name, 15)
+                });
+              }}
               className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
               placeholder="Введите название категории"
               required
@@ -222,7 +230,7 @@ export default function NewCategoryPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light disabled:opacity-50"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>
