@@ -1,10 +1,15 @@
 /**
  * @file generated-enums.ts
- * @description Manually generated enum types from Prisma schema
- * These enums match the Prisma schema exactly and can be used
- * until prisma generate can run successfully.
+ * @description This file is no longer needed - use enums from @prisma/client instead
+ *
+ * All enums are now imported directly from @prisma/client:
+ * import { UserRole, OrderStatus, PaymentMethod, PaymentStatus, DiscountType, LegalDocumentType } from '@prisma/client';
  */
 
+// DEPRECATED: Use @prisma/client enums instead
+// This file is kept for reference but should not be used
+
+/*
 export enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',
@@ -40,3 +45,4 @@ export enum LegalDocumentType {
   OFFER = 'OFFER',
   DELIVERY_PAYMENT = 'DELIVERY_PAYMENT',
 }
+*/

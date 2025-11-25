@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { OrderStatus, PaymentMethod } from './orders.types.js';
+import { OrderStatus, PaymentMethod } from '@prisma/client';
 
 export const createOrderSchema = z.object({
   body: z.object({

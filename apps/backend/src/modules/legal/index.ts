@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { LegalDocumentType } from '../../generated-enums.js';
+import { LegalDocumentType } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';

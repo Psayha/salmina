@@ -5,7 +5,7 @@
  * @created 2024-11-13
  */
 
-import { UserRole } from '../../generated-enums.js';
+import { UserRole } from '@prisma/client';
 
 // Re-export UserRole for convenience
 export { UserRole };

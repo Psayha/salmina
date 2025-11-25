@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { DiscountType } from '../../generated-enums.js';
+import { DiscountType } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { NotFoundError } from '../../common/errors/AppError.js';

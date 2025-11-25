@@ -5,7 +5,7 @@
  * @created 2024-11-13
  */
 
-import { OrderStatus, PaymentMethod, PaymentStatus } from '../../generated-enums.js';
+import { OrderStatus, PaymentMethod, PaymentStatus } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 
 // Re-export enums for convenience
