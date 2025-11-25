@@ -35,7 +35,7 @@ export const setupGracefulShutdown = (server: Server) => {
       logger.info('Prisma disconnected');
 
       // Close Redis connection
-      await redis.quit();
+      await redis.disconnect();
       logger.info('Redis disconnected');
 
       // Clear the timeout as shutdown completed successfully

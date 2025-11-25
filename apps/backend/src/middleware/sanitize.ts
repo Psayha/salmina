@@ -39,7 +39,7 @@ const sanitizeInput = (input: any): any => {
  * Middleware to sanitize request body
  * Apply to routes that accept user-generated content
  */
-export const sanitizeBody = (req: Request, res: Response, next: NextFunction) => {
+export const sanitizeBody = (req: Request, _res: Response, next: NextFunction) => {
   if (req.body) {
     req.body = sanitizeInput(req.body);
   }
@@ -49,7 +49,7 @@ export const sanitizeBody = (req: Request, res: Response, next: NextFunction) =>
 /**
  * Middleware to sanitize query parameters
  */
-export const sanitizeQuery = (req: Request, res: Response, next: NextFunction) => {
+export const sanitizeQuery = (req: Request, _res: Response, next: NextFunction) => {
   if (req.query) {
     req.query = sanitizeInput(req.query);
   }
@@ -59,7 +59,7 @@ export const sanitizeQuery = (req: Request, res: Response, next: NextFunction) =
 /**
  * Middleware to sanitize route parameters
  */
-export const sanitizeParams = (req: Request, res: Response, next: NextFunction) => {
+export const sanitizeParams = (req: Request, _res: Response, next: NextFunction) => {
   if (req.params) {
     req.params = sanitizeInput(req.params);
   }
@@ -69,7 +69,7 @@ export const sanitizeParams = (req: Request, res: Response, next: NextFunction) 
 /**
  * Combined middleware to sanitize all inputs
  */
-export const sanitizeAll = (req: Request, res: Response, next: NextFunction) => {
+export const sanitizeAll = (req: Request, _res: Response, next: NextFunction) => {
   if (req.body) req.body = sanitizeInput(req.body);
   if (req.query) req.query = sanitizeInput(req.query);
   if (req.params) req.params = sanitizeInput(req.params);

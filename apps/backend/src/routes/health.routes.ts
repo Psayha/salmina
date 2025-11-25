@@ -50,7 +50,8 @@ router.get('/health', asyncHandler(async (_req, res) => {
 
   // Check Redis connection
   try {
-    await redis.ping();
+    const client = await redis.getClient();
+    await client.ping();
     health.checks.redis = 'ok';
   } catch (error) {
     health.checks.redis = 'error';
