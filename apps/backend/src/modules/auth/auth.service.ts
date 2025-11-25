@@ -51,12 +51,8 @@ export class AuthService {
    * @throws {BadRequestError} If initData parsing fails
    */
   async authenticateWithTelegram(initData: string): Promise<AuthResponse> {
-    logger.info('🔐 authenticateWithTelegram called');
-    logger.info(`📱 initData length: ${initData?.length || 0}`);
-
     // Validate Telegram initData signature
     const isValid = validateTelegramInitData(initData, env.TELEGRAM_BOT_TOKEN);
-    logger.info(`✅ initData validation result: ${isValid}`);
 
     if (!isValid) {
       logger.warn('Telegram authentication failed: invalid initData signature');
@@ -65,7 +61,6 @@ export class AuthService {
 
     // Parse initData to extract user information
     const parsedData = parseTelegramInitData(initData);
-    logger.info(`📋 Parsed data:`, parsedData);
 
     if (!parsedData || !parsedData.user) {
       logger.warn('Telegram authentication failed: unable to parse user data');
@@ -73,11 +68,6 @@ export class AuthService {
     }
 
     const { user: telegramUser } = parsedData;
-    logger.info(`👤 Telegram user:`, {
-      id: telegramUser.id,
-      firstName: telegramUser.first_name,
-      username: telegramUser.username,
-    });
 
     // Check if auth_date is not too old (prevent replay attacks)
     const authDate = parsedData.auth_date;
@@ -90,14 +80,7 @@ export class AuthService {
     }
 
     // Find or create user
-    logger.info('🔍 Calling findOrCreateUser...');
     const user = await this.findOrCreateUser(telegramUser);
-    logger.info(`✅ User found/created:`, {
-      id: user.id,
-      telegramId: user.telegramId.toString(),
-      role: user.role,
-      isActive: user.isActive,
-    });
 
     // Check if user is active
     if (!user.isActive) {
@@ -106,14 +89,12 @@ export class AuthService {
     }
 
     // Generate tokens
-    logger.info('🔑 Generating tokens...');
     const { accessToken, refreshToken } = await this.generateTokens(user);
 
     // Store refresh token in Redis
-    logger.info('💾 Storing refresh token in Redis...');
     await this.storeRefreshToken(user.id, refreshToken);
 
-    logger.info(`🎉 User authenticated successfully: ${user.id} (Telegram ID: ${user.telegramId})`);
+    logger.info(`User authenticated successfully: ${user.id} (Telegram ID: ${user.telegramId})`);
 
     return {
       accessToken,
@@ -243,37 +224,17 @@ export class AuthService {
     username?: string;
     photo_url?: string;
   }): Promise<User> {
-    logger.info('🔍 findOrCreateUser called with:', {
-      telegramId: telegramUser.id,
-      firstName: telegramUser.first_name,
-      username: telegramUser.username,
-    });
-
     const telegramId = BigInt(telegramUser.id);
-    logger.info(`📊 telegramId as BigInt: ${telegramId.toString()}`);
 
     // Check if this is an admin user
     const isAdmin = env.ADMIN_TELEGRAM_IDS.includes(telegramUser.id.toString());
     const role = isAdmin ? UserRole.ADMIN : UserRole.USER;
-    logger.info(`👑 Role determined: ${role} (isAdmin: ${isAdmin})`);
-    logger.info(`🔧 ADMIN_TELEGRAM_IDS from env: ${JSON.stringify(env.ADMIN_TELEGRAM_IDS)}`);
 
     // Check if user exists
-    logger.info('🔍 Checking if user exists in database...');
     const existingUser = await prisma.user.findUnique({ where: { telegramId } });
     const isNewUser = !existingUser;
-    logger.info(`📊 User exists: ${!isNewUser}, Creating new user: ${isNewUser}`);
-
-    if (existingUser) {
-      logger.info(`✅ Found existing user:`, {
-        id: existingUser.id,
-        telegramId: existingUser.telegramId.toString(),
-        role: existingUser.role,
-      });
-    }
 
     // Find or create user
-    logger.info('💾 Running prisma.user.upsert...');
     const user = await prisma.user.upsert({
       where: { telegramId },
       update: {
@@ -295,24 +256,14 @@ export class AuthService {
       },
     });
 
-    logger.info(`✅ Upsert completed! User ${isNewUser ? 'CREATED' : 'UPDATED'}: ${user.id} (Telegram ID: ${telegramId})`);
-    logger.info(`📊 Final user data:`, {
-      id: user.id,
-      telegramId: user.telegramId.toString(),
-      firstName: user.firstName,
-      username: user.username,
-      role: user.role,
-      isActive: user.isActive,
-    });
+    logger.info(`User ${isNewUser ? 'created' : 'updated'}: ${user.id} (Telegram ID: ${telegramId})`);
 
     // Send welcome message to new users
     if (isNewUser) {
-      logger.info('📧 Sending welcome message to new user...');
       try {
         await telegramService.sendWelcomeMessage(telegramUser.id, telegramUser.first_name);
-        logger.info('✅ Welcome message sent successfully');
       } catch (error) {
-        logger.error('❌ Failed to send welcome message:', error);
+        logger.error('Failed to send welcome message:', error);
         // Don't fail auth if welcome message fails
       }
     }

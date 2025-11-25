@@ -17,6 +17,24 @@ router.get('/', async (_req: any, res: any, next: any) => {
   }
 });
 
+// GET /api/promotions/admin - All promotions (admin)
+// MUST be before /:id route to avoid matching "admin" as an ID
+router.get('/admin', authenticate, requireAdmin, async (_req: any, res: any, next: any) => {
+  try {
+    const promotions = await prisma.promotion.findMany({
+      include: {
+        _count: {
+          select: { products: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json({ success: true, data: promotions });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /api/promotions/:id - Get single promotion (public)
 router.get('/:id', async (req: any, res: any, next: any) => {
   try {
@@ -36,23 +54,6 @@ router.get('/:id', async (req: any, res: any, next: any) => {
     }
 
     res.json({ success: true, data: promotion });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// GET /api/promotions/admin - All promotions (admin)
-router.get('/admin', authenticate, requireAdmin, async (_req: any, res: any, next: any) => {
-  try {
-    const promotions = await prisma.promotion.findMany({
-      include: {
-        _count: {
-          select: { products: true },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-    res.json({ success: true, data: promotions });
   } catch (error) {
     next(error);
   }

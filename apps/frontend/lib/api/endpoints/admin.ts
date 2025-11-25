@@ -20,23 +20,13 @@ export const adminApi = {
   },
 
   getUsers: async (): Promise<User[]> => {
-    try {
-      console.log('🔍 Calling GET /api/users with params:', { limit: 100, page: 1 });
-      const response = await apiClient.get<ApiResponse<{ users: User[]; pagination: any }>>('/users', {
-        params: {
-          limit: 100,
-          page: 1,
-        },
-      });
-      console.log('✅ Users API response:', response.data);
-      console.log('📊 Users count:', response.data.data.users.length);
-      return response.data.data.users;
-    } catch (error: any) {
-      console.error('❌ Users API error:', error);
-      console.error('Error response:', error?.response?.data);
-      console.error('Error status:', error?.response?.status);
-      throw error;
-    }
+    const response = await apiClient.get<ApiResponse<{ users: User[]; pagination: any }>>('/users', {
+      params: {
+        limit: 100,
+        page: 1,
+      },
+    });
+    return response.data.data.users;
   },
 
   updateUserRole: async (userId: string, role: 'USER' | 'ADMIN'): Promise<User> => {
