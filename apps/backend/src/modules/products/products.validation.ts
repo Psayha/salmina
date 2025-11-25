@@ -111,7 +111,7 @@ export const skuSchema = z
  */
 export const imagesSchema = z
   .array(z.string().url('Each image must be a valid URL'))
-  .min(1, 'At least one image is required')
+  .min(0, 'Images array is optional')
   .max(10, 'Maximum 10 images allowed');
 
 /**

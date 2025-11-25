@@ -59,6 +59,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 60000, // 60 seconds for file uploads
         });
 
         if (response.data.success && response.data.data.url) {
