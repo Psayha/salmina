@@ -7,14 +7,15 @@ import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../../common/middleware/auth.middleware.js';
 import { ordersService } from './orders.service.js';
 import { CreateOrderInput, UpdateOrderStatusInput } from './orders.validation.js';
-import { OrderStatus } from './orders.types.js';
+import { OrderStatus, CreateOrderDTO, UpdateOrderStatusDTO } from './orders.types.js';
 
 class OrdersController {
   async createOrder(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.userId;
       const data: CreateOrderInput = req.body;
-      const order = await ordersService.createOrder(userId, data);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const order = await ordersService.createOrder(userId, data as unknown as CreateOrderDTO);
       res.status(201).json({ success: true, data: order });
     } catch (error) {
       next(error);
@@ -48,7 +49,8 @@ class OrdersController {
     try {
       const { id } = req.params;
       const data: UpdateOrderStatusInput = req.body;
-      const order = await ordersService.updateOrderStatus(id, data);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const order = await ordersService.updateOrderStatus(id, data as unknown as UpdateOrderStatusDTO);
       res.json({ success: true, data: order });
     } catch (error) {
       next(error);
