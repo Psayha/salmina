@@ -96,10 +96,11 @@ export class AuthService {
 
     logger.info(`User authenticated successfully: ${user.id} (Telegram ID: ${user.telegramId})`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return {
       accessToken,
       refreshToken,
-      user: toUserData(user),
+      user: toUserData(user as unknown as User),
     };
   }
 
@@ -154,9 +155,10 @@ export class AuthService {
 
     logger.info(`Access token refreshed for user: ${user.id}`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return {
       accessToken,
-      user: toUserData(user),
+      user: toUserData(user as unknown as User),
     };
   }
 
