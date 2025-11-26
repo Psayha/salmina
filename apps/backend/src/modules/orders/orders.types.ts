@@ -5,10 +5,75 @@
  * @created 2024-11-13
  */
 
-import { Order, OrderItem, OrderStatus, PaymentMethod, PaymentStatus } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
-export { OrderStatus, PaymentMethod, PaymentStatus };
+export enum OrderStatus {
+  PAID = 'PAID',
+  PROCESSING = 'PROCESSING',
+  SHIPPED = 'SHIPPED',
+  CANCELLED = 'CANCELLED',
+}
 
+export enum PaymentMethod {
+  ONLINE = 'ONLINE',
+  SBP = 'SBP',
+  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY',
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  FAILED = 'FAILED',
+}
+
+/**
+ * Order model interface
+ */
+export interface Order {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  status: OrderStatus;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerAddress: string;
+  comment: string | null;
+  subtotal: Decimal;
+  discount: Decimal;
+  total: Decimal;
+  promocodeId: string | null;
+  promocodeDiscount: Decimal | null;
+  trackingNumber: string | null;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  paidAt: Date | null;
+  shippedAt: Date | null;
+}
+
+/**
+ * OrderItem model interface
+ */
+export interface OrderItem {
+  id: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  productArticle: string;
+  productImage: string;
+  basePrice: Decimal;
+  appliedPrice: Decimal;
+  hadPromotion: boolean;
+  quantity: number;
+  createdAt: Date;
+}
+
+/**
+ * Order with items
+ */
 export interface OrderWithItems extends Order {
   items: OrderItem[];
 }
@@ -85,7 +150,7 @@ export function toOrderDTO(order: OrderWithItems): OrderDTO {
     updatedAt: order.updatedAt,
     paidAt: order.paidAt,
     shippedAt: order.shippedAt,
-    items: order.items.map((item) => ({
+    items: order.items.map((item: OrderItem): OrderItemDTO => ({
       id: item.id,
       productName: item.productName,
       productArticle: item.productArticle,

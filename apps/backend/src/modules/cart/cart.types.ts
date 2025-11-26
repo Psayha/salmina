@@ -5,8 +5,35 @@
  * @created 2024-11-13
  */
 
-import { Cart, CartItem, Product } from '@prisma/client';
-// import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from '@prisma/client/runtime/library';
+import { Product } from '../products/products.types.js';
+
+/**
+ * Cart model interface
+ */
+export interface Cart {
+  id: string;
+  userId: string | null;
+  sessionToken: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  expiresAt: Date | null;
+}
+
+/**
+ * CartItem model interface
+ */
+export interface CartItem {
+  id: string;
+  cartId: string;
+  productId: string;
+  quantity: number;
+  price: Decimal;
+  appliedPrice: Decimal;
+  hasPromotion: boolean;
+  allowPromocode: boolean;
+  createdAt: Date;
+}
 
 /**
  * Cart item with product details
@@ -139,11 +166,11 @@ export function calculateCartTotals(
   items: CartItemWithProduct[],
   promocodeDiscount = 0,
 ): CartTotals {
-  const subtotal = items.reduce((sum, item) => {
+  const subtotal = items.reduce((sum: number, item: CartItemWithProduct) => {
     return sum + Number(item.appliedPrice) * item.quantity;
   }, 0);
 
-  const discount = items.reduce((sum, item) => {
+  const discount = items.reduce((sum: number, item: CartItemWithProduct) => {
     const basePrice = Number(item.price);
     const appliedPrice = Number(item.appliedPrice);
     const itemDiscount = (basePrice - appliedPrice) * item.quantity;
@@ -152,7 +179,7 @@ export function calculateCartTotals(
 
   const total = subtotal - promocodeDiscount;
 
-  const itemsCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemsCount = items.reduce((sum: number, item: CartItemWithProduct) => sum + item.quantity, 0);
 
   return {
     subtotal,

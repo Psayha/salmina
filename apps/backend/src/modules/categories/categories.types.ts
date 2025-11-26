@@ -5,7 +5,23 @@
  * @created 2024-11-13
  */
 
-import { Category } from '@prisma/client';
+/**
+ * Category model interface
+ */
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  parentId: string | null;
+  order: number;
+  image: string | null;
+  showOnHome: boolean;
+  homeOrder: number | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Category DTO (Data Transfer Object)

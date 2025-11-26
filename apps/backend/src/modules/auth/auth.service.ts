@@ -5,9 +5,9 @@
  * @created 2024-11-13
  */
 
-import { User, UserRole } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { redis } from '../../database/redis.service.js';
+import { User, UserRole } from './auth.types.js';
 import {
   validateTelegramInitData,
   parseTelegramInitData,
@@ -268,6 +268,7 @@ export class AuthService {
       }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return user;
   }
 
@@ -332,6 +333,7 @@ export class AuthService {
       throw new UnauthorizedError('User not found', ErrorCode.UNAUTHORIZED);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return user;
   }
 }

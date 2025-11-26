@@ -76,11 +76,11 @@ class ProdamusService {
     }
 
     // Prepare products data
-    const products = params.products.map((product, index) => ({
+    const products = params.products.map((product: ProductItem, index: number) => ({
       [`products[${index}][name]`]: product.name,
       [`products[${index}][price]`]: product.price.toFixed(2),
       [`products[${index}][quantity]`]: product.quantity.toString(),
-    })).reduce((acc, item) => ({ ...acc, ...item }), {});
+    })).reduce((acc: Record<string, string>, item: Record<string, string>) => ({ ...acc, ...item }), {});
 
     // Build payment data
     const paymentData: Record<string, string> = {
@@ -135,7 +135,7 @@ class ProdamusService {
 
     // Create signature string: key:value;key:value;...
     const signatureString = sortedKeys
-      .map((key) => `${key}:${data[key]}`)
+      .map((key: string) => `${key}:${data[key]}`)
       .join(';');
 
     // Generate HMAC SHA256 signature

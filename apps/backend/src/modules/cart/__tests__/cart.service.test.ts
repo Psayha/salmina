@@ -183,7 +183,7 @@ describe('CartService', () => {
 
       // Assert
       expect(prismaMock.product.findUnique).toHaveBeenCalledWith({
-        where: { id: 'product-1', isActive: true },
+        where: { id: 'product-1' },
       });
       expect(prismaMock.cartItem.create).toHaveBeenCalledWith({
         data: {

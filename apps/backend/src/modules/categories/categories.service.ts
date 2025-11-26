@@ -15,7 +15,17 @@ import {
   CreateCategoryDTO,
   UpdateCategoryDTO,
   toCategoryDTO,
+  Category,
 } from './categories.types.js';
+
+/**
+ * Category with product count
+ */
+interface CategoryWithCountPayload extends Category {
+  _count: {
+    products: number;
+  };
+}
 
 class CategoriesService {
   /**
@@ -39,7 +49,7 @@ class CategoriesService {
     const rootCategories: CategoryTree[] = [];
 
     // First pass: create all nodes
-    categories.forEach((cat) => {
+    categories.forEach((cat: CategoryWithCountPayload) => {
       categoryMap.set(cat.id, {
         ...toCategoryDTO(cat),
         children: [],
@@ -48,7 +58,7 @@ class CategoriesService {
     });
 
     // Second pass: build tree
-    categories.forEach((cat) => {
+    categories.forEach((cat: CategoryWithCountPayload) => {
       const node = categoryMap.get(cat.id);
       if (!node) {
         return;
@@ -86,7 +96,8 @@ class CategoriesService {
       },
     });
 
-    return categories.map((cat) => ({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return categories.map((cat: CategoryWithCountPayload) => ({
       ...toCategoryDTO(cat),
       productCount: cat._count.products,
     }));
@@ -99,7 +110,7 @@ class CategoriesService {
     logger.info(`Getting category by slug: ${slug}`);
 
     const category = await prisma.category.findUnique({
-      where: { slug, isActive: true },
+      where: { slug },
       include: {
         children: {
           where: { isActive: true },
@@ -111,13 +122,13 @@ class CategoriesService {
       },
     });
 
-    if (!category) {
+    if (!category || !category.isActive) {
       throw new NotFoundError('Category', slug);
     }
 
     return {
       ...toCategoryDTO(category),
-      children: category.children.map((child) => ({
+      children: category.children.map((child: Category) => ({
         ...toCategoryDTO(child),
         children: [],
       })),

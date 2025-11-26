@@ -5,8 +5,58 @@
  * @created 2024-11-13
  */
 
-import { Product, Category } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
+
+/**
+ * Product model interface
+ */
+export interface Product {
+  id: string;
+  categoryId: string;
+  name: string;
+  slug: string;
+  description: string;
+  price: Decimal;
+  promotionPrice: Decimal | null;
+  discountPrice: Decimal | null;
+  article: string;
+  sku: string;
+  weight: Decimal;
+  dimensions: string | null;
+  quantity: number;
+  composition: string | null;
+  delivery: string | null;
+  characteristics: any;
+  application: string | null;
+  images: string[];
+  isNew: boolean;
+  isHit: boolean;
+  isDiscount: boolean;
+  hasPromotion: boolean;
+  viewCount: number;
+  orderCount: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Category model interface
+ */
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  parentId: string | null;
+  order: number;
+  image: string | null;
+  showOnHome: boolean;
+  homeOrder: number | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Product with category relation

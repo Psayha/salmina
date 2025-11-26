@@ -5,7 +5,7 @@
  * @created 2024-11-13
  */
 
-import { User, UserRole } from '@prisma/client';
+import { User, UserRole } from '../auth/auth.types.js';
 
 /**
  * User data returned to client (sanitized)

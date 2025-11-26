@@ -5,7 +5,6 @@
  * @created 2024-11-13
  */
 
-import { Prisma } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import {
   ProductListItem,
@@ -155,6 +154,7 @@ export class ProductsService {
 
     logger.info(`Found ${products.length} products out of ${ids.length} requested`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return products.map(toProductListItem);
   }
 
@@ -208,6 +208,7 @@ export class ProductsService {
 
     logger.info(`Found ${relatedProducts.length} related products`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return relatedProducts.map(toProductListItem);
   }
 
@@ -415,8 +416,8 @@ export class ProductsService {
    * @returns Prisma where clause
    * @private
    */
-  private buildWhereClause(filters: ProductFilters, query?: string): Prisma.ProductWhereInput {
-    const where: Prisma.ProductWhereInput = {
+  private buildWhereClause(filters: ProductFilters, query?: string): any {
+    const where: any = {
       isActive: true,
     };
 
@@ -481,7 +482,7 @@ export class ProductsService {
    * @returns Prisma orderBy clause
    * @private
    */
-  private buildOrderByClause(sortBy: string, order: string): Prisma.ProductOrderByWithRelationInput[] {
+  private buildOrderByClause(sortBy: string, order: string): any[] {
     const orderDirection = order === 'asc' ? 'asc' : 'desc';
 
     switch (sortBy) {
@@ -531,7 +532,7 @@ export class ProductsService {
    * @private
    */
   private async validateUniqueFields(slug?: string, article?: string, sku?: string, excludeId?: string): Promise<void> {
-    const where: Prisma.ProductWhereInput[] = [];
+    const where: any[] = [];
 
     if (slug) {
       where.push({ slug });

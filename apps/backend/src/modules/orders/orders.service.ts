@@ -3,13 +3,15 @@
  * @description Business logic for orders
  */
 
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { NotFoundError, BadRequestError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
 import { telegramService } from '../../services/telegram.service.js';
 import { prodamusService } from '../../services/prodamus.service.js';
 // import { cartService } from '../cart/cart.service.js'; // unused
-import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus } from './orders.types.js';
+import { CreateOrderDTO, UpdateOrderStatusDTO, OrderDTO, toOrderDTO, OrderStatus, PaymentStatus, OrderItem } from './orders.types.js';
+import { CartItemWithProduct } from '../cart/cart.types.js';
 
 class OrdersService {
   /**
@@ -51,8 +53,8 @@ class OrdersService {
     }
 
     // Calculate totals
-    const subtotal = cart.items.reduce((sum, item) => sum + Number(item.appliedPrice) * item.quantity, 0);
-    const discount = cart.items.reduce((sum, item) => {
+    const subtotal = cart.items.reduce((sum: number, item: CartItemWithProduct) => sum + Number(item.appliedPrice) * item.quantity, 0);
+    const discount = cart.items.reduce((sum: number, item: CartItemWithProduct) => {
       const diff = Number(item.price) - Number(item.appliedPrice);
       return sum + diff * item.quantity;
     }, 0);
@@ -96,13 +98,15 @@ class OrdersService {
     const orderNumber = await this.generateOrderNumber();
 
     // Create order in transaction
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Create order
       const newOrder = await tx.order.create({
         data: {
           orderNumber,
           userId,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
           status: data.paymentMethod === 'ONLINE' ? OrderStatus.PAID : OrderStatus.PAID,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
           paymentStatus: data.paymentMethod === 'ONLINE' ? PaymentStatus.PENDING : data.paymentMethod === 'SBP' ? PaymentStatus.PENDING : PaymentStatus.PAID,
           customerName: data.customerName,
           customerPhone: data.customerPhone,
@@ -160,6 +164,7 @@ class OrdersService {
         where: { cartId: cart.id },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return tx.order.findUnique({
         where: { id: newOrder.id },
         include: { items: true },
@@ -175,6 +180,7 @@ class OrdersService {
     // Generate payment link for ONLINE payment method
     let paymentUrl: string | undefined;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     if (data.paymentMethod === 'ONLINE') {
       try {
         paymentUrl = prodamusService.generatePaymentLink({
@@ -182,7 +188,7 @@ class OrdersService {
           customerName: order.customerName,
           customerEmail: order.customerEmail || undefined,
           customerPhone: order.customerPhone || undefined,
-          products: order.items.map((item) => ({
+          products: order.items.map((item: OrderItem) => ({
             name: item.productName,
             price: Number(item.appliedPrice),
             quantity: item.quantity,
@@ -205,7 +211,7 @@ class OrdersService {
         orderNumber: order.orderNumber,
         customerName: order.customerName,
         total: Number(order.total),
-        items: order.items.map((item) => ({
+        items: order.items.map((item: OrderItem) => ({
           productName: item.productName,
           quantity: item.quantity,
           price: Number(item.appliedPrice),

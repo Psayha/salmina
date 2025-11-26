@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { LegalDocumentType } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
-import { LegalDocumentType } from '@prisma/client';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
+
+export { LegalDocumentType };
 
 const router: Router = Router();
 
@@ -43,7 +45,7 @@ router.post('/', authenticate, requireAdmin, asyncHandler(async (req: TypedReque
 // PATCH /api/legal/:id - Update document (admin)
 router.patch('/:id', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<Partial<LegalDocumentBody>, { id: string }>,
-  res
+  res,
 ) => {
   const document = await prisma.legalDocument.update({
     where: { id: req.params.id },

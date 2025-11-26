@@ -1,10 +1,12 @@
 import { Router } from 'express';
+import { DiscountType } from '@prisma/client';
 import { prisma } from '../../database/prisma.service.js';
 import { authenticate, requireAdmin } from '../../common/middleware/auth.middleware.js';
 import { NotFoundError } from '../../common/errors/AppError.js';
 import { asyncHandler, TypedRequest } from '../../types/express.js';
-import { DiscountType } from '@prisma/client';
 import { paginate } from '../../utils/pagination.js';
+
+export { DiscountType };
 
 const router: Router = Router();
 
@@ -26,7 +28,7 @@ router.get('/', authenticate, requireAdmin, asyncHandler(async (req: TypedReques
     { page: Number(req.query.page), limit: Number(req.query.limit) },
     undefined,
     undefined,
-    { createdAt: 'desc' }
+    { createdAt: 'desc' },
   );
   res.json({ success: true, ...result });
 }));
@@ -40,7 +42,7 @@ router.post('/', authenticate, requireAdmin, asyncHandler(async (req: TypedReque
 // PATCH /api/promocodes/:id - Update (admin)
 router.patch('/:id', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<Partial<CreatePromocodeBody>, { id: string }>,
-  res
+  res,
 ) => {
   const promocode = await prisma.promocode.update({
     where: { id: req.params.id },
@@ -52,7 +54,7 @@ router.patch('/:id', authenticate, requireAdmin, asyncHandler(async (
 // DELETE /api/promocodes/:id - Delete (admin)
 router.delete('/:id', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<never, { id: string }>,
-  res
+  res,
 ) => {
   await prisma.promocode.delete({ where: { id: req.params.id } });
   res.json({ success: true, message: 'Promocode deleted' });

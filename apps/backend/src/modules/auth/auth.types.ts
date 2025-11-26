@@ -5,7 +5,27 @@
  * @created 2024-11-13
  */
 
-import { User } from '@prisma/client';
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+export interface User {
+  id: string;
+  telegramId: bigint;
+  username: string | null;
+  firstName: string;
+  lastName: string | null;
+  photoUrl: string | null;
+  phone: string | null;
+  email: string | null;
+  role: UserRole;
+  isActive: boolean;
+  hasAcceptedTerms: boolean;
+  termsAcceptedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 /**
  * Authentication response with tokens

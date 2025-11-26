@@ -26,7 +26,7 @@ router.get('/admin', authenticate, requireAdmin, asyncHandler(async (req: TypedR
         select: { products: true },
       },
     },
-    { createdAt: 'desc' }
+    { createdAt: 'desc' },
   );
   res.json({ success: true, ...result });
 }));
@@ -81,7 +81,7 @@ router.post('/', authenticate, requireAdmin, asyncHandler(async (req: TypedReque
 // PATCH /api/promotions/:id - Update (admin)
 router.patch('/:id', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<Partial<CreatePromotionBody>, { id: string }>,
-  res
+  res,
 ) => {
   const { productIds, ...data } = req.body;
   const promotion = await prisma.promotion.update({
@@ -97,7 +97,7 @@ router.patch('/:id', authenticate, requireAdmin, asyncHandler(async (
 // DELETE /api/promotions/:id - Delete (admin)
 router.delete('/:id', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<never, { id: string }>,
-  res
+  res,
 ) => {
   await prisma.promotion.delete({ where: { id: req.params.id } });
   res.json({ success: true, message: 'Promotion deleted' });
@@ -106,7 +106,7 @@ router.delete('/:id', authenticate, requireAdmin, asyncHandler(async (
 // POST /api/promotions/:id/products - Assign products (admin)
 router.post('/:id/products', authenticate, requireAdmin, asyncHandler(async (
   req: TypedRequest<{ productIds: string[] }, { id: string }>,
-  res
+  res,
 ) => {
   const { productIds } = req.body; // Array of product IDs
   const promotion = await prisma.promotion.update({

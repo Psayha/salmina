@@ -63,6 +63,7 @@ class CartService {
       logger.info(`Cart created: ${cart.id}`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return cart;
   }
 
@@ -93,10 +94,10 @@ class CartService {
 
     // Get product
     const product = await prisma.product.findUnique({
-      where: { id: data.productId, isActive: true },
+      where: { id: data.productId },
     });
 
-    if (!product) {
+    if (!product || !product.isActive) {
       throw new NotFoundError('Product', data.productId);
     }
 

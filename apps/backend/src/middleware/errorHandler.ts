@@ -6,8 +6,7 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { ZodError } from 'zod';
-import { Prisma } from '@prisma/client';
+import { ZodError, ZodIssue } from 'zod';
 import { AppError, ErrorCode, InternalError, ValidationError } from '../common/errors/AppError.js';
 import { logger } from '../utils/logger.js';
 
@@ -23,15 +22,15 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
   }
   // Handle Zod validation errors
   else if (err instanceof ZodError) {
-    const details = err.errors.map((e) => ({
+    const details = err.errors.map((e: ZodIssue) => ({
       field: e.path.join('.'),
       message: e.message,
     }));
     error = new ValidationError('Validation failed', details);
   }
   // Handle Prisma errors
-  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    error = handlePrismaError(err);
+  else if (err.name === 'PrismaClientKnownRequestError' || (err as any).code) {
+    error = handlePrismaError(err as any);
   }
   // Handle JWT errors
   else if (err.name === 'JsonWebTokenError') {
@@ -78,7 +77,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
 /**
  * Handle Prisma errors
  */
-function handlePrismaError(error: Prisma.PrismaClientKnownRequestError): AppError {
+function handlePrismaError(error: any): AppError {
   switch (error.code) {
     case 'P2002':
       // Unique constraint violation

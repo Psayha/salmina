@@ -70,8 +70,8 @@ export const sanitizeParams = (req: Request, _res: Response, next: NextFunction)
  * Combined middleware to sanitize all inputs
  */
 export const sanitizeAll = (req: Request, _res: Response, next: NextFunction) => {
-  if (req.body) req.body = sanitizeInput(req.body);
-  if (req.query) req.query = sanitizeInput(req.query);
-  if (req.params) req.params = sanitizeInput(req.params);
+  if (req.body) {req.body = sanitizeInput(req.body);}
+  if (req.query) {req.query = sanitizeInput(req.query);}
+  if (req.params) {req.params = sanitizeInput(req.params);}
   next();
 };
