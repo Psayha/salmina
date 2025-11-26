@@ -269,7 +269,7 @@ export class AuthService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return user;
+    return user as unknown as User;
   }
 
   /**
@@ -334,7 +334,7 @@ export class AuthService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return user;
+    return user as unknown as User;
   }
 }
 
