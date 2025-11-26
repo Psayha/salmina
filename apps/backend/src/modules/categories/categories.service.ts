@@ -110,7 +110,7 @@ class CategoriesService {
     logger.info(`Getting category by slug: ${slug}`);
 
     const category = await prisma.category.findUnique({
-      where: { slug, isActive: true },
+      where: { slug },
       include: {
         children: {
           where: { isActive: true },
@@ -122,7 +122,7 @@ class CategoriesService {
       },
     });
 
-    if (!category) {
+    if (!category || !category.isActive) {
       throw new NotFoundError('Category', slug);
     }
 
