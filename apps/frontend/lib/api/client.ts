@@ -9,11 +9,6 @@ const DEVELOPMENT_API_URL = 'http://localhost:3001/api';
  * Called on each request to ensure correct URL even after hydration
  */
 function getApiBaseUrl(): string {
-  // Allow explicit override via environment variable (for development only)
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
-
   // Client-side: detect production by hostname
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
