@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 
 export interface TelegramWebApp {
   initData: string;
@@ -146,24 +146,67 @@ export function useTelegram() {
   );
 }
 
+// Global state for back button to prevent flickering
+let backButtonCallbackRef: (() => void) | null = null;
+let backButtonShowTimeout: ReturnType<typeof setTimeout> | null = null;
+let backButtonHideTimeout: ReturnType<typeof setTimeout> | null = null;
+
 /**
- * Hook for Telegram Back Button
+ * Hook for Telegram Back Button - debounced to prevent flickering
  */
 export function useTelegramBackButton(onClick: () => void) {
   const { webApp } = useTelegram();
+  const callbackRef = useRef(onClick);
+  
+  // Keep callback ref updated
+  useEffect(() => {
+    callbackRef.current = onClick;
+  }, [onClick]);
 
   useEffect(() => {
     if (!webApp) return;
 
     const backButton = webApp.BackButton;
-    backButton.onClick(onClick);
-    backButton.show();
+    
+    // Clear any pending hide timeout
+    if (backButtonHideTimeout) {
+      clearTimeout(backButtonHideTimeout);
+      backButtonHideTimeout = null;
+    }
+
+    // Wrapper that calls current callback
+    const handleClick = () => {
+      callbackRef.current();
+    };
+
+    // Remove old callback if exists
+    if (backButtonCallbackRef) {
+      backButton.offClick(backButtonCallbackRef);
+    }
+
+    // Set new callback
+    backButtonCallbackRef = handleClick;
+    backButton.onClick(handleClick);
+    
+    // Debounced show
+    if (backButtonShowTimeout) {
+      clearTimeout(backButtonShowTimeout);
+    }
+    backButtonShowTimeout = setTimeout(() => {
+      backButton.show();
+    }, 10);
 
     return () => {
-      backButton.offClick(onClick);
-      backButton.hide();
+      // Debounced hide - only hide if no new component registers within 50ms
+      backButtonHideTimeout = setTimeout(() => {
+        if (backButtonCallbackRef === handleClick) {
+          backButton.offClick(handleClick);
+          backButton.hide();
+          backButtonCallbackRef = null;
+        }
+      }, 50);
     };
-  }, [webApp, onClick]);
+  }, [webApp]);
 }
 
 /**
@@ -180,20 +223,27 @@ export function useTelegramMainButton(
   },
 ) {
   const { webApp } = useTelegram();
+  const callbackRef = useRef(onClick);
+
+  useEffect(() => {
+    callbackRef.current = onClick;
+  }, [onClick]);
 
   useEffect(() => {
     if (!webApp) return;
 
     const mainButton = webApp.MainButton;
+    
+    const handleClick = () => {
+      callbackRef.current();
+    };
 
     mainButton.setText(text);
 
-    // eslint-disable-next-line react-hooks/immutability
     if (options?.color) mainButton.color = options.color;
-
     if (options?.textColor) mainButton.textColor = options.textColor;
 
-    mainButton.onClick(onClick);
+    mainButton.onClick(handleClick);
 
     if (options?.isActive !== false) {
       mainButton.enable();
@@ -208,10 +258,10 @@ export function useTelegramMainButton(
     }
 
     return () => {
-      mainButton.offClick(onClick);
+      mainButton.offClick(handleClick);
       mainButton.hide();
     };
-  }, [webApp, text, onClick, options]);
+  }, [webApp, text, options?.color, options?.textColor, options?.isActive, options?.isVisible]);
 }
 
 /**
