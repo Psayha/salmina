@@ -151,7 +151,7 @@ export default function ProductsPage() {
               <button
                 onClick={() => {
                   haptic?.impactOccurred('light');
-                  router.push(`/admin/products/${row.original.id}`);
+                  router.push(`/admin/products/${row.original.slug}`);
                 }}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400 transition-colors"
               >

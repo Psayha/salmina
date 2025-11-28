@@ -4,7 +4,6 @@
  * @author AI Assistant
  * @created 2024-11-13
  */
-
 import { Request, Response, NextFunction } from 'express';
 import { categoriesService } from './categories.service.js';
 import { CreateCategoryInput, UpdateCategoryInput } from './categories.validation.js';
@@ -17,7 +16,6 @@ class CategoriesController {
   async getCategoriesTree(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const categories = await categoriesService.getCategoriesTree();
-
       res.json({
         success: true,
         data: categories,
@@ -34,7 +32,6 @@ class CategoriesController {
   async getHomeCategories(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const categories = await categoriesService.getHomeCategories();
-
       res.json({
         success: true,
         data: categories,
@@ -45,14 +42,17 @@ class CategoriesController {
   }
 
   /**
-   * Get category by slug
-   * GET /api/categories/:slug
+   * Get category by slug or ID
+   * GET /api/categories/:identifier
    */
   async getCategoryBySlug(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { slug } = req.params;
-      const category = await categoriesService.getCategoryBySlug(slug);
-
+      // Check if identifier is UUID or slug
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+      const category = isUUID 
+        ? await categoriesService.getCategoryById(slug)
+        : await categoriesService.getCategoryBySlug(slug);
       res.json({
         success: true,
         data: category,
@@ -70,7 +70,6 @@ class CategoriesController {
     try {
       const data: CreateCategoryInput = req.body;
       const category = await categoriesService.createCategory(data);
-
       res.status(201).json({
         success: true,
         data: category,
@@ -89,7 +88,6 @@ class CategoriesController {
       const { id } = req.params;
       const data: UpdateCategoryInput = req.body;
       const category = await categoriesService.updateCategory(id, data);
-
       res.json({
         success: true,
         data: category,
@@ -107,7 +105,6 @@ class CategoriesController {
     try {
       const { id } = req.params;
       await categoriesService.deleteCategory(id);
-
       res.json({
         success: true,
         message: 'Category deleted successfully',

@@ -44,7 +44,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Trust proxy - required when running behind nginx or other reverse proxies
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(helmet());

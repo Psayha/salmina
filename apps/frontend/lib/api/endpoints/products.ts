@@ -17,12 +17,31 @@ export interface GetProductsParams {
   sortOrder?: 'asc' | 'desc';
 }
 
+interface ProductsApiResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
 /**
  * Get products list with filters
  */
 export async function getProducts(params?: GetProductsParams): Promise<PaginatedResponse<Product>> {
-  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>('/products', { params });
-  return response.data.data;
+  const response = await apiClient.get<ApiResponse<ProductsApiResponse>>('/products', { params });
+  const { products, pagination } = response.data.data;
+  return {
+    items: products,
+    total: pagination.total,
+    page: pagination.page,
+    limit: pagination.limit,
+    totalPages: pagination.totalPages,
+  };
 }
 
 /**
@@ -40,10 +59,17 @@ export async function searchProducts(
   query: string,
   params?: Omit<GetProductsParams, 'search'>,
 ): Promise<PaginatedResponse<Product>> {
-  const response = await apiClient.get<ApiResponse<PaginatedResponse<Product>>>('/products/search', {
+  const response = await apiClient.get<ApiResponse<ProductsApiResponse>>('/products/search', {
     params: { q: query, ...params },
   });
-  return response.data.data;
+  const { products, pagination } = response.data.data;
+  return {
+    items: products,
+    total: pagination.total,
+    page: pagination.page,
+    limit: pagination.limit,
+    totalPages: pagination.totalPages,
+  };
 }
 
 /**

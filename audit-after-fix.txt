@@ -1,0 +1,392 @@
+🔍 АУДИТ PRODUCTION СЕРВЕРА
+===========================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. СИСТЕМНАЯ ИНФОРМАЦИЯ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 OS Version:
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+
+💾 Disk Space:
+/dev/sda1        20G  4.6G   15G  25% /
+
+🧠 Memory Usage:
+Mem:           1.9Gi       684Mi       637Mi        18Mi       842Mi       1.3Gi
+
+⚙️ CPU Info:
+Model name:                           Intel Xeon Processor (Icelake)
+BIOS Model name:                      pc-i440fx-6.2  CPU @ 2.0GHz
+CPU(s):                               2
+NUMA node0 CPU(s):                    0,1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. УСТАНОВЛЕННОЕ ПО
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 Node.js:
+v20.19.5
+[0;32m✓[0m Node.js установлен
+
+📦 pnpm:
+8.15.0
+[0;32m✓[0m pnpm установлен
+
+📦 PM2:
+6.0.13
+[0;32m✓[0m PM2 установлен
+
+📦 PostgreSQL:
+[0;31m✗ PostgreSQL НЕ установлен[0m
+
+📦 Redis:
+[0;31m✗ Redis НЕ установлен[0m
+
+📦 Nginx:
+nginx version: nginx/1.24.0 (Ubuntu)
+[0;32m✓[0m Nginx установлен
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. СТРУКТУРА ПРОЕКТА
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[0;32m✓[0m Проект найден: /var/www/telegram-shop
+
+📂 Структура каталогов:
+total 644
+drwxr-xr-x 11 root root   4096 Nov 21 20:19 .
+drwxr-xr-x  4 root root   4096 Nov 16 14:24 ..
+-rw-r--r--  1 root root  13165 Nov 16 14:30 API_INTEGRATION.md
+drwxr-xr-x  4 root root   4096 Nov 16 14:30 apps
+-rw-r--r--  1 root root   1894 Nov 21 20:31 audit-after-fix.txt
+-rw-r--r--  1 root root  24883 Nov 21 19:53 audit-report.txt
+-rw-r--r--  1 root root   9388 Nov 21 20:02 AUDIT_SUMMARY.md
+-rw-r--r--  1 root root  21426 Nov 21 19:53 BUILD_AUDIT_COMPLETE.md
+-rw-r--r--  1 root root   7956 Nov 21 19:53 BUILD_AUDIT_FINAL_2_ERRORS.md
+-rw-r--r--  1 root root  10502 Nov 21 19:53 BUILD_AUDIT_JWT_ERROR.md
+-rw-r--r--  1 root root   9722 Nov 21 19:53 BUILD_AUDIT_REAL_2_ERRORS.md
+-rw-r--r--  1 root root  10255 Nov 21 19:53 BUILD_AUDIT_REAL.md
+-rw-r--r--  1 root root   3537 Nov 16 14:30 .context7.md
+-rw-r--r--  1 root root  17651 Nov 21 19:53 DEPLOYMENT.md
+-rw-r--r--  1 root root    903 Nov 16 14:30 docker-compose.yml
+drwxr-xr-x  6 root root   4096 Nov 16 14:30 docs
+-rw-r--r--  1 root root   1104 Nov 16 15:03 ecosystem.config.js
+-rw-r--r--  1 root root    189 Nov 16 14:30 .editorconfig
+-rw-------  1 root root   4056 Nov 21 20:14 .env
+
+📄 Git информация:
+claude/audit-build-review-01STdfiqgSELHqkCsWJd35C3
+7bf06fe docs: add comprehensive production server analysis and fix guide
+7fb43d3 feat: add production server audit script
+da090dc fix: resolve critical build and configuration issues
+01406da docs: найти вторую критическую ошибку - JWT variable names
+b6a0d43 docs: найти РЕАЛЬНЫЕ 2 критические ошибки
+
+📦 Package versions:
+  "version": "1.1.0",
+
+🔧 node_modules:
+[0;32m✓[0m node_modules существует
+793M	node_modules
+
+🗂️ Apps:
+[0;32m✓[0m Backend build существует
+total 64K
+drwxr-xr-x  5 root root 4.0K Nov 16 15:29 common
+drwxr-xr-x  2 root root 4.0K Nov 16 15:29 config
+drwxr-xr-x  2 root root 4.0K Nov 21 20:03 controllers
+drwxr-xr-x  2 root root 4.0K Nov 16 15:29 database
+[0;32m✓[0m Frontend build существует
+total 200K
+-rw-r--r-- 1 root root  461 Nov 21 20:16 app-path-routes-manifest.json
+drwxr-xr-x 3 root root 4.0K Nov 21 20:16 build
+-rw-r--r-- 1 root root   21 Nov 21 20:16 BUILD_ID
+-rw-r--r-- 1 root root  494 Nov 21 20:16 build-manifest.json
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[0;32m✓[0m .env файл существует
+
+🔑 Основные переменные (маскированные):
+[0;32m✓[0m NODE_ENV установлена
+[0;32m✓[0m PORT установлена
+[0;32m✓[0m DATABASE_URL установлена
+[0;32m✓[0m JWT_SECRET установлена
+[0;32m✓[0m JWT_REFRESH_SECRET установлена
+[0;32m✓[0m TELEGRAM_BOT_TOKEN установлена
+[0;32m✓[0m REDIS_URL установлена
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. PM2 ПРОЦЕССЫ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 PM2 Status:
+┌────┬───────────────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name                      │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼───────────────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1  │ telegram-shop-backend     │ default     │ 1.1.0   │ fork    │ 1472019  │ 5m     │ 12   │ online    │ 0%       │ 86.0mb   │ root     │ disabled │
+│ 0  │ telegram-shop-frontend    │ default     │ N/A     │ fork    │ 1470903  │ 13m    │ 3    │ online    │ 0%       │ 94.1mb   │ root     │ disabled │
+└────┴───────────────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+📊 PM2 Logs (last 20 lines):
+[TAILING] Tailing last 20 lines for [all] processes (change the value with --lines option)
+/root/.pm2/pm2.log last 20 lines:
+PM2        | 2025-11-21T20:17:29: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:29: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:29: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:17:29: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:17:30: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:17:31: PM2 log: App [telegram-shop-backend:1] online
+PM2        | 2025-11-21T20:17:32: PM2 log: App [telegram-shop-backend:1] exited with code [1] via signal [SIGINT]
+PM2        | 2025-11-21T20:17:32: PM2 log: Script /var/www/telegram-shop/apps/backend/dist/index.js had too many unstable restarts (10). Stopped. "errored"
+PM2        | 2025-11-21T20:26:01: PM2 log: App [telegram-shop-backend:1] starting in -fork mode-
+PM2        | 2025-11-21T20:26:01: PM2 log: App [telegram-shop-backend:1] online
+
+/var/www/telegram-shop/logs/frontend-out.log last 20 lines:
+0|telegram | 2025-11-21 20:07:24: 
+0|telegram | 2025-11-21 20:07:24: > frontend@1.1.0 start /var/www/telegram-shop/apps/frontend
+0|telegram | 2025-11-21 20:07:24: > next start
+0|telegram | 2025-11-21 20:07:24: 
+0|telegram | 2025-11-21 20:07:24:    ▲ Next.js 16.0.3
+0|telegram | 2025-11-21 20:07:24:    - Local:         http://localhost:3000
+0|telegram | 2025-11-21 20:07:24:    - Network:       http://192.168.0.234:3000
+0|telegram | 2025-11-21 20:07:25: 
+0|telegram | 2025-11-21 20:07:25:  ✓ Starting...
+0|telegram | 2025-11-21 20:07:25:  ✓ Ready in 918ms
+0|telegram | 2025-11-21 20:17:28: 
+0|telegram | 2025-11-21 20:17:28: > frontend@1.1.0 start /var/www/telegram-shop/apps/frontend
+0|telegram | 2025-11-21 20:17:28: > next start
+0|telegram | 2025-11-21 20:17:28: 
+0|telegram | 2025-11-21 20:17:28:    ▲ Next.js 16.0.3
+0|telegram | 2025-11-21 20:17:28:    - Local:         http://localhost:3000
+0|telegram | 2025-11-21 20:17:28:    - Network:       http://192.168.0.234:3000
+0|telegram | 2025-11-21 20:17:28: 
+0|telegram | 2025-11-21 20:17:28:  ✓ Starting...
+0|telegram | 2025-11-21 20:17:28:  ✓ Ready in 490ms
+
+/var/www/telegram-shop/logs/frontend-error.log last 20 lines:
+0|telegram | 2025-11-16 17:00:45: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-16 18:21:50:  ⚠ Unsupported metadata viewport is configured in metadata export in /product/[slug]. Please move it to viewport export instead.
+0|telegram | 2025-11-16 18:21:50: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-16 18:21:53:  ⚠ Unsupported metadata viewport is configured in metadata export in /product/[slug]. Please move it to viewport export instead.
+0|telegram | 2025-11-16 18:21:53: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-16 18:48:49:  ⚠ Unsupported metadata viewport is configured in metadata export in /category/[slug]. Please move it to viewport export instead.
+0|telegram | 2025-11-16 18:48:49: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-17 10:33:39:  ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+0|telegram | 2025-11-17 10:33:39:  We detected multiple lockfiles and selected the directory of /var/www/telegram-shop/pnpm-lock.yaml as the root directory.
+0|telegram | 2025-11-17 10:33:39:  To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+0|telegram | 2025-11-17 10:33:39:    See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+0|telegram | 2025-11-17 10:33:39:  Detected additional lockfiles: 
+0|telegram | 2025-11-17 10:33:39:    * /var/www/telegram-shop/apps/frontend/package-lock.json
+0|telegram | 2025-11-17 10:33:39: 
+0|telegram | 2025-11-20 08:02:50:  ⚠ Unsupported metadata viewport is configured in metadata export in /product/[slug]. Please move it to viewport export instead.
+0|telegram | 2025-11-20 08:02:50: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-21 20:20:25:  ⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+0|telegram | 2025-11-21 20:20:25: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+0|telegram | 2025-11-21 20:20:29:  ⚠ Unsupported metadata viewport is configured in metadata export in /_not-found. Please move it to viewport export instead.
+0|telegram | 2025-11-21 20:20:29: Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+
+/var/www/telegram-shop/logs/backend-error.log last 20 lines:
+1|telegram | 2025-11-21 20:17:32: [2025-11-21T17:17:32.217Z] [WARN] Prodamus payment gateway is not configured. Set PRODAMUS_PAYMENT_FORM_URL and PRODAMUS_SECRET_KEY in .env
+1|telegram | 2025-11-21 20:17:32: [2025-11-21T17:17:32.252Z] [ERROR] ❌ Database connection failed: PrismaClientInitializationError: Can't reach database server at `localhost:5432`
+1|telegram | 2025-11-21 20:17:32: 
+1|telegram | 2025-11-21 20:17:32: Please make sure your database server is running at `localhost:5432`.
+1|telegram | 2025-11-21 20:17:32:     at t (/var/www/telegram-shop/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:112:2488)
+1|telegram | 2025-11-21 20:17:32:     at Proxy.connect (file:///var/www/telegram-shop/apps/backend/src/database/prisma.service.ts:49:7)
+1|telegram | 2025-11-21 20:17:32:     at startServer (file:///var/www/telegram-shop/apps/backend/src/index.ts:145:5) {
+1|telegram | 2025-11-21 20:17:32:   clientVersion: '5.22.0',
+1|telegram | 2025-11-21 20:17:32:   errorCode: 'P1001'
+1|telegram | 2025-11-21 20:17:32: }
+1|telegram | 2025-11-21 20:17:32: [2025-11-21T17:17:32.262Z] [ERROR] Failed to start server: PrismaClientInitializationError: Can't reach database server at `localhost:5432`
+1|telegram | 2025-11-21 20:17:32: 
+1|telegram | 2025-11-21 20:17:32: Please make sure your database server is running at `localhost:5432`.
+1|telegram | 2025-11-21 20:17:32:     at t (/var/www/telegram-shop/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client/runtime/library.js:112:2488)
+1|telegram | 2025-11-21 20:17:32:     at Proxy.connect (file:///var/www/telegram-shop/apps/backend/src/database/prisma.service.ts:49:7)
+1|telegram | 2025-11-21 20:17:32:     at startServer (file:///var/www/telegram-shop/apps/backend/src/index.ts:145:5) {
+1|telegram | 2025-11-21 20:17:32:   clientVersion: '5.22.0',
+1|telegram | 2025-11-21 20:17:32:   errorCode: 'P1001'
+1|telegram | 2025-11-21 20:17:32: }
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.208Z] [WARN] Prodamus payment gateway is not configured. Set PRODAMUS_PAYMENT_FORM_URL and PRODAMUS_SECRET_KEY in .env
+
+/var/www/telegram-shop/logs/backend-out.log last 20 lines:
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.327Z] [INFO] Redis Client connecting...
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.332Z] [INFO] ✅ Redis Client ready
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.335Z] [INFO] 🚀 Server running on http://localhost:3001
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.336Z] [INFO] 📝 Environment: production
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.336Z] [INFO] 🌐 Frontend URL: http://localhost:3000
+1|telegram | 2025-11-21 20:07:24: [2025-11-21T17:07:24.336Z] [INFO] 📚 API Documentation: http://localhost:3001/api
+1|telegram | 2025-11-21 20:15:09: [2025-11-21T17:15:09.500Z] [INFO] Redis Client connecting...
+1|telegram | 2025-11-21 20:15:09: [2025-11-21T17:15:09.506Z] [INFO] Redis Client connecting...
+1|telegram | 2025-11-21 20:17:25: [2025-11-21T17:17:25.025Z] [INFO] SIGINT received, starting graceful shutdown...
+1|telegram | 2025-11-21 20:17:25: [2025-11-21T17:17:25.033Z] [INFO] Database connection closed
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.249Z] [INFO] ✅ Database connected successfully
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.258Z] [INFO] Redis Client connecting...
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.261Z] [INFO] ✅ Redis Client ready
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.262Z] [INFO] 🚀 Server running on http://localhost:3001
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.262Z] [INFO] 📝 Environment: production
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.262Z] [INFO] 🌐 Frontend URL: http://localhost:3000
+1|telegram | 2025-11-21 20:26:02: [2025-11-21T17:26:02.262Z] [INFO] 📚 API Documentation: http://localhost:3001/api
+1|telegram | 2025-11-21 20:28:36: [2025-11-21T17:28:36.541Z] [INFO] GET /health { query: {}, ip: '::1' }
+1|telegram | 2025-11-21 20:29:21: [2025-11-21T17:29:21.481Z] [INFO] GET /health { query: {}, ip: '::ffff:127.0.0.1' }
+1|telegram | 2025-11-21 20:30:24: [2025-11-21T17:30:24.832Z] [INFO] GET /health { query: {}, ip: '::ffff:127.0.0.1' }
+
+
+💾 PM2 Memory Usage:
+│ restarts          │ 12                                                │
+│ uptime            │ 5m                                                │
+│ unstable restarts │ 0                                                 │
+│ km:cpu:profiling:start │
+│ km:cpu:profiling:stop  │
+│ restarts          │ 3                                              │
+│ uptime            │ 13m                                            │
+│ unstable restarts │ 0                                              │
+│ km:cpu:profiling:start │
+│ km:cpu:profiling:stop  │
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. СТАТУС СЕРВИСОВ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🗄️ PostgreSQL:
+[0;31m✗[0m PostgreSQL не активен
+
+⚡ Redis:
+[0;31m✗[0m Redis не активен
+
+🌐 Nginx:
+[0;32m✓[0m Nginx активен
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. NGINX КОНФИГУРАЦИЯ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[0;31m✗[0m Nginx конфиг не найден: /etc/nginx/sites-enabled/telegram-shop
+
+Доступные конфиги:
+total 8
+drwxr-xr-x 2 root root 4096 Nov 16 15:31 .
+drwxr-xr-x 8 root root 4096 Nov 21 20:19 ..
+lrwxrwxrwx 1 root root   45 Nov 16 15:31 app.salminashop.ru -> /etc/nginx/sites-available/app.salminashop.ru
+lrwxrwxrwx 1 root root   34 Nov 16 14:22 default -> /etc/nginx/sites-available/default
+lrwxrwxrwx 1 root root   41 Nov 16 15:31 salminashop.ru -> /etc/nginx/sites-available/salminashop.ru
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. БАЗА ДАННЫХ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔗 Database URL найден
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. SSL СЕРТИФИКАТЫ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔒 Let's Encrypt сертификаты:
+total 16
+drwx------ 3 root root 4096 Nov 16 15:41 .
+drwxr-xr-x 7 root root 4096 Nov 21 20:30 ..
+-rw-r--r-- 1 root root  740 Nov 16 15:41 README
+drwxr-xr-x 2 root root 4096 Nov 16 15:41 salminashop.ru
+
+📅 Срок действия сертификатов:
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Found the following certs:
+  Certificate Name: salminashop.ru
+    Serial Number: 6dca23d15fa3de95148d9fce8ad7e5c8d1e
+    Key Type: ECDSA
+    Domains: salminashop.ru admin.salminashop.ru app.salminashop.ru www.salminashop.ru
+    Expiry Date: 2026-02-14 11:42:32+00:00 (VALID: 84 days)
+    Certificate Path: /etc/letsencrypt/live/salminashop.ru/fullchain.pem
+    Private Key Path: /etc/letsencrypt/live/salminashop.ru/privkey.pem
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. ПОСЛЕДНИЕ ЛОГИ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 Nginx Error Log (last 10):
+2025/11/21 20:20:26 [error] 1471288#1471288: *8705 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /.DS_Store HTTP/1.1", upstream: "http://localhost/.DS_Store", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471288#1471288: *8707 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /.env HTTP/1.1", upstream: "http://localhost/.env", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471288#1471288: *8713 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /.git/config HTTP/1.1", upstream: "http://localhost/.git/config", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471288#1471288: *8718 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /s/233313e21313e2932323e21393/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties HTTP/1.1", upstream: "http://localhost/s/233313e21313e2932323e21393/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471288#1471288: *8724 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /config.json HTTP/1.1", upstream: "http://localhost/config.json", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471287#1471287: *8732 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /telescope/requests HTTP/1.1", upstream: "http://localhost/telescope/requests", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471287#1471287: *8735 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /info.php HTTP/1.1", upstream: "http://localhost/info.php", host: "app.salminashop.ru"
+2025/11/21 20:20:27 [error] 1471287#1471287: *8741 no live upstreams while connecting to upstream, client: 188.166.108.93, server: app.salminashop.ru, request: "GET /?rest_route=/wp/v2/users/ HTTP/1.1", upstream: "http://localhost/?rest_route=/wp/v2/users/", host: "app.salminashop.ru"
+2025/11/21 20:22:46 [error] 1471288#1471288: *8856 connect() failed (111: Connection refused) while connecting to upstream, client: 91.229.11.132, server: app.salminashop.ru, request: "GET /health HTTP/1.1", upstream: "http://127.0.0.1:3001/health", host: "app.salminashop.ru"
+2025/11/21 20:22:46 [error] 1471288#1471288: *8856 connect() failed (111: Connection refused) while connecting to upstream, client: 91.229.11.132, server: app.salminashop.ru, request: "GET /health HTTP/1.1", upstream: "http://[::1]:3001/health", host: "app.salminashop.ru"
+
+📋 Nginx Access Log (last 10):
+162.158.182.116 - - [21/Nov/2025:20:21:34 +0300] "GET /wordpress/wp-admin/setup-config.php HTTP/1.1" 404 3184 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
+91.229.11.132 - - [21/Nov/2025:20:22:46 +0300] "GET / HTTP/1.1" 200 22260 "-" "curl/8.5.0"
+91.229.11.132 - - [21/Nov/2025:20:22:46 +0300] "GET /health HTTP/1.1" 502 166 "-" "curl/8.5.0"
+142.93.106.231 - - [21/Nov/2025:20:23:32 +0300] "GET / HTTP/1.1" 200 409 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46"
+213.199.47.87 - - [21/Nov/2025:20:26:34 +0300] "GET / HTTP/1.1" 200 4391 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+176.65.148.220 - - [21/Nov/2025:20:26:42 +0300] "GET /dispatch.asp HTTP/1.1" 404 196 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46"
+91.229.11.132 - - [21/Nov/2025:20:29:21 +0300] "GET /health HTTP/1.1" 200 110 "-" "curl/8.5.0"
+91.229.11.132 - - [21/Nov/2025:20:29:28 +0300] "HEAD / HTTP/1.1" 200 0 "-" "curl/8.5.0"
+91.229.11.132 - - [21/Nov/2025:20:30:24 +0300] "GET / HTTP/1.1" 200 22260 "-" "curl/8.5.0"
+91.229.11.132 - - [21/Nov/2025:20:30:24 +0300] "GET /health HTTP/1.1" 200 110 "-" "curl/8.5.0"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. СЕТЕВЫЕ ПОДКЛЮЧЕНИЯ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 Открытые порты:
+tcp        0      0 0.0.0.0:5432            0.0.0.0:*               LISTEN      1471827/docker-prox 
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      753/nginx: master p 
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      753/nginx: master p 
+tcp        0      0 0.0.0.0:6379            0.0.0.0:*               LISTEN      1471800/docker-prox 
+tcp6       0      0 :::3000                 :::*                    LISTEN      1470967/next-server 
+tcp6       0      0 :::3001                 :::*                    LISTEN      1472019/node /var/w 
+tcp6       0      0 :::5432                 :::*                    LISTEN      1471833/docker-prox 
+tcp6       0      0 :::443                  :::*                    LISTEN      753/nginx: master p 
+tcp6       0      0 :::80                   :::*                    LISTEN      753/nginx: master p 
+tcp6       0      0 :::6379                 :::*                    LISTEN      1471805/docker-prox 
+
+🔗 Активные соединения:
+Total: 229
+TCP:   35 (estab 7, closed 14, orphaned 0, timewait 4)
+
+Transport Total     IP        IPv6
+RAW	  1         0         1        
+UDP	  3         3         0        
+TCP	  21        10        11       
+INET	  25        13        12       
+FRAG	  0         0         0        
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. ПРОВЕРКА ДОСТУПНОСТИ СЕРВИСОВ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 Frontend (salminashop.ru):
+200
+
+🌐 Backend (app.salminashop.ru/health):
+200
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ АУДИТ ЗАВЕРШЕН
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Сохраните результаты в файл:
+bash audit-production-server.sh > audit-report.txt 2>&1
+

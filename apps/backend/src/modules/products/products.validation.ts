@@ -104,7 +104,7 @@ export const skuSchema = z
   .string()
   .min(1)
   .max(50)
-  .regex(/^[A-Z0-9-]+$/, 'SKU must contain only uppercase letters, numbers, and hyphens');
+  .regex(/^[a-zA-Z0-9а-яА-ЯёЁ_\-]+$/, 'SKU must contain only letters, numbers, hyphens and underscores');
 
 /**
  * Images array schema
@@ -187,19 +187,7 @@ export const createProductSchema = z.object({
         path: ['promotionPrice'],
       },
     )
-    .refine(
-      (data) => {
-        // discountPrice must be less than price
-        if (data.discountPrice && data.discountPrice >= data.price) {
-          return false;
-        }
-        return true;
-      },
-      {
-        message: 'Discount price must be less than regular price',
-        path: ['discountPrice'],
-      },
-    ),
+    ,
 });
 
 /**

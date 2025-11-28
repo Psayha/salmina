@@ -7,6 +7,7 @@ import { CartIcon } from './ui/icons';
 
 export interface ProductCardProps {
   id: string;
+  slug: string;
   name: string;
   description?: string;
   price: number;
@@ -15,10 +16,11 @@ export interface ProductCardProps {
   emoji?: string;
   imageUrl?: string;
   onAddToCart?: (id: string) => void;
-  onClick?: (id: string) => void;
+  onClick?: (slug: string) => void;
 }
 
 export const ProductCard = memo(function ProductCard({
+  slug,
   id,
   name,
   description,
@@ -40,7 +42,7 @@ export const ProductCard = memo(function ProductCard({
   };
 
   const handleClick = () => {
-    onClick?.(id);
+    onClick?.(slug);
   };
 
   return (

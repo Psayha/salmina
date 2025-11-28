@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegram } from '@/lib/telegram/useTelegram';
@@ -9,6 +9,9 @@ import { ToastProvider } from './Toast';
 import { ErrorBoundary } from './ErrorBoundary';
 import { ThemeProvider } from './ThemeProvider';
 import { LoadingScreen } from './LoadingScreen';
+
+// Global flag to track if app has been initialized
+let hasInitialized = false;
 
 /**
  * App providers with React Query and initialization
@@ -47,13 +50,22 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const autoLoginWithTelegram = useAuthStore((state) => state.autoLoginWithTelegram);
   const fetchCurrentUser = useAuthStore((state) => state.fetchCurrentUser);
   const fetchCart = useCartStore((state) => state.fetchCart);
-
-  const [showLoading, setShowLoading] = useState(true);
+  
+  // Show loading only on first app load, not on navigation
+  const [showLoading, setShowLoading] = useState(!hasInitialized);
+  const initStarted = useRef(false);
 
   useEffect(() => {
+    // Skip if already initialized or init already started
+    if (hasInitialized || initStarted.current) {
+      return;
+    }
+
     if (!isReady || !webApp) {
       return;
     }
+
+    initStarted.current = true;
 
     async function initialize() {
       try {
@@ -92,9 +104,10 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isReady, webApp]);
 
   const handleLoadingComplete = () => {
+    hasInitialized = true;
     setShowLoading(false);
   };
 

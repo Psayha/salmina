@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateCategory, getCategoryBySlug, getCategories } from '@/lib/api/endpoints/categories';
 import { Category } from '@/lib/api/types';
@@ -8,7 +8,8 @@ import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTele
 import { ArrowLeft, Save } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
-export default function EditCategoryPage({ params }: { params: { id: string } }) {
+export default function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const haptic = useTelegramHaptic();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -35,7 +36,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   useEffect(() => {
     async function loadData() {
       try {
-        const [categoryData, categoriesData] = await Promise.all([getCategoryBySlug(params.id), getCategories()]);
+        const [categoryData, categoriesData] = await Promise.all([getCategoryBySlug(id), getCategories()]);
 
         setCategory(categoryData);
         setCategories(categoriesData.filter((c) => c.id !== categoryData.id));
@@ -61,7 +62,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
       }
     }
     loadData();
-  }, [params.id, router, haptic]);
+  }, [id, router, haptic]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,7 +254,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light disabled:opacity-50"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>
