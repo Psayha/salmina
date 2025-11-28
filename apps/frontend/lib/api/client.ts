@@ -1,44 +1,51 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+
+// Production API URL - hardcoded to ensure correct value
+const PRODUCTION_API_URL = 'https://app.salminashop.ru/api';
+const DEVELOPMENT_API_URL = 'http://localhost:3001/api';
 
 /**
- * Get API base URL based on environment
- * - Production: https://app.salminashop.ru/api
- * - Development: http://localhost:3001/api
- * - Can be overridden with NEXT_PUBLIC_API_URL env variable
+ * Get API base URL dynamically based on current environment
+ * Called on each request to ensure correct URL even after hydration
  */
 function getApiBaseUrl(): string {
-  // Allow explicit override via environment variable
+  // Allow explicit override via environment variable (for development only)
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // Detect production environment
+  // Client-side: detect production by hostname
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
 
-    // Production domain
-    if (hostname === 'salminashop.ru' || hostname === 'www.salminashop.ru') {
-      return 'https://app.salminashop.ru/api';
+    // Production domains
+    if (
+      hostname === 'salminashop.ru' ||
+      hostname === 'www.salminashop.ru' ||
+      hostname.endsWith('.salminashop.ru')
+    ) {
+      return PRODUCTION_API_URL;
+    }
+
+    // Local development
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return DEVELOPMENT_API_URL;
     }
   }
 
-  // Default to localhost for development
-  return 'http://localhost:3001/api';
-}
+  // Server-side or unknown: check NODE_ENV
+  if (process.env.NODE_ENV === 'production') {
+    return PRODUCTION_API_URL;
+  }
 
-// API base URL
-const API_BASE_URL = getApiBaseUrl();
-
-// Log the API URL in development for debugging
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  console.log('[API Client] Using API base URL:', API_BASE_URL);
+  return DEVELOPMENT_API_URL;
 }
 
 /**
  * Axios instance with default configuration
+ * Note: baseURL is set dynamically in request interceptor
  */
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
@@ -46,10 +53,14 @@ export const apiClient = axios.create({
 });
 
 /**
- * Request interceptor - add auth token and session token
+ * Request interceptor - set baseURL dynamically and add auth tokens
  */
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
+    // Set baseURL dynamically on each request
+    // This ensures correct URL after hydration
+    config.baseURL = getApiBaseUrl();
+
     // Add JWT token if available
     const token = getAuthToken();
     if (token) {
@@ -117,7 +128,7 @@ async function refreshAuthToken(): Promise<void> {
     throw new Error('No refresh token');
   }
 
-  const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+  const response = await axios.post(`${getApiBaseUrl()}/auth/refresh`, {
     refreshToken,
   });
 

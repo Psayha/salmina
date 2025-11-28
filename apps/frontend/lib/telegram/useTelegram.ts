@@ -99,6 +99,9 @@ declare global {
   }
 }
 
+// Global flag to ensure ready() and requestFullscreen() are called only once
+let telegramInitialized = false;
+
 /**
  * Hook for Telegram Web App integration
  */
@@ -113,7 +116,9 @@ export function useTelegram() {
   });
 
   useEffect(() => {
-    if (webApp) {
+    // Only initialize Telegram WebApp once
+    if (webApp && !telegramInitialized) {
+      telegramInitialized = true;
       webApp.ready();
       if (webApp.requestFullscreen) {
         webApp.requestFullscreen();
