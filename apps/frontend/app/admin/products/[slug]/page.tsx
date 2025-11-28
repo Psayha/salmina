@@ -157,7 +157,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 font-light">Загрузка товара...</div>
+        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка товара...</div>
       </div>
     );
   }
@@ -167,34 +167,34 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.push('/admin/products')}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
         </button>
         <div>
-          <h1 className="text-2xl font-light text-gray-900">Редактировать товар</h1>
-          <p className="text-sm font-light text-gray-600 mt-1">{product?.name}</p>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Редактировать товар</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">{product?.name}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 p-6 space-y-4">
+        <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-gray-700 p-6 space-y-4">
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               Название <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="Введите название товара"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               URL (slug) <span className="text-red-500">*</span>
             </label>
             <input
@@ -203,21 +203,21 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
               onChange={(e) =>
                 setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })
               }
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="nazvanie-tovara"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Используется в URL товара</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Используется в URL товара</p>
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               Описание <span className="text-red-500">*</span>
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="Введите описание товара"
               rows={4}
               required
@@ -226,37 +226,37 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 Артикул <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.article}
                 onChange={(e) => setFormData({ ...formData, article: e.target.value.toUpperCase() })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light uppercase"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light uppercase text-gray-900 dark:text-white"
                 placeholder="ART-123"
                 pattern="[A-Z0-9-]+"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Заглавные буквы, цифры, дефисы</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Заглавные буквы, цифры, дефисы</p>
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 SKU <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="SKU-001"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 Вес (г) <span className="text-red-500">*</span>
               </label>
               <input
@@ -264,7 +264,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 step="0.01"
                 value={formData.weight}
                 onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="100"
                 required
               />
@@ -272,13 +272,13 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               Категория <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               required
             >
               <option value="">Выберите категорию</option>
@@ -292,7 +292,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 Цена <span className="text-red-500">*</span>
               </label>
               <input
@@ -300,38 +300,38 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 step="0.01"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0.00"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Цена со скидкой</label>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Цена со скидкой</label>
               <input
                 type="number"
                 step="0.01"
                 value={formData.discountPrice}
                 onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Количество</label>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Количество</label>
               <input
                 type="number"
                 value={formData.quantity}
                 onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               Изображения <span className="text-red-500">*</span>
             </label>
             <ImageUpload
@@ -339,7 +339,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
               onChange={(urls) => setFormData({ ...formData, images: urls.join('\n') })}
               maxFiles={5}
             />
-            <p className="text-xs text-gray-500 mt-1">Первое изображение будет основным</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Первое изображение будет основным</p>
           </div>
 
           <div className="flex items-center gap-4 flex-wrap">
@@ -348,9 +348,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Активен</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Активен</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -358,9 +358,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 type="checkbox"
                 checked={formData.hasPromotion}
                 onChange={(e) => setFormData({ ...formData, hasPromotion: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Акция</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Акция</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -368,9 +368,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 type="checkbox"
                 checked={formData.isNew}
                 onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Новинка</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Новинка</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -378,9 +378,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 type="checkbox"
                 checked={formData.isHit}
                 onChange={(e) => setFormData({ ...formData, isHit: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Хит</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Хит</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -388,33 +388,33 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 type="checkbox"
                 checked={formData.isDiscount}
                 onChange={(e) => setFormData({ ...formData, isDiscount: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Скидка</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Скидка</span>
             </label>
           </div>
 
           {formData.hasPromotion && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-light text-gray-700 mb-2">Цена по акции</label>
+                <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Цена по акции</label>
                 <input
                   type="number"
                   step="0.01"
                   value={formData.promotionPrice}
                   onChange={(e) => setFormData({ ...formData, promotionPrice: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                  className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                   placeholder="0.00"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-light text-gray-700 mb-2">Текст акции</label>
+                <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Текст акции</label>
                 <input
                   type="text"
                   value={formData.promotionLabel}
                   onChange={(e) => setFormData({ ...formData, promotionLabel: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                  className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                   placeholder="Скидка 20%"
                 />
               </div>
@@ -426,7 +426,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
           <button
             type="button"
             onClick={() => router.push('/admin/products')}
-            className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-light"
+            className="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-light"
           >
             Отмена
           </button>

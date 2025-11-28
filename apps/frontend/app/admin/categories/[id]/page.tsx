@@ -105,7 +105,7 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 font-light">Загрузка категории...</div>
+        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка категории...</div>
       </div>
     );
   }
@@ -115,34 +115,34 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.push('/admin/categories')}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
         </button>
         <div>
-          <h1 className="text-2xl font-light text-gray-900">Редактировать категорию</h1>
-          <p className="text-sm font-light text-gray-600 mt-1">{category?.name}</p>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Редактировать категорию</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">{category?.name}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 p-6 space-y-4">
+        <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-gray-700 p-6 space-y-4">
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               Название <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="Введите название категории"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
               URL (slug) <span className="text-red-500">*</span>
             </label>
             <input
@@ -151,26 +151,26 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
               onChange={(e) =>
                 setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })
               }
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="nazvanie-kategorii"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Используется в URL категории</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Используется в URL категории</p>
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">Описание</label>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Описание</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               placeholder="Введите описание категории"
               rows={3}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 mb-2">Изображение</label>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Изображение</label>
             <ImageUpload
               value={formData.image ? [formData.image] : []}
               onChange={(urls) => setFormData({ ...formData, image: urls[0] || '' })}
@@ -180,11 +180,11 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Родительская категория</label>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Родительская категория</label>
               <select
                 value={formData.parentId}
                 onChange={(e) => setFormData({ ...formData, parentId: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               >
                 <option value="">Нет (корневая категория)</option>
                 {categories.map((cat) => (
@@ -196,12 +196,12 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Порядок сортировки</label>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Порядок сортировки</label>
               <input
                 type="number"
                 value={formData.order}
                 onChange={(e) => setFormData({ ...formData, order: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0"
               />
             </div>
@@ -213,9 +213,9 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
                 type="checkbox"
                 checked={formData.showOnHome}
                 onChange={(e) => setFormData({ ...formData, showOnHome: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Показывать на главной</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Показывать на главной</span>
             </label>
 
             <label className="flex items-center gap-2 cursor-pointer">
@@ -223,20 +223,20 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 rounded focus:ring-pink-500"
+                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
-              <span className="text-sm font-light text-gray-700">Активна</span>
+              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Активна</span>
             </label>
           </div>
 
           {formData.showOnHome && (
             <div>
-              <label className="block text-sm font-light text-gray-700 mb-2">Порядок на главной</label>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Порядок на главной</label>
               <input
                 type="number"
                 value={formData.homeOrder}
                 onChange={(e) => setFormData({ ...formData, homeOrder: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light"
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0"
               />
             </div>
@@ -247,7 +247,7 @@ export default function EditCategoryPage({ params }: { params: Promise<{ id: str
           <button
             type="button"
             onClick={() => router.push('/admin/categories')}
-            className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-light"
+            className="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-light"
           >
             Отмена
           </button>
