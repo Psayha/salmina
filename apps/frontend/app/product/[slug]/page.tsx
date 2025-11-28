@@ -86,12 +86,12 @@ export default function ProductPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen relative z-10 flex items-center justify-center">
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-lg">
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 dark:border-white/10 shadow-lg">
           <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-white/30 rounded-xl"></div>
-            <div className="h-8 bg-white/30 rounded w-3/4"></div>
-            <div className="h-4 bg-white/30 rounded w-full"></div>
-            <div className="h-4 bg-white/30 rounded w-5/6"></div>
+            <div className="h-64 bg-white/30 dark:bg-white/10 rounded-xl"></div>
+            <div className="h-8 bg-white/30 dark:bg-white/10 rounded w-3/4"></div>
+            <div className="h-4 bg-white/30 dark:bg-white/10 rounded w-full"></div>
+            <div className="h-4 bg-white/30 dark:bg-white/10 rounded w-5/6"></div>
           </div>
         </div>
       </div>
@@ -101,8 +101,8 @@ export default function ProductPage() {
   if (!product) {
     return (
       <div className="min-h-screen relative z-10 flex items-center justify-center p-6">
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-lg text-center">
-          <p className="text-gray-700 mb-4">Товар не найден</p>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 dark:border-white/10 shadow-lg text-center">
+          <p className="text-gray-700 dark:text-gray-300 mb-4">Товар не найден</p>
           <Button onClick={() => router.push('/')}>На главную</Button>
         </div>
       </div>
@@ -115,7 +115,7 @@ export default function ProductPage() {
   return (
     <div className="min-h-screen relative z-10 pb-24">
       {/* Product Image */}
-      <div className="relative h-96 w-full bg-white/40 backdrop-blur-md border-b border-white/30">
+      <div className="relative h-96 w-full bg-white/40 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10">
         {product.images && product.images.length > 0 ? (
           <Image src={product.images[0]} alt={product.name} fill className="object-cover" priority />
         ) : (
@@ -127,54 +127,54 @@ export default function ProductPage() {
         {/* Favorite Button */}
         <button
           onClick={handleToggleFavorite}
-          className="absolute top-6 right-6 w-12 h-12 bg-white/60 backdrop-blur-md rounded-full border border-white/30 shadow-lg flex items-center justify-center hover:bg-white/70 transition-all duration-300"
+          className="absolute top-6 right-6 w-12 h-12 bg-white/60 dark:bg-white/20 backdrop-blur-md rounded-full border border-white/30 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-white/70 dark:hover:bg-white/30 transition-all duration-300"
         >
-          <HeartIcon className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-700'}`} />
+          <HeartIcon className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-700 dark:text-gray-200'}`} />
         </button>
       </div>
 
       {/* Product Info */}
       <div className="px-6 py-6 space-y-6">
         {/* Name and Price */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-          <h1 className="text-2xl font-light text-gray-900 mb-4">{product.name}</h1>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white mb-4">{product.name}</h1>
 
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-light text-gray-900">{finalPrice.toLocaleString('ru-RU')} ₽</span>
+            <span className="text-3xl font-light text-gray-900 dark:text-white">{finalPrice.toLocaleString('ru-RU')} ₽</span>
             {hasDiscount && (
-              <span className="text-lg text-gray-500 line-through">{product.price.toLocaleString('ru-RU')} ₽</span>
+              <span className="text-lg text-gray-500 dark:text-gray-400 line-through">{product.price.toLocaleString('ru-RU')} ₽</span>
             )}
           </div>
         </div>
 
         {/* Description */}
         {product.description && (
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">Описание</h2>
-            <p className="text-sm font-light text-gray-600 leading-relaxed">{product.description}</p>
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-3">Описание</h2>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400 leading-relaxed">{product.description}</p>
           </div>
         )}
 
         {/* Quantity Selector */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Количество</h2>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Количество</h2>
           <div className="flex items-center justify-center gap-6">
             <button
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
-              className="w-12 h-12 bg-white/50 backdrop-blur-md rounded-full border border-white/30 shadow-lg flex items-center justify-center hover:bg-white/60 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-12 h-12 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/30 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-white/60 dark:hover:bg-white/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span className="text-2xl font-light text-gray-700">−</span>
+              <span className="text-2xl font-light text-gray-700 dark:text-gray-200">−</span>
             </button>
 
-            <span className="text-3xl font-light text-gray-900 min-w-[60px] text-center">{quantity}</span>
+            <span className="text-3xl font-light text-gray-900 dark:text-white min-w-[60px] text-center">{quantity}</span>
 
             <button
               onClick={() => handleQuantityChange(1)}
               disabled={quantity >= 99}
-              className="w-12 h-12 bg-white/50 backdrop-blur-md rounded-full border border-white/30 shadow-lg flex items-center justify-center hover:bg-white/60 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-12 h-12 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/30 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-white/60 dark:hover:bg-white/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span className="text-2xl font-light text-gray-700">+</span>
+              <span className="text-2xl font-light text-gray-700 dark:text-gray-200">+</span>
             </button>
           </div>
         </div>
@@ -182,15 +182,15 @@ export default function ProductPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 px-2">Похожие товары</h2>
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 px-2">Похожие товары</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {relatedProducts.map((related) => (
                 <div
                   key={related.id}
                   onClick={() => handleRelatedProductClick(related.slug)}
-                  className="bg-white/40 backdrop-blur-md rounded-xl p-4 border border-white/30 shadow-lg cursor-pointer hover:bg-white/50 transition-all duration-300"
+                  className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/30 dark:border-white/10 shadow-lg cursor-pointer hover:bg-white/50 dark:hover:bg-white/20 transition-all duration-300"
                 >
-                  <div className="aspect-square relative mb-3 bg-white/30 rounded-lg overflow-hidden">
+                  <div className="aspect-square relative mb-3 bg-white/30 dark:bg-white/10 rounded-lg overflow-hidden">
                     {related.images && related.images.length > 0 ? (
                       <Image src={related.images[0]} alt={related.name} fill className="object-cover" />
                     ) : (
@@ -199,8 +199,8 @@ export default function ProductPage() {
                       </div>
                     )}
                   </div>
-                  <p className="text-sm font-light text-gray-900 mb-1 line-clamp-2">{related.name}</p>
-                  <p className="text-base font-light text-gray-900">
+                  <p className="text-sm font-light text-gray-900 dark:text-white mb-1 line-clamp-2">{related.name}</p>
+                  <p className="text-base font-light text-gray-900 dark:text-white">
                     {(related.promotionPrice || related.discountPrice || related.price).toLocaleString('ru-RU')} ₽
                   </p>
                 </div>
@@ -211,9 +211,9 @@ export default function ProductPage() {
       </div>
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/60 backdrop-blur-md border-t border-white/30 shadow-lg p-6 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/60 dark:bg-white/10 backdrop-blur-md border-t border-white/30 dark:border-white/10 shadow-lg p-6 z-50">
         <Button onClick={handleAddToCart} disabled={isAddingToCart} className="w-full py-4 text-base">
-          <CartIcon className="w-5 h-5 mr-2 text-gray-900" />
+          <CartIcon className="w-5 h-5 mr-2 text-gray-900 dark:text-white" />
           {isAddingToCart ? 'Добавление...' : 'Добавить в корзину'}
         </Button>
       </div>

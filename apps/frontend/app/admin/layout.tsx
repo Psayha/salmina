@@ -1,6 +1,8 @@
 'use client';
 
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { AdminBottomNav } from '@/components/admin/AdminBottomNav';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -28,8 +30,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
-        <div className="text-gray-600 font-light">Загрузка...</div>
+      <div className={`flex items-center justify-center min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-pink-50 via-white to-blue-50'}`}>
+        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка...</div>
       </div>
     );
   }
@@ -49,9 +51,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           : 'bg-gradient-to-br from-pink-50 via-white to-blue-50'
       }`}
     >
+      {/* Sidebar - Desktop only */}
+      <AdminSidebar />
+
       {/* Header with Safe Area */}
       <div
-        className="fixed top-0 left-0 right-0 z-40"
+        className="fixed top-0 left-0 right-0 z-40 md:left-64"
         style={{
           paddingTop: 'env(safe-area-inset-top)',
         }}
@@ -61,14 +66,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content with proper spacing */}
       <main
-        className="px-4 max-w-7xl mx-auto w-full"
+        className="px-4 max-w-7xl mx-auto w-full md:ml-64"
         style={{
           paddingTop: 'calc(5rem + env(safe-area-inset-top))',
-          paddingBottom: 'calc(2rem + env(safe-area-inset-bottom))',
+          paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))',
         }}
       >
         {children}
       </main>
+
+      {/* Bottom Navigation - Mobile only */}
+      <AdminBottomNav />
     </div>
   );
 }

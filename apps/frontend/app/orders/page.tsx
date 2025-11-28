@@ -35,11 +35,11 @@ const statusLabels: Record<Order['status'], string> = {
 };
 
 const statusColors: Record<Order['status'], string> = {
-  pending: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-700',
-  paid: 'bg-blue-500/20 border-blue-500/30 text-blue-700',
-  shipped: 'bg-purple-500/20 border-purple-500/30 text-purple-700',
-  delivered: 'bg-green-500/20 border-green-500/30 text-green-700',
-  cancelled: 'bg-red-500/20 border-red-500/30 text-red-700',
+  pending: 'bg-yellow-500/20 border-yellow-500/30 text-yellow-700 dark:text-yellow-400',
+  paid: 'bg-blue-500/20 border-blue-500/30 text-blue-700 dark:text-blue-400',
+  shipped: 'bg-purple-500/20 border-purple-500/30 text-purple-700 dark:text-purple-400',
+  delivered: 'bg-green-500/20 border-green-500/30 text-green-700 dark:text-green-400',
+  cancelled: 'bg-red-500/20 border-red-500/30 text-red-700 dark:text-red-400',
 };
 
 // Transform API order to UI order
@@ -118,9 +118,9 @@ export default function OrdersPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen relative z-10 flex items-center justify-center p-6">
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-12 border border-white/30 shadow-lg text-center max-w-md">
-          <h2 className="text-xl font-light text-gray-900 mb-3">Требуется авторизация</h2>
-          <p className="text-sm font-light text-gray-600 mb-6">
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/30 dark:border-white/10 shadow-lg text-center max-w-md">
+          <h2 className="text-xl font-light text-gray-900 dark:text-white mb-3">Требуется авторизация</h2>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-400 mb-6">
             Войдите в аккаунт, чтобы просматривать историю заказов
           </p>
           <Button onClick={() => router.push('/')}>На главную</Button>
@@ -132,11 +132,11 @@ export default function OrdersPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen relative z-10 flex items-center justify-center p-6">
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-lg">
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 dark:border-white/10 shadow-lg">
           <div className="animate-pulse space-y-4">
-            <div className="h-24 bg-white/30 rounded-xl w-80"></div>
-            <div className="h-24 bg-white/30 rounded-xl w-80"></div>
-            <div className="h-24 bg-white/30 rounded-xl w-80"></div>
+            <div className="h-24 bg-white/30 dark:bg-white/10 rounded-xl w-80"></div>
+            <div className="h-24 bg-white/30 dark:bg-white/10 rounded-xl w-80"></div>
+            <div className="h-24 bg-white/30 dark:bg-white/10 rounded-xl w-80"></div>
           </div>
         </div>
       </div>
@@ -154,17 +154,17 @@ export default function OrdersPage() {
     return (
       <div className="min-h-screen relative z-10 pb-24">
         {/* Header */}
-        <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+        <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
           <div className="px-6 py-6">
-            <h1 className="text-2xl font-light text-gray-900">Заказ {order.orderNumber}</h1>
-            <p className="text-sm font-light text-gray-600 mt-1">{formatDate(order.createdAt)}</p>
+            <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказ {order.orderNumber}</h1>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">{formatDate(order.createdAt)}</p>
           </div>
         </div>
 
         <div className="px-6 py-6 space-y-6">
           {/* Status */}
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-3">Статус заказа</h2>
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-3">Статус заказа</h2>
             <div
               className={`inline-block px-4 py-2 rounded-full border backdrop-blur-md ${statusColors[order.status]}`}
             >
@@ -173,12 +173,12 @@ export default function OrdersPage() {
           </div>
 
           {/* Items */}
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Состав заказа</h2>
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg space-y-4">
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Состав заказа</h2>
 
             {order.items.map((item) => (
-              <div key={item.id} className="flex gap-4 pb-4 border-b border-white/30 last:border-0 last:pb-0">
-                <div className="relative w-16 h-16 bg-white/30 rounded-xl overflow-hidden shrink-0">
+              <div key={item.id} className="flex gap-4 pb-4 border-b border-white/30 dark:border-white/10 last:border-0 last:pb-0">
+                <div className="relative w-16 h-16 bg-white/30 dark:bg-white/10 rounded-xl overflow-hidden shrink-0">
                   {item.productImage ? (
                     <Image src={item.productImage} alt={item.productName} fill className="object-cover" />
                   ) : (
@@ -189,14 +189,14 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="flex-1">
-                  <p className="text-base font-light text-gray-900 mb-1">{item.productName}</p>
-                  <p className="text-sm font-light text-gray-600">
+                  <p className="text-base font-light text-gray-900 dark:text-white mb-1">{item.productName}</p>
+                  <p className="text-sm font-light text-gray-600 dark:text-gray-400">
                     {item.quantity} × {item.price.toLocaleString('ru-RU')} ₽
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <p className="text-base font-light text-gray-900">
+                  <p className="text-base font-light text-gray-900 dark:text-white">
                     {(item.quantity * item.price).toLocaleString('ru-RU')} ₽
                   </p>
                 </div>
@@ -205,10 +205,10 @@ export default function OrdersPage() {
           </div>
 
           {/* Total */}
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
             <div className="flex justify-between items-center">
-              <span className="text-base font-light text-gray-900">Итого:</span>
-              <span className="text-2xl font-light text-gray-900">{order.total.toLocaleString('ru-RU')} ₽</span>
+              <span className="text-base font-light text-gray-900 dark:text-white">Итого:</span>
+              <span className="text-2xl font-light text-gray-900 dark:text-white">{order.total.toLocaleString('ru-RU')} ₽</span>
             </div>
           </div>
 
@@ -225,21 +225,21 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen relative z-10 pb-24">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
         <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900">Мои заказы</h1>
-          {!isEmpty && <p className="text-sm font-light text-gray-600 mt-1">Всего заказов: {orders.length}</p>}
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Мои заказы</h1>
+          {!isEmpty && <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">Всего заказов: {orders.length}</p>}
         </div>
       </div>
 
       {isEmpty ? (
         <div className="flex items-center justify-center min-h-[60vh] px-6">
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-12 border border-white/30 shadow-lg text-center max-w-md">
-            <div className="w-24 h-24 mx-auto mb-6 bg-white/30 rounded-full flex items-center justify-center">
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/30 dark:border-white/10 shadow-lg text-center max-w-md">
+            <div className="w-24 h-24 mx-auto mb-6 bg-white/30 dark:bg-white/10 rounded-full flex items-center justify-center">
               <span className="text-5xl">📦</span>
             </div>
-            <h2 className="text-xl font-light text-gray-900 mb-3">Заказов пока нет</h2>
-            <p className="text-sm font-light text-gray-600 mb-6">Оформите первый заказ и он появится здесь</p>
+            <h2 className="text-xl font-light text-gray-900 dark:text-white mb-3">Заказов пока нет</h2>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mb-6">Оформите первый заказ и он появится здесь</p>
             <Button onClick={() => router.push('/')}>Перейти к покупкам</Button>
           </div>
         </div>
@@ -249,23 +249,23 @@ export default function OrdersPage() {
             <button
               key={order.id}
               onClick={() => handleOrderClick(order.id)}
-              className="w-full bg-white/40 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg hover:bg-white/50 transition-all duration-300 text-left"
+              className="w-full bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/30 dark:border-white/10 shadow-lg hover:bg-white/50 dark:hover:bg-white/20 transition-all duration-300 text-left"
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <p className="text-base font-light text-gray-900 mb-1">Заказ {order.orderNumber}</p>
-                  <p className="text-xs font-light text-gray-600">{formatDate(order.createdAt)}</p>
+                  <p className="text-base font-light text-gray-900 dark:text-white mb-1">Заказ {order.orderNumber}</p>
+                  <p className="text-xs font-light text-gray-600 dark:text-gray-400">{formatDate(order.createdAt)}</p>
                 </div>
                 <div className={`px-3 py-1 rounded-full border backdrop-blur-md ${statusColors[order.status]}`}>
                   <span className="text-xs font-light">{statusLabels[order.status]}</span>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-white/30">
-                <span className="text-sm font-light text-gray-600">
+              <div className="flex justify-between items-center pt-3 border-t border-white/30 dark:border-white/10">
+                <span className="text-sm font-light text-gray-600 dark:text-gray-400">
                   {order.itemsCount} {order.itemsCount === 1 ? 'товар' : 'товаров'}
                 </span>
-                <span className="text-lg font-light text-gray-900">{order.total.toLocaleString('ru-RU')} ₽</span>
+                <span className="text-lg font-light text-gray-900 dark:text-white">{order.total.toLocaleString('ru-RU')} ₽</span>
               </div>
             </button>
           ))}

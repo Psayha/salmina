@@ -75,11 +75,11 @@ export default function FavoritesPage() {
   return (
     <div className="min-h-screen relative z-10 pb-24">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
         <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900">Избранное</h1>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Избранное</h1>
           {products.length > 0 && (
-            <p className="text-sm font-light text-gray-600 mt-1">
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">
               {products.length} {products.length === 1 ? 'товар' : 'товаров'}
             </p>
           )}
@@ -105,7 +105,7 @@ export default function FavoritesPage() {
                     e.stopPropagation();
                     handleToggleFavorite(product.id);
                   }}
-                  className="absolute top-2 right-2 z-10 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full border border-white/30 shadow-lg flex items-center justify-center hover:bg-white/90 transition-all duration-300"
+                  className="absolute top-2 right-2 z-10 w-10 h-10 bg-white/80 dark:bg-white/20 backdrop-blur-md rounded-full border border-white/30 dark:border-white/10 shadow-lg flex items-center justify-center hover:bg-white/90 dark:hover:bg-white/30 transition-all duration-300"
                 >
                   <HeartIcon className="w-5 h-5 fill-red-500 text-red-500" />
                 </button>

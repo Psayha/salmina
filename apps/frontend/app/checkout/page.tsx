@@ -147,56 +147,56 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen relative z-10 pb-32">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
         <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900">Оформление заказа</h1>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Оформление заказа</h1>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
         {/* Contact Information */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Контактные данные</h2>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg space-y-4">
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Контактные данные</h2>
 
           <div>
-            <label className="block text-sm font-light text-gray-600 mb-2">Имя и фамилия *</label>
+            <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Имя и фамилия *</label>
             <input
               type="text"
               value={formData.fullName}
               onChange={(e) => handleInputChange('fullName', e.target.value)}
-              className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
               placeholder="Иван Иванов"
             />
-            {errors.fullName && <p className="text-xs text-red-600 mt-1">{errors.fullName}</p>}
+            {errors.fullName && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.fullName}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-600 mb-2">Телефон *</label>
+            <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Телефон *</label>
             <input
               type="tel"
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
-              className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
               placeholder="+7 (999) 123-45-67"
             />
-            {errors.phone && <p className="text-xs text-red-600 mt-1">{errors.phone}</p>}
+            {errors.phone && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.phone}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-600 mb-2">Email</label>
+            <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Email</label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
               placeholder="example@mail.com"
             />
           </div>
         </div>
 
         {/* Delivery Method */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Способ доставки</h2>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg space-y-4">
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Способ доставки</h2>
 
           <div className="space-y-3">
             {[
@@ -208,8 +208,8 @@ export default function CheckoutPage() {
                 key={method.value}
                 className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
                   formData.deliveryMethod === method.value
-                    ? 'bg-white/60 border-white/50'
-                    : 'bg-white/30 border-white/30 hover:bg-white/40'
+                    ? 'bg-white/60 dark:bg-white/20 border-white/50 dark:border-white/20'
+                    : 'bg-white/30 dark:bg-white/5 border-white/30 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10'
                 }`}
               >
                 <input
@@ -221,8 +221,8 @@ export default function CheckoutPage() {
                   className="mt-1"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-light text-gray-900">{method.label}</p>
-                  <p className="text-xs font-light text-gray-600">{method.desc}</p>
+                  <p className="text-sm font-light text-gray-900 dark:text-white">{method.label}</p>
+                  <p className="text-xs font-light text-gray-600 dark:text-gray-400">{method.desc}</p>
                 </div>
               </label>
             ))}
@@ -231,54 +231,54 @@ export default function CheckoutPage() {
 
         {/* Delivery Address */}
         {formData.deliveryMethod !== 'pickup' && (
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Адрес доставки</h2>
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg space-y-4">
+            <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Адрес доставки</h2>
 
             <div>
-              <label className="block text-sm font-light text-gray-600 mb-2">Город *</label>
+              <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Город *</label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={(e) => handleInputChange('city', e.target.value)}
-                className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
                 placeholder="Москва"
               />
-              {errors.city && <p className="text-xs text-red-600 mt-1">{errors.city}</p>}
+              {errors.city && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.city}</p>}
             </div>
 
             {formData.deliveryMethod === 'courier' && (
               <div>
-                <label className="block text-sm font-light text-gray-600 mb-2">Адрес *</label>
+                <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Адрес *</label>
                 <input
                   type="text"
                   value={formData.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
-                  className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
                   placeholder="ул. Примерная, д. 1, кв. 1"
                 />
-                {errors.address && <p className="text-xs text-red-600 mt-1">{errors.address}</p>}
+                {errors.address && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.address}</p>}
               </div>
             )}
 
             {formData.deliveryMethod === 'post' && (
               <div>
-                <label className="block text-sm font-light text-gray-600 mb-2">Почтовый индекс *</label>
+                <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Почтовый индекс *</label>
                 <input
                   type="text"
                   value={formData.postalCode}
                   onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                  className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20"
                   placeholder="123456"
                 />
-                {errors.postalCode && <p className="text-xs text-red-600 mt-1">{errors.postalCode}</p>}
+                {errors.postalCode && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{errors.postalCode}</p>}
               </div>
             )}
           </div>
         )}
 
         {/* Payment Method */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg space-y-4">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 mb-4">Способ оплаты</h2>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg space-y-4">
+          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">Способ оплаты</h2>
 
           <div className="space-y-3">
             {[
@@ -290,8 +290,8 @@ export default function CheckoutPage() {
                 key={method.value}
                 className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
                   formData.paymentMethod === method.value
-                    ? 'bg-white/60 border-white/50'
-                    : 'bg-white/30 border-white/30 hover:bg-white/40'
+                    ? 'bg-white/60 dark:bg-white/20 border-white/50 dark:border-white/20'
+                    : 'bg-white/30 dark:bg-white/5 border-white/30 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10'
                 }`}
               >
                 <input
@@ -303,8 +303,8 @@ export default function CheckoutPage() {
                   className="mt-1"
                 />
                 <div className="flex-1">
-                  <p className="text-sm font-light text-gray-900">{method.label}</p>
-                  <p className="text-xs font-light text-gray-600">{method.desc}</p>
+                  <p className="text-sm font-light text-gray-900 dark:text-white">{method.label}</p>
+                  <p className="text-xs font-light text-gray-600 dark:text-gray-400">{method.desc}</p>
                 </div>
               </label>
             ))}
@@ -312,24 +312,24 @@ export default function CheckoutPage() {
         </div>
 
         {/* Comment */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
-          <label className="block text-sm font-light text-gray-600 mb-2">Комментарий к заказу</label>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+          <label className="block text-sm font-light text-gray-600 dark:text-gray-300 mb-2">Комментарий к заказу</label>
           <textarea
             value={formData.comment}
             onChange={(e) => handleInputChange('comment', e.target.value)}
             rows={4}
-            className="w-full px-4 py-3 bg-white/50 backdrop-blur-md rounded-xl border border-white/30 text-sm font-light text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none"
+            className="w-full px-4 py-3 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 text-sm font-light text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 dark:focus:ring-white/20 resize-none"
             placeholder="Дополнительная информация для курьера или пожелания"
           />
         </div>
       </form>
 
       {/* Fixed Bottom Bar with Total and Submit */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/60 backdrop-blur-md border-t border-white/30 shadow-lg z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/60 dark:bg-white/10 backdrop-blur-md border-t border-white/30 dark:border-white/10 shadow-lg z-50">
         <div className="px-6 py-4 space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-base font-light text-gray-900">Итого к оплате:</span>
-            <span className="text-2xl font-light text-gray-900">{cart.totals.total.toLocaleString('ru-RU')} ₽</span>
+            <span className="text-base font-light text-gray-900 dark:text-white">Итого к оплате:</span>
+            <span className="text-2xl font-light text-gray-900 dark:text-white">{cart.totals.total.toLocaleString('ru-RU')} ₽</span>
           </div>
 
           <Button type="submit" onClick={handleSubmit} disabled={isSubmitting} className="w-full py-4 text-base">
