@@ -17,8 +17,8 @@ export const AdminSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-white/80 backdrop-blur-xl border-r border-gray-200 z-50 hidden md:flex flex-col">
-      <div className="p-6 border-b border-gray-100">
+    <aside className="fixed left-0 top-0 h-full w-64 bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200 dark:border-gray-700 z-50 hidden md:flex flex-col">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-700">
         <h1 className="text-xl font-bold bg-linear-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
           Salmina Admin
         </h1>
@@ -33,10 +33,12 @@ export const AdminSidebar = () => {
             <Link key={item.href} href={item.href}>
               <div
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  isActive ? 'bg-pink-50 text-pink-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  isActive
+                    ? 'bg-pink-50 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-pink-500' : 'text-gray-400'}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-pink-500 dark:text-pink-400' : 'text-gray-400 dark:text-gray-500'}`} />
                 <span className="font-medium">{item.label}</span>
                 {isActive && (
                   <motion.div
@@ -50,8 +52,8 @@ export const AdminSidebar = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-100">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors">
+      <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+        <button className="flex items-center gap-3 px-4 py-3 w-full text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-500/20 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-colors">
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Выйти</span>
         </button>

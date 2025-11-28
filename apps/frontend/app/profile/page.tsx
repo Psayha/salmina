@@ -86,18 +86,18 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen relative z-10 pb-24">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
+      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
         <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900">Профиль</h1>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Профиль</h1>
         </div>
       </div>
 
       <div className="px-6 py-6 space-y-6">
         {/* User Info Card */}
         {isAuthenticated && user ? (
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-lg">
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-20 h-20 bg-white/50 backdrop-blur-md rounded-full border border-white/30 flex items-center justify-center">
+              <div className="w-20 h-20 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-full border border-white/30 dark:border-white/10 flex items-center justify-center">
                 {user.photoUrl ? (
                   <Image
                     src={user.photoUrl || ''}
@@ -107,36 +107,36 @@ export default function ProfilePage() {
                     unoptimized
                   />
                 ) : (
-                  <UserIcon className="w-10 h-10 text-gray-600" />
+                  <UserIcon className="w-10 h-10 text-gray-600 dark:text-gray-400" />
                 )}
               </div>
 
               <div className="flex-1">
-                <h2 className="text-xl font-light text-gray-900 mb-1">
+                <h2 className="text-xl font-light text-gray-900 dark:text-white mb-1">
                   {user.firstName} {user.lastName || ''}
                 </h2>
-                {user.username && <p className="text-sm font-light text-gray-600">@{user.username}</p>}
-                {user.phoneNumber && <p className="text-sm font-light text-gray-600">{user.phoneNumber}</p>}
+                {user.username && <p className="text-sm font-light text-gray-600 dark:text-gray-400">@{user.username}</p>}
+                {user.phoneNumber && <p className="text-sm font-light text-gray-600 dark:text-gray-400">{user.phoneNumber}</p>}
               </div>
             </div>
 
             {/* User Stats */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 text-center">
-                <p className="text-2xl font-light text-gray-900 mb-1">0</p>
-                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">Заказов</p>
+              <div className="bg-white/30 dark:bg-white/10 backdrop-blur-md rounded-xl p-4 text-center">
+                <p className="text-2xl font-light text-gray-900 dark:text-white mb-1">0</p>
+                <p className="text-xs font-light text-gray-600 dark:text-gray-400 uppercase tracking-wide">Заказов</p>
               </div>
-              <div className="bg-white/30 backdrop-blur-md rounded-xl p-4 text-center">
-                <p className="text-2xl font-light text-gray-900 mb-1">{favoriteIds.length}</p>
-                <p className="text-xs font-light text-gray-600 uppercase tracking-wide">Избранное</p>
+              <div className="bg-white/30 dark:bg-white/10 backdrop-blur-md rounded-xl p-4 text-center">
+                <p className="text-2xl font-light text-gray-900 dark:text-white mb-1">{favoriteIds.length}</p>
+                <p className="text-xs font-light text-gray-600 dark:text-gray-400 uppercase tracking-wide">Избранное</p>
               </div>
             </div>
           </div>
         ) : (
-          <div className="bg-white/40 backdrop-blur-md rounded-2xl p-8 border border-white/30 shadow-lg text-center">
-            <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h2 className="text-lg font-light text-gray-900 mb-2">Войдите в аккаунт</h2>
-            <p className="text-sm font-light text-gray-600 mb-6">Чтобы просматривать заказы и сохранять избранное</p>
+          <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/30 dark:border-white/10 shadow-lg text-center">
+            <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-400 dark:text-gray-500" />
+            <h2 className="text-lg font-light text-gray-900 dark:text-white mb-2">Войдите в аккаунт</h2>
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mb-6">Чтобы просматривать заказы и сохранять избранное</p>
             <Button onClick={() => router.push('/')}>На главную</Button>
           </div>
         )}
@@ -147,32 +147,32 @@ export default function ProfilePage() {
             <button
               key={index}
               onClick={item.onClick}
-              className={`w-full backdrop-blur-md rounded-2xl p-5 border shadow-lg hover:bg-white/50 transition-all duration-300 text-left ${
+              className={`w-full backdrop-blur-md rounded-2xl p-5 border shadow-lg hover:bg-white/50 dark:hover:bg-white/20 transition-all duration-300 text-left ${
                 item.isAdmin
                   ? 'bg-linear-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30'
-                  : 'bg-white/40 border-white/30'
+                  : 'bg-white/40 dark:bg-white/10 border-white/30 dark:border-white/10'
               }`}
             >
-              <p className="text-base font-light text-gray-900 mb-1">{item.label}</p>
-              <p className="text-xs font-light text-gray-600">{item.description}</p>
+              <p className="text-base font-light text-gray-900 dark:text-white mb-1">{item.label}</p>
+              <p className="text-xs font-light text-gray-600 dark:text-gray-400">{item.description}</p>
             </button>
           ))}
         </div>
 
         {/* Legal Links */}
-        <div className="bg-white/40 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg space-y-3">
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/30 dark:border-white/10 shadow-lg space-y-3">
           <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">
+            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
               Политика конфиденциальности
             </p>
           </button>
           <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">
+            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
               Пользовательское соглашение
             </p>
           </button>
           <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 hover:text-gray-900 transition-colors">О приложении</p>
+            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">О приложении</p>
           </button>
         </div>
 
@@ -180,7 +180,7 @@ export default function ProfilePage() {
         {isAuthenticated && (
           <button
             onClick={handleLogout}
-            className="w-full py-4 bg-red-500/20 backdrop-blur-md rounded-full border border-red-500/30 text-sm font-light text-red-700 hover:bg-red-500/30 transition-all duration-300"
+            className="w-full py-4 bg-red-500/20 backdrop-blur-md rounded-full border border-red-500/30 text-sm font-light text-red-700 dark:text-red-400 hover:bg-red-500/30 transition-all duration-300"
           >
             Выйти из аккаунта
           </button>
@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
         {/* App Version */}
         <div className="text-center">
-          <p className="text-xs font-light text-gray-500">Версия 1.0.0</p>
+          <p className="text-xs font-light text-gray-500 dark:text-gray-400">Версия 1.0.0</p>
         </div>
       </div>
     </div>

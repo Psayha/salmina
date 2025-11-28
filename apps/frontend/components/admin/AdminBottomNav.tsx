@@ -19,7 +19,7 @@ export const AdminBottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-white/30 shadow-lg"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl border-t border-white/30 dark:border-gray-700 shadow-lg md:hidden"
       style={{
         paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
       }}
@@ -45,7 +45,7 @@ export const AdminBottomNav = () => {
               >
                 <Icon
                   className={`w-5 h-5 transition-colors ${
-                    isActive ? 'text-pink-600' : 'text-gray-500'
+                    isActive ? 'text-pink-600 dark:text-pink-400' : 'text-gray-500 dark:text-gray-400'
                   }`}
                 />
                 {isActive && (
@@ -54,7 +54,7 @@ export const AdminBottomNav = () => {
               </div>
               <span
                 className={`text-[10px] font-light transition-colors ${
-                  isActive ? 'text-pink-600' : 'text-gray-500'
+                  isActive ? 'text-pink-600 dark:text-pink-400' : 'text-gray-500 dark:text-gray-400'
                 }`}
               >
                 {item.label}
