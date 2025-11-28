@@ -134,12 +134,12 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
                       <span className="text-white font-semibold text-sm">
-                        {user.name?.[0]?.toUpperCase() || 'U'}
+                        {user.firstName?.[0]?.toUpperCase() || user.username?.[0]?.toUpperCase() || 'U'}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {user.name || 'Пользователь'}
+                        {user.firstName || user.username || 'Пользователь'}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         ID: {user.telegramId}

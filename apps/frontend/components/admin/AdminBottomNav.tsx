@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, Tags, ShoppingCart, Users, ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, ImageIcon } from 'lucide-react';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const navItems = [

@@ -262,7 +262,7 @@ export default function UploadsPage() {
         </div>
       </Modal>
 
-      <Toast {...toast.toastProps} />
+      <Toast toasts={toast.toasts} removeToast={toast.removeToast} />
     </div>
   );
 }
