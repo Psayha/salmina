@@ -1,82 +1,70 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 import { CategoryPill } from '@/components/ui/CategoryPill';
 import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { promotionsApi } from '@/lib/api/endpoints/promotions';
 import { productsApi, categoriesApi } from '@/lib/api';
-import { Promotion, Product, Category } from '@/lib/api/types';
+import { Promotion } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { ProductSection } from '@/components/ProductSection';
 import { Stories } from '@/components/Stories';
-// ...
 
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
-
-  // Data states
-  const [categories, setCategories] = useState<Partial<Category>[]>([{ id: 'all', name: 'Все товары', slug: 'all' }]);
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
-
-  // Product sections states
-  const [newProducts, setNewProducts] = useState<Product[]>([]);
-  const [hitProducts, setHitProducts] = useState<Product[]>([]);
-  const [discountProducts, setDiscountProducts] = useState<Product[]>([]);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-
-  const [isLoading, setIsLoading] = useState(true);
 
   // Stories state
   const [showStories, setShowStories] = useState(false);
   const [storiesStartIndex, setStoriesStartIndex] = useState(0);
   const [viewedStories, setViewedStories] = useState<Set<string>>(new Set());
 
-  // ...
+  // React Query - данные кешируются автоматически
+  const { data: categoriesData = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: categoriesApi.getCategories,
+  });
 
-  // Fetch data on mount
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const [categoriesResponse, promotionsResponse, newResponse, hitResponse, discountResponse, allResponse] =
-          await Promise.all([
-            categoriesApi.getCategories(),
-            promotionsApi.getPromotions(),
-            productsApi.getProducts({ isNew: true, limit: 8 }),
-            productsApi.getProducts({ isHit: true, limit: 8 }),
-            productsApi.getProducts({ isDiscount: true, limit: 8 }),
-            productsApi.getProducts({ limit: 20 }),
-          ]);
+  const { data: promotions = [] } = useQuery({
+    queryKey: ['promotions'],
+    queryFn: promotionsApi.getPromotions,
+  });
 
-        setCategories([
-          { id: 'all', name: 'Все товары', slug: 'all' },
-          ...(Array.isArray(categoriesResponse) ? categoriesResponse : []),
-        ]);
-        setPromotions(Array.isArray(promotionsResponse) ? promotionsResponse : []);
+  const { data: newProductsData, isLoading: isLoadingNew } = useQuery({
+    queryKey: ['products', 'new'],
+    queryFn: () => productsApi.getProducts({ isNew: true, limit: 8 }),
+  });
 
-        setNewProducts(newResponse.items || []);
-        setHitProducts(hitResponse.items || []);
-        setDiscountProducts(discountResponse.items || []);
-        setAllProducts(allResponse.items || []);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-        setCategories([{ id: 'all', name: 'Все товары', slug: 'all' }]);
-        setPromotions([]);
-        setNewProducts([]);
-        setHitProducts([]);
-        setDiscountProducts([]);
-        setAllProducts([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+  const { data: hitProductsData, isLoading: isLoadingHit } = useQuery({
+    queryKey: ['products', 'hit'],
+    queryFn: () => productsApi.getProducts({ isHit: true, limit: 8 }),
+  });
+
+  const { data: discountProductsData, isLoading: isLoadingDiscount } = useQuery({
+    queryKey: ['products', 'discount'],
+    queryFn: () => productsApi.getProducts({ isDiscount: true, limit: 8 }),
+  });
+
+  const { data: allProductsData, isLoading: isLoadingAll } = useQuery({
+    queryKey: ['products', 'all'],
+    queryFn: () => productsApi.getProducts({ limit: 20 }),
+  });
+
+  // Подготовка данных
+  const categories = [
+    { id: 'all', name: 'Все товары', slug: 'all' },
+    ...(Array.isArray(categoriesData) ? categoriesData : []),
+  ];
+  const newProducts = newProductsData?.items || [];
+  const hitProducts = hitProductsData?.items || [];
+  const discountProducts = discountProductsData?.items || [];
+  const allProducts = allProductsData?.items || [];
+
 
   // Zustand stores
   const { addToCart } = useCartStore();
@@ -117,7 +105,7 @@ export default function Home() {
           <div className="mb-6 px-4">
             <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
               <div className="flex gap-3">
-                {promotions.map((promotion, index) => {
+                {promotions.map((promotion: Promotion, index: number) => {
                   const isViewed = viewedStories.has(promotion.id);
                   return (
                     <div
@@ -138,8 +126,7 @@ export default function Home() {
                             : 'bg-gradient-to-br from-pink-500 via-rose-500 to-orange-500'
                         }`}
                       >
-                        <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform bg-white dark:bg-gray-900"
-                        >
+                        <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform bg-white dark:bg-gray-900">
                           <div className="absolute inset-0 bg-gray-100 animate-pulse" />
                           {promotion.image && (
                             <Image
@@ -183,7 +170,7 @@ export default function Home() {
         <ProductSection
           title="Новинки"
           products={newProducts}
-          isLoading={isLoading}
+          isLoading={isLoadingNew}
           onProductClick={handleProductClick}
           onAddToCart={handleAddToCart}
         />
@@ -191,7 +178,7 @@ export default function Home() {
         <ProductSection
           title="Хиты продаж"
           products={hitProducts}
-          isLoading={isLoading}
+          isLoading={isLoadingHit}
           onProductClick={handleProductClick}
           onAddToCart={handleAddToCart}
         />
@@ -199,7 +186,7 @@ export default function Home() {
         <ProductSection
           title="Скидки"
           products={discountProducts}
-          isLoading={isLoading}
+          isLoading={isLoadingDiscount}
           onProductClick={handleProductClick}
           onAddToCart={handleAddToCart}
         />
@@ -208,7 +195,7 @@ export default function Home() {
         <div className="px-4">
           <h2 className="text-xl font-light text-gray-900 mb-4">Все товары</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {isLoading
+            {isLoadingAll
               ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : allProducts.map((product) => (
                   <ProductCard

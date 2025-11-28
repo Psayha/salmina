@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateProduct, getProductBySlug } from '@/lib/api/endpoints/products';
 import { getCategories } from '@/lib/api/endpoints/categories';
@@ -9,7 +9,8 @@ import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTele
 import { ArrowLeft, Save } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
-export default function EditProductPage({ params }: { params: { slug: string } }) {
+export default function EditProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
   const haptic = useTelegramHaptic();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,7 +46,7 @@ export default function EditProductPage({ params }: { params: { slug: string } }
   useEffect(() => {
     async function loadData() {
       try {
-        const [productData, categoriesData] = await Promise.all([getProductBySlug(params.slug), getCategories()]);
+        const [productData, categoriesData] = await Promise.all([getProductBySlug(slug), getCategories()]);
 
         setProduct(productData);
         setCategories(categoriesData);
@@ -80,7 +81,7 @@ export default function EditProductPage({ params }: { params: { slug: string } }
       }
     }
     loadData();
-  }, [params.slug, router, haptic]);
+  }, [slug, router, haptic]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -341,7 +342,7 @@ export default function EditProductPage({ params }: { params: { slug: string } }
             <p className="text-xs text-gray-500 mt-1">Первое изображение будет основным</p>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -432,7 +433,7 @@ export default function EditProductPage({ params }: { params: { slug: string } }
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-linear-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>

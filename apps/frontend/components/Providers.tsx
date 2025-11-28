@@ -22,8 +22,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
-            refetchOnWindowFocus: false,
+            staleTime: 5 * 60 * 1000,      // 5 минут данные считаются свежими
+            gcTime: 30 * 60 * 1000,         // 30 минут хранить в кеше
+            retry: 2,                        // 2 повторные попытки при ошибке
+            refetchOnWindowFocus: false,    // Не обновлять при фокусе
+            refetchOnReconnect: true,       // Обновлять при восстановлении сети
+            refetchOnMount: false,          // Не перезапрашивать если данные свежие
           },
         },
       }),
@@ -50,7 +54,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const autoLoginWithTelegram = useAuthStore((state) => state.autoLoginWithTelegram);
   const fetchCurrentUser = useAuthStore((state) => state.fetchCurrentUser);
   const fetchCart = useCartStore((state) => state.fetchCart);
-  
+
   // Show loading only on first app load, not on navigation
   const [showLoading, setShowLoading] = useState(!hasInitialized);
   const initStarted = useRef(false);
