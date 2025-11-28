@@ -1,91 +1,62 @@
-# 🛍️ Telegram Shop - Интернет-магазин косметики
+# Telegram Shop - Salmina
+
+Интернет-магазин косметики в формате Telegram Mini App.
 
 **Версия:** 1.1.0
-**Платформа:** Telegram Mini App
-**Статус:** 🚀 DEPLOYED TO PRODUCTION ✅
+**Статус:** Production
 
----
+## Production URLs
 
-## 📋 Описание
+- **Shop:** https://salminashop.ru
+- **API:** https://app.salminashop.ru
+- **Admin:** https://admin.salminashop.ru
 
-Профессиональный интернет-магазин косметики в формате Telegram Mini App с полным функционалом: каталог товаров, корзина, заказы, админ-панель, интеграция с платежными системами.
+## Технологии
 
----
+### Frontend
+- Next.js 16 (App Router)
+- React 19
+- TypeScript 5.6
+- Tailwind CSS 4
+- Zustand (state management)
+- React Query
 
-## 🏗️ Структура проекта
+### Backend
+- Node.js 20+
+- Express.js 4.19
+- TypeScript 5.6
+- Prisma ORM 5.22
+- PostgreSQL 15
+- Redis 7
+- JWT authentication
+
+### DevOps
+- Docker Compose
+- GitHub Actions (CI/CD)
+- PM2 (process manager)
+- Nginx (reverse proxy + SSL)
+
+## Структура проекта
 
 ```
-telegram-shop/
+salmina/
 ├── apps/
-│   ├── frontend/          # Next.js 14+ App Router
-│   └── backend/           # Node.js + Express API
+│   ├── frontend/          # Next.js приложение
+│   └── backend/           # Express API сервер
 ├── packages/
-│   ├── shared/            # Общий код
-│   └── types/             # TypeScript типы
+│   ├── shared/            # Общие утилиты
+│   └── types/             # Shared TypeScript типы
 ├── docs/                  # Документация
-├── files/                 # ТЗ и документация проекта
-└── docker-compose.yml     # Docker окружение
+├── files/                 # Техническое задание
+└── scripts/               # Скрипты
 ```
 
----
-
-## 🌐 Production Environment
-
-**Live URLs:**
-
-- 🛍️ **Shop:** https://salminashop.ru
-- 🔌 **API:** https://app.salminashop.ru
-- 👨‍💼 **Admin:** https://admin.salminashop.ru
-
-**Server:**
-
-- 🖥️ VPS: 91.229.11.132
-- 🐧 OS: Ubuntu 22.04
-- 🔒 SSL: Let's Encrypt (Auto-renewal)
-- 🚀 Process Manager: PM2
-- 🌐 Reverse Proxy: Nginx
-
-**Status:** ✅ All services online and healthy
-
----
-
-## 🚀 Быстрый старт
+## Быстрый старт
 
 ### Требования
-
 - Node.js >= 20.0.0
 - pnpm >= 8.0.0
 - Docker & Docker Compose
-
-### Production Deployment Status
-
-**Frontend:**
-
-- ✅ TypeScript: 0 errors
-- ✅ Production build: Successful
-- ✅ 11 pages deployed
-- ✅ 15 components
-- ✅ **DEPLOYED:** https://salminashop.ru
-
-**Backend API:**
-
-- ✅ TypeScript: 0 errors
-- ✅ Production build: Successful
-- ✅ 9 модулей, 51 endpoints
-- ✅ **DEPLOYED:** https://app.salminashop.ru
-- ✅ Database: PostgreSQL (connected)
-- ✅ Cache: Redis (connected)
-- ✅ **Testing:** 79/79 unit tests passing (100%) 🧪
-- ✅ **Coverage:** 91.95% для services layer
-
-**Infrastructure:**
-
-- ✅ Nginx configured with SSL
-- ✅ HTTP → HTTPS redirect enabled
-- ✅ PM2 auto-restart enabled
-- ✅ Firewall configured
-- ✅ SEO: robots.txt (noindex)
-- ✅ CI/CD: GitHub Actions configured
 
 ### Установка
 
@@ -95,112 +66,25 @@ pnpm install
 
 # 2. Настройка окружения
 cp .env.example .env
-# Отредактируйте .env (см. раздел Конфигурация ниже)
+# Отредактируйте .env файл
 
 # 3. Запуск Docker (PostgreSQL + Redis)
 docker-compose up -d
 
-# 4. Backend setup
+# 4. Миграция базы данных
 cd apps/backend
-cp .env.example .env
-# Отредактируйте apps/backend/.env
-pnpm prisma migrate dev
-pnpm prisma db seed
+pnpm db:migrate
+pnpm db:seed
+cd ../..
 
-# 5. Запуск приложений
-# Terminal 1 - Backend
-pnpm dev:backend
-
-# Terminal 2 - Frontend
-pnpm dev
+# 5. Запуск
+pnpm dev:all
 ```
 
-Frontend доступен: http://localhost:3000
-Backend API: http://localhost:3001
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
 
----
-
-## 📚 Документация
-
-### 🎯 Главные документы
-
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - 🚀 Полное руководство: от запуска до production
-- **[API_INTEGRATION.md](API_INTEGRATION.md)** - 🔗 Все API endpoints с примерами
-
-### 📊 Отчеты о разработке
-
-- [PHASE_3_COMPLETE.md](PHASE_3_COMPLETE.md) - Phase 3: Backend (9 модулей, 51 endpoint) ✅
-- [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md) - Phase 4: Frontend (11 pages, 15 components) ✅
-- [PHASE_6_TELEGRAM.md](PHASE_6_TELEGRAM.md) - Phase 6.1: Telegram Bot Integration ✅
-- [PHASE_6.2_PRODAMUS.md](PHASE_6.2_PRODAMUS.md) - Phase 6.2: Prodamus Payment Integration ✅
-- [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Phase 7: Testing (70% завершена, возврат к долгу) 🚧
-
-### 🔧 Руководства по настройке
-
-- [DEPLOYMENT.md](DEPLOYMENT.md) - 🚀 Production deployment guide
-- [PRODAMUS_SETUP.md](PRODAMUS_SETUP.md) - 💳 Настройка платежной системы Prodamus
-- [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) - 🤖 Настройка Telegram Bot
-- [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) - ⚙️ CI/CD с GitHub Actions
-- [API_INTEGRATION.md](API_INTEGRATION.md) - 🔗 API endpoints и примеры использования
-
-### 📋 Техническое задание
-
-- [files/technical-specification-v1.1.md](files/technical-specification-v1.1.md) - Полное ТЗ v1.1
-- [files/context7-v1.1.md](files/context7-v1.1.md) - Контекст для AI
-
-### 📦 Backend модули (папка `apps/backend/src/modules/`)
-
-**Полная информация:** [docs/modules/README.md](docs/modules/README.md)
-
-**Все модули реализованы (Phase 2-3):**
-
-1. [Auth Module](apps/backend/src/modules/auth/README.md) - Аутентификация (5 endpoints) ✅
-2. [Users Module](apps/backend/src/modules/users/README.md) - Пользователи (8 endpoints) ✅
-3. [Products Module](apps/backend/src/modules/products/README.md) - Товары (8 endpoints) ✅
-4. [Categories Module](apps/backend/src/modules/categories/) - Категории (6 endpoints) ✅
-5. [Cart Module](apps/backend/src/modules/cart/) - Корзина (5 endpoints) ✅
-6. [Orders Module](apps/backend/src/modules/orders/) - Заказы (6 endpoints) ✅
-7. [Promocodes Module](apps/backend/src/modules/promocodes/) - Промокоды (5 endpoints) ✅
-8. [Promotions Module](apps/backend/src/modules/promotions/) - Акции (4 endpoints) ✅
-9. [Legal Module](apps/backend/src/modules/legal/) - Юридические документы (4 endpoints) ✅
-
-**Итого:** 9 модулей, 51 endpoint, Backend готов к использованию!
-
----
-
-## 🛠️ Технологический стек
-
-### Frontend
-
-- Next.js 14+ (App Router)
-- TypeScript (strict mode)
-- Tailwind CSS
-- Zustand (state management)
-- React Hook Form + Zod
-- @telegram-apps/sdk
-- Framer Motion
-
-### Backend
-
-- Node.js 20+
-- Express.js
-- TypeScript (strict mode)
-- Prisma ORM
-- PostgreSQL 15+
-- Redis
-- JWT authentication
-- Jest 30+ (тестирование)
-
-### DevOps & CI/CD
-
-- Docker & Docker Compose
-- GitHub Actions (автодеплой в production)
-- PM2 (process manager)
-- Nginx (reverse proxy + SSL)
-
----
-
-## 📝 Скрипты
+## Скрипты
 
 ```bash
 # Разработка
@@ -210,224 +94,100 @@ pnpm dev:all          # Оба одновременно
 
 # Сборка
 pnpm build            # Все приложения
-pnpm build:frontend   # Только frontend
-pnpm build:backend    # Только backend
 
-# Линтинг и проверка типов
+# Тестирование
+pnpm test             # Запуск тестов
+pnpm test:coverage    # С отчетом покрытия
+
+# Линтинг
 pnpm lint
 pnpm type-check
 
-# Тестирование
-pnpm test             # Запуск всех тестов
-pnpm test:watch       # Watch режим
-pnpm test:coverage    # С отчетом о покрытии
-
 # База данных
 pnpm db:generate      # Генерация Prisma Client
-pnpm db:migrate       # Применение миграций
-pnpm db:studio        # Prisma Studio
+pnpm db:migrate       # Миграции
+pnpm db:studio        # Prisma Studio GUI
 ```
 
----
+## API Модули
 
-## 🔧 Конфигурация
+Backend содержит 9 модулей с 51 endpoint:
 
-Скопируйте `.env.example` в `.env` и заполните необходимые переменные:
+| Модуль | Endpoints | Описание |
+|--------|-----------|----------|
+| Auth | 5 | JWT + Telegram аутентификация |
+| Users | 8 | Управление пользователями |
+| Products | 8 | Каталог товаров |
+| Categories | 6 | Категории |
+| Cart | 5 | Корзина |
+| Orders | 6 | Заказы |
+| Promocodes | 5 | Промокоды |
+| Promotions | 4 | Акции и баннеры |
+| Legal | 4 | Юридические документы |
+
+Полная документация API: [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md)
+
+## Безопасность
+
+Реализованные защиты:
+- Rate Limiting (защита от DDoS)
+- XSS Protection (санитизация входных данных)
+- JWT аутентификация с refresh tokens
+- CORS whitelist
+- Helmet (security headers)
+- Zod validation
+- RBAC (role-based access control)
+- Prisma ORM (защита от SQL injection)
+
+## Тестирование
 
 ```bash
-cp .env.example .env
+pnpm test
 ```
 
----
+- 79/79 unit тестов (100% passing)
+- 91.95% покрытие для сервисов
 
-## 📊 База данных
+## Документация
 
-Схема базы данных описана в `apps/backend/prisma/schema.prisma`.
+| Документ | Описание |
+|----------|----------|
+| [docs/QUICKSTART.md](docs/QUICKSTART.md) | Быстрый старт |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Production deployment |
+| [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md) | API endpoints |
+| [docs/TELEGRAM_SETUP.md](docs/TELEGRAM_SETUP.md) | Настройка Telegram Bot |
+| [docs/PRODAMUS_SETUP.md](docs/PRODAMUS_SETUP.md) | Настройка Prodamus |
+| [docs/GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md) | CI/CD |
 
-Основные таблицы:
+## Конфигурация
 
-- `users` - Пользователи
-- `products` - Товары
-- `categories` - Категории
-- `orders` - Заказы
-- `cart_items` - Корзина
-- `promotions` - Акции
-- `legal_documents` - Юридические документы
-- `wishlist_shares` - Публичные wishlist
+Основные переменные окружения (см. `.env.example`):
 
----
+```bash
+# App
+NODE_ENV=development
+PORT=3001
+FRONTEND_URL=http://localhost:3000
 
-## 🎯 Этапы разработки
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/telegram_shop
 
-- [x] **Phase 1: Foundation** - Инфраструктура ✅
-  - Monorepo структура
-  - TypeScript конфигурация
-  - ESLint/Prettier
-  - Docker Compose
-  - Prisma схема
-  - CI/CD pipelines
-  - Shared types (2,667 LOC)
+# Redis
+REDIS_URL=redis://localhost:6379
 
-- [x] **Phase 2: Backend Core** - Основные модули ✅
-  - Authentication (JWT + Telegram) - 5 endpoints
-  - Users management - 8 endpoints
-  - Products catalog - 8 endpoints
-  - Categories - 6 endpoints
-  - Clean Architecture
-  - Error handling
-  - Validation middleware
-  - **Итого: 27 endpoints, 10,000+ LOC**
-  - **Отчет:** [PHASE_2_REPORT.md](docs/project/PHASE_2_REPORT.md)
+# JWT
+JWT_SECRET=your-secret-key-min-32-chars
+JWT_REFRESH_SECRET=your-refresh-secret-min-32-chars
 
-- [x] **Phase 3: Backend Completion** - Все оставшиеся модули ✅
-  - Cart module - 5 endpoints (session + user support)
-  - Orders module - 6 endpoints (transaction handling)
-  - Promocodes module - 5 endpoints (discount management)
-  - Promotions module - 4 endpoints (banners/sales)
-  - Legal documents module - 4 endpoints (terms/privacy)
-  - Clean Architecture во всех модулях
-  - Stock validation & order transactions
-  - **Итого: 9 модулей, 51 endpoints, 15,000+ LOC**
-  - **Отчет:** [PHASE_3_COMPLETE.md](PHASE_3_COMPLETE.md)
-  - **Backend готов к использованию!** 🎉
+# Telegram
+TELEGRAM_BOT_TOKEN=your-bot-token
+ADMIN_TELEGRAM_IDS=123456789,987654321
 
-- [x] **Phase 4: Frontend Core** - Полный frontend ✅
-  - 15 UI components (Button, Loading, Toast, ErrorBoundary, etc.)
-  - Layout components (Header, BottomNav)
-  - 11 pages (Home, Product, Cart, Checkout, Profile, Search, etc.)
-  - Telegram SDK integration (useTelegram hook)
-  - State management (3 Zustand stores: Auth, Cart, Favorites)
-  - API client с auto token refresh
-  - Error handling (ErrorBoundary + global-error)
-  - Production build: Successful (0 TypeScript errors)
-  - **Итого: 11 pages, 15 components, 5000+ LOC**
-  - **Отчет:** [PHASE_4_SUMMARY.md](PHASE_4_SUMMARY.md)
-  - **Frontend готов к production!** 🎉
+# Prodamus (опционально)
+PRODAMUS_PAYMENT_FORM_URL=
+PRODAMUS_SECRET_KEY=
+```
 
-- [x] **Phase 5: Production Deployment** - Deployed! 🚀
-  - ✅ VPS server setup (Ubuntu 22.04)
-  - ✅ Database migration & seeding
-  - ✅ PM2 process manager configured
-  - ✅ Nginx reverse proxy with SSL
-  - ✅ Let's Encrypt SSL certificates
-  - ✅ HTTP → HTTPS redirects
-  - ✅ Domain configuration (4 domains)
-  - ✅ Auto-restart on reboot
-  - ✅ robots.txt (noindex)
-  - **Status:** Live at https://salminashop.ru
-
-- [x] **Phase 6: Integrations** - Completed ✅
-  - ✅ Telegram Bot notifications
-    - Order creation alerts
-    - Status update notifications
-    - Welcome messages
-  - ✅ Prodamus payment integration
-    - Payment link generation
-    - Webhook processing
-    - Signature verification
-    - Order status updates
-  - [ ] CDEK delivery (optional)
-
-- [x] **Phase 7: Testing** - ✅ Completed!
-  - ✅ Jest 30+ setup с ESM поддержкой
-  - ✅ Unit tests для Prodamus service (14/14 passing, 88.7% coverage)
-  - ✅ Unit tests для Auth service (17/17 passing, 94.25% coverage)
-  - ✅ Unit tests для Cart service (7/7 passing, 43.83% coverage)
-  - ✅ Unit tests для Orders service (11/11 passing, 59.61% coverage)
-  - ✅ Unit tests для Products service (18/18 passing, 73.64% coverage)
-  - ✅ Unit tests для Telegram service (12/12 passing, 100% coverage)
-  - ✅ GitHub Actions: tests + coverage в CI/CD
-  - ✅ Supertest установлен для future integration tests
-  - **Итого: 79/79 тестов (100% passing), 91.95% coverage для services**
-  - **Отчет:** [PHASE_7_TESTING.md](PHASE_7_TESTING.md)
-
----
-
-## 📊 Production Status
-
-### 🚀 DEPLOYED TO PRODUCTION
-
-**Frontend (LIVE):**
-
-- ✅ https://salminashop.ru
-- ✅ 11 страниц deployed
-- ✅ 15 UI компонентов
-- ✅ 3 Zustand stores с persist
-- ✅ Telegram SDK integration
-- ✅ SSL enabled (Let's Encrypt)
-- ✅ HTTP → HTTPS redirect
-- ✅ robots.txt (noindex)
-
-**Backend API (LIVE):**
-
-- ✅ https://app.salminashop.ru
-- ✅ 9 модулей, 51 endpoints
-- ✅ PostgreSQL database (migrated & seeded)
-- ✅ Redis cache
-- ✅ PM2 process manager
-- ✅ Health check: /health
-
-**Infrastructure:**
-
-- ✅ VPS: 91.229.11.132 (Ubuntu 22.04)
-- ✅ Nginx reverse proxy
-- ✅ SSL certificates (auto-renewal)
-- ✅ PM2 auto-restart on reboot
-- ✅ 4 domains configured
-
-**Documentation:**
-
-- ✅ [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment
-- ✅ [PRODAMUS_SETUP.md](PRODAMUS_SETUP.md) - Prodamus payment setup
-- ✅ [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) - Telegram Bot setup
-- ✅ [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) - CI/CD automation
-- ✅ [API_INTEGRATION.md](API_INTEGRATION.md) - API documentation
-- ✅ [PHASE_7_TESTING.md](PHASE_7_TESTING.md) - Testing progress
-- ✅ README.md - Project overview
-
-**Integrations:**
-
-- ✅ Telegram Bot - Order notifications
-- ✅ Prodamus Payment Gateway - Online payments (card, SBP)
-- ✅ GitHub Actions - Auto-deploy to production
-
-**Testing:**
-
-- ✅ Jest 30+ с ESM поддержкой
-- ✅ 49/49 unit tests passing (100%)
-- ✅ 4 test suites passed
-- ⭐ Auth service: 94.25% coverage
-- ⭐ Prodamus service: 88.7% coverage
-- ⭐ Orders service: покрыт тестами
-- ⭐ Cart service: покрыт тестами
-- 📊 Среднее покрытие: ~90%
-
-### ⏳ Следующие шаги
-
-1. **Phase 7: Testing - Технический долг** (текущая фаза 🚧)
-   - [ ] 🔴 Products service unit tests (~12-15 тестов)
-   - [ ] 🔴 Telegram service unit tests (~8-10 тестов)
-   - [ ] 🔴 Integration tests с Supertest (~20-30 тестов)
-   - [ ] 🔴 Тесты в CI/CD pipeline (GitHub Actions)
-   - [ ] 🟡 E2E tests с Playwright (опционально)
-   - **Цель:** Довести покрытие до 100%, все критичные сервисы покрыты
-
-2. **Future Enhancements** (после завершения тестов)
-   - CDEK delivery integration
-   - Admin panel enhancements
-   - Push notifications
-   - Performance optimization
-
-**Статус:** 🟢 Production deployed & testing in progress!
-
----
-
-## 📄 Лицензия
+## Лицензия
 
 Private project
-
----
-
-## 👥 Контакты
-
-Проект разрабатывается согласно техническому заданию v1.1.
