@@ -82,7 +82,9 @@ export default function CartPage() {
     );
   }
 
-  const isEmpty = !cart || cart.items.length === 0;
+  // Filter out items with missing product data
+  const validItems = cart?.items.filter((item) => item.product) || [];
+  const isEmpty = !cart || validItems.length === 0;
 
   return (
     <div className="min-h-screen relative z-10 pb-32">
@@ -113,7 +115,7 @@ export default function CartPage() {
         <>
           {/* Cart Items */}
           <div className="px-6 py-6 space-y-4">
-            {cart.items.map((item) => (
+            {validItems.map((item) => (
               <div
                 key={item.id}
                 className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/30 dark:border-white/10 shadow-lg"
@@ -121,10 +123,10 @@ export default function CartPage() {
                 <div className="flex gap-4">
                   {/* Product Image */}
                   <div className="relative w-24 h-24 bg-white/30 dark:bg-white/10 rounded-xl overflow-hidden flex-shrink-0">
-                    {item.product.images && item.product.images.length > 0 ? (
+                    {item.product?.images && item.product.images.length > 0 ? (
                       <Image
                         src={item.product.images[0]}
-                        alt={item.product.name}
+                        alt={item.product?.name || 'Товар'}
                         fill
                         className="object-cover"
                       />
@@ -138,7 +140,7 @@ export default function CartPage() {
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-light text-gray-900 dark:text-white mb-1 line-clamp-2">
-                      {item.product.name}
+                      {item.product?.name || 'Товар'}
                     </h3>
                     <p className="text-lg font-light text-gray-900 dark:text-white">
                       {item.price.toLocaleString('ru-RU')} ₽
