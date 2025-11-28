@@ -1,113 +1,34 @@
-# 📚 Документация Telegram Shop
+# Документация
 
-Центральный индекс всей документации проекта.
+## Руководства
 
----
+| Документ | Описание |
+|----------|----------|
+| [QUICKSTART.md](QUICKSTART.md) | Быстрый старт для локальной разработки |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Production deployment на VPS |
+| [API_INTEGRATION.md](API_INTEGRATION.md) | API endpoints и примеры использования |
 
-## 🗂️ Структура документации
+## Интеграции
 
-```
-docs/
-├── development/      # Настройка и разработка
-├── deployment/       # Docker setup
-└── modules/          # Документация модулей backend
-```
+| Документ | Описание |
+|----------|----------|
+| [TELEGRAM_SETUP.md](TELEGRAM_SETUP.md) | Настройка Telegram Bot |
+| [PRODAMUS_SETUP.md](PRODAMUS_SETUP.md) | Настройка платежной системы Prodamus |
+| [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) | CI/CD с GitHub Actions |
 
----
+## Дополнительно
 
-## 📋 Главные документы
+| Документ | Описание |
+|----------|----------|
+| [PRODUCTION_FIX_GUIDE.md](PRODUCTION_FIX_GUIDE.md) | Решение проблем на production |
+| [development/SETUP.md](development/SETUP.md) | Детальная настройка окружения |
+| [development/MIGRATION.md](development/MIGRATION.md) | Работа с миграциями БД |
+| [deployment/DOCKER_SETUP.md](deployment/DOCKER_SETUP.md) | Docker конфигурация |
 
-### Корневая папка проекта (`/`)
+## Backend модули
 
-| Файл                                        | Описание                                                    |
-| ------------------------------------------- | ----------------------------------------------------------- |
-| [README.md](../README.md)                   | **Главный файл проекта** - обзор, установка, текущий статус |
-| [DEPLOYMENT.md](../DEPLOYMENT.md)           | Руководство по деплою (Docker, VPS)                         |
-| [API_INTEGRATION.md](../API_INTEGRATION.md) | API Endpoints и примеры интеграции                          |
-| [QUICKSTART.md](../QUICKSTART.md)           | Быстрый старт для локальной разработки                      |
+Документация модулей находится в `apps/backend/src/modules/*/README.md`:
 
-### Техническое задание (`/files/`)
-
-| Файл                                                                        | Описание                       |
-| --------------------------------------------------------------------------- | ------------------------------ |
-| [technical-specification-v1.1.md](../files/technical-specification-v1.1.md) | **Полное техническое задание** |
-| [context7-v1.1.md](../files/context7-v1.1.md)                               | Контекст для AI-ассистентов    |
-
----
-
-## 🛠️ Разработка (`/docs/development/`)
-
-| Файл                                     | Описание                         |
-| ---------------------------------------- | -------------------------------- |
-| [SETUP.md](development/SETUP.md)         | Первоначальная настройка проекта |
-| [MIGRATION.md](development/MIGRATION.md) | Инструкции по миграциям БД       |
-
----
-
-## 🚢 Деплой (`/docs/deployment/`)
-
-| Файл                                          | Описание                          |
-| --------------------------------------------- | --------------------------------- |
-| [DOCKER_SETUP.md](deployment/DOCKER_SETUP.md) | Полная инструкция по Docker setup |
-
-**Для production deployment:** см. [DEPLOYMENT.md](../DEPLOYMENT.md)
-
----
-
-## 📦 Backend Модули
-
-**Главный файл:** [modules/README.md](modules/README.md)
-
-| Модуль         | Endpoints | Документация                                             |
-| -------------- | --------- | -------------------------------------------------------- |
-| **Auth**       | 5         | [README](../apps/backend/src/modules/auth/README.md)     |
-| **Users**      | 8         | [README](../apps/backend/src/modules/users/README.md)    |
-| **Products**   | 8         | [README](../apps/backend/src/modules/products/README.md) |
-| **Categories** | 6         | В коде                                                   |
-| **Cart**       | 5         | В коде                                                   |
-| **Orders**     | 6         | В коде                                                   |
-| **Promocodes** | 5         | В коде                                                   |
-| **Promotions** | 4         | В коде                                                   |
-| **Legal**      | 4         | В коде                                                   |
-
-**Итого:** 9 модулей, 51 endpoint ✅
-
-Детали: [modules/README.md](modules/README.md)
-
----
-
-## 🔍 Быстрый доступ
-
-### По типу задачи:
-
-- **Запустить проект:** [QUICKSTART.md](../QUICKSTART.md)
-- **Setup окружения:** [DEPLOYMENT.md](../DEPLOYMENT.md)
-- **Настроить Docker:** [deployment/DOCKER_SETUP.md](deployment/DOCKER_SETUP.md)
-- **Работа с API:** [API_INTEGRATION.md](../API_INTEGRATION.md)
-- **Миграции БД:** [development/MIGRATION.md](development/MIGRATION.md)
-
-### По модулю backend:
-
-- **Аутентификация:** [auth/README.md](../apps/backend/src/modules/auth/README.md)
-- **Пользователи:** [users/README.md](../apps/backend/src/modules/users/README.md)
-- **Товары:** [products/README.md](../apps/backend/src/modules/products/README.md)
-- **Все модули:** [modules/README.md](modules/README.md)
-
----
-
-## 📊 Текущий статус проекта
-
-**Development Phase**
-
-- ✅ **Backend:** Полностью готов (9 модулей, API для админки есть).
-- ✅ **Frontend (User):** Готов (каталог, корзина, оформление заказа).
-- ❌ **Frontend (Admin):** Отсутствует (требуется разработка UI).
-- ✅ **CI/CD:** GitHub Actions настроены.
-
-**Проект готов к локальному запуску и доработке админ-панели.**
-
-Детали: [README.md](../README.md)
-
----
-
-**Версия проекта:** 1.1.0
+- [Auth](../apps/backend/src/modules/auth/README.md) - Аутентификация
+- [Users](../apps/backend/src/modules/users/README.md) - Пользователи
+- [Products](../apps/backend/src/modules/products/README.md) - Товары
