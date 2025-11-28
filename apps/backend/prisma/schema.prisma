@@ -121,6 +121,7 @@ model Product {
   isHit           Boolean   @default(false)
   isDiscount      Boolean   @default(false)
   hasPromotion    Boolean   @default(false)
+  promotionLabel  String?
   viewCount       Int       @default(0)
   orderCount      Int       @default(0)
   isActive        Boolean   @default(true)
@@ -190,6 +191,7 @@ model CartItem {
   price           Decimal  @db.Decimal(10, 2)
   appliedPrice    Decimal  @db.Decimal(10, 2)
   hasPromotion    Boolean  @default(false)
+  promotionLabel  String?
   allowPromocode  Boolean  @default(true)
   createdAt       DateTime @default(now())
 

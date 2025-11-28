@@ -28,26 +28,18 @@ import { logger } from '../../utils/logger.js';
 export class ProductsService {
   /**
    * Get all products with pagination, filters, and search
-   *
-   * @param params - Search parameters including pagination, filters, and sorting
-   * @returns Paginated list of products
    */
   async getAllProducts(params: ProductSearchParams): Promise<ProductsListResponse> {
     const { page, limit, sortBy = 'new', order = 'desc', filters = {}, query } = params;
 
-    // Calculate pagination
     const skip = (page - 1) * limit;
     const take = limit;
 
-    // Build where clause
     const where = this.buildWhereClause(filters, query);
-
-    // Build order by clause
     const orderBy = this.buildOrderByClause(sortBy, order);
 
     logger.info(`Getting products list: page=${page}, limit=${limit}, sortBy=${sortBy}, order=${order}`);
 
-    // Execute queries in parallel
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
@@ -61,10 +53,7 @@ export class ProductsService {
       prisma.product.count({ where }),
     ]);
 
-    // Transform to response format
     const productItems = products.map(toProductListItem);
-
-    // Calculate pagination metadata
     const pagination = this.calculatePagination(total, page, limit);
 
     logger.info(`Found ${total} products, returning ${products.length} items`);
@@ -77,10 +66,6 @@ export class ProductsService {
 
   /**
    * Get product by slug and increment view count
-   *
-   * @param slug - Product slug
-   * @returns Product details
-   * @throws {NotFoundError} If product not found
    */
   async getProductBySlug(slug: string): Promise<ProductDetail> {
     logger.info(`Getting product by slug: ${slug}`);
@@ -100,7 +85,6 @@ export class ProductsService {
       throw new NotFoundError('Product', slug);
     }
 
-    // Increment view count asynchronously (don't wait)
     this.incrementViewCount(product.id).catch((error) => {
       logger.error(`Failed to increment view count for product ${product.id}:`, error);
     });
@@ -110,10 +94,6 @@ export class ProductsService {
 
   /**
    * Get product by ID
-   *
-   * @param id - Product ID
-   * @returns Product details
-   * @throws {NotFoundError} If product not found
    */
   async getProductById(id: string): Promise<ProductDetail> {
     logger.info(`Getting product by ID: ${id}`);
@@ -133,9 +113,6 @@ export class ProductsService {
 
   /**
    * Get multiple products by IDs (bulk fetch for favorites)
-   *
-   * @param ids - Array of product IDs
-   * @returns Array of product details
    */
   async getProductsByIds(ids: string[]): Promise<ProductListItem[]> {
     logger.info(`Getting ${ids.length} products by IDs`);
@@ -154,15 +131,11 @@ export class ProductsService {
 
     logger.info(`Found ${products.length} products out of ${ids.length} requested`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return products.map(toProductListItem);
   }
 
   /**
    * Search products by query string
-   *
-   * @param params - Search parameters
-   * @returns Paginated list of products
    */
   async searchProducts(params: ProductSearchParams): Promise<ProductsListResponse> {
     const { page, limit, sortBy = 'new', order = 'desc', filters = {}, query } = params;
@@ -174,16 +147,10 @@ export class ProductsService {
 
   /**
    * Get related products (same category)
-   *
-   * @param productId - Product ID
-   * @param limit - Maximum number of related products
-   * @returns List of related products
-   * @throws {NotFoundError} If product not found
    */
   async getRelatedProducts(productId: string, limit: number = 4): Promise<ProductListItem[]> {
     logger.info(`Getting related products for: ${productId}, limit=${limit}`);
 
-    // Get the product to find its category
     const product = await prisma.product.findUnique({
       where: { id: productId },
       select: { categoryId: true, isActive: true },
@@ -194,12 +161,11 @@ export class ProductsService {
       throw new NotFoundError('Product', productId);
     }
 
-    // Find related products in the same category
     const relatedProducts = await prisma.product.findMany({
       where: {
         categoryId: product.categoryId,
         isActive: true,
-        id: { not: productId }, // Exclude the current product
+        id: { not: productId },
       },
       orderBy: [{ orderCount: 'desc' }, { viewCount: 'desc' }, { createdAt: 'desc' }],
       take: limit,
@@ -208,22 +174,15 @@ export class ProductsService {
 
     logger.info(`Found ${relatedProducts.length} related products`);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return relatedProducts.map(toProductListItem);
   }
 
   /**
    * Create a new product (admin only)
-   *
-   * @param data - Product creation data
-   * @returns Created product
-   * @throws {ConflictError} If slug, article, or SKU already exists
-   * @throws {NotFoundError} If category not found
    */
   async createProduct(data: CreateProductDTO): Promise<ProductDetail> {
     logger.info(`Creating product: ${data.name}`);
 
-    // Check if category exists
     const category = await prisma.category.findUnique({
       where: { id: data.categoryId },
     });
@@ -232,16 +191,15 @@ export class ProductsService {
       throw new NotFoundError('Category', data.categoryId);
     }
 
-    // Check for unique constraints
     await this.validateUniqueFields(data.slug, data.article, data.sku);
-
-    // Validate price logic
     this.validatePriceLogic(data);
 
-    // Create product
+    const { categoryId, ...restData } = data;
+
     const product = await prisma.product.create({
       data: {
-        ...data,
+        ...restData,
+        category: { connect: { id: categoryId } },
         price: data.price,
         promotionPrice: data.promotionPrice ?? null,
         discountPrice: data.discountPrice ?? null,
@@ -267,17 +225,10 @@ export class ProductsService {
 
   /**
    * Update a product (admin only)
-   *
-   * @param id - Product ID
-   * @param data - Product update data
-   * @returns Updated product
-   * @throws {NotFoundError} If product not found
-   * @throws {ConflictError} If slug, article, or SKU already exists
    */
   async updateProduct(id: string, data: UpdateProductDTO): Promise<ProductDetail> {
     logger.info(`Updating product: ${id}`);
 
-    // Check if product exists
     const existingProduct = await prisma.product.findUnique({
       where: { id },
     });
@@ -287,7 +238,6 @@ export class ProductsService {
       throw new NotFoundError('Product', id);
     }
 
-    // If category is being updated, check if it exists
     if (data.categoryId) {
       const category = await prisma.category.findUnique({
         where: { id: data.categoryId },
@@ -298,19 +248,24 @@ export class ProductsService {
       }
     }
 
-    // Check for unique constraints (only if fields are being updated)
     if (data.slug || data.article || data.sku) {
       await this.validateUniqueFields(data.slug, data.article, data.sku, id);
     }
 
-    // Validate price logic with merged data
     const mergedData = { ...existingProduct, ...data };
     this.validatePriceLogic(mergedData);
 
-    // Update product
-    const updateData: any = { ...data };
+    // Prepare update data - handle categoryId separately
+    const { categoryId, ...restData } = data;
+    const updateData: any = {
+      ...restData,
+      updatedAt: new Date(),
+    };
 
-    updateData.updatedAt = new Date();
+    // Use category connect if categoryId is provided
+    if (categoryId) {
+      updateData.category = { connect: { id: categoryId } };
+    }
 
     const product = await prisma.product.update({
       where: { id },
@@ -325,15 +280,10 @@ export class ProductsService {
 
   /**
    * Delete a product (soft delete - set isActive to false)
-   *
-   * @param id - Product ID
-   * @returns Success status
-   * @throws {NotFoundError} If product not found
    */
   async deleteProduct(id: string): Promise<{ success: boolean }> {
     logger.info(`Deleting product (soft): ${id}`);
 
-    // Check if product exists
     const product = await prisma.product.findUnique({
       where: { id },
     });
@@ -343,7 +293,6 @@ export class ProductsService {
       throw new NotFoundError('Product', id);
     }
 
-    // Soft delete by setting isActive to false
     await prisma.product.update({
       where: { id },
       data: {
@@ -359,16 +308,10 @@ export class ProductsService {
 
   /**
    * Update product stock quantity
-   *
-   * @param id - Product ID
-   * @param quantity - New quantity
-   * @returns Updated product
-   * @throws {NotFoundError} If product not found
    */
   async updateStock(id: string, quantity: number): Promise<ProductDetail> {
     logger.info(`Updating stock for product ${id}: quantity=${quantity}`);
 
-    // Check if product exists
     const product = await prisma.product.findUnique({
       where: { id },
     });
@@ -378,7 +321,6 @@ export class ProductsService {
       throw new NotFoundError('Product', id);
     }
 
-    // Update quantity
     const updatedProduct = await prisma.product.update({
       where: { id },
       data: {
@@ -393,12 +335,6 @@ export class ProductsService {
     return toProductDetail(updatedProduct);
   }
 
-  /**
-   * Increment view count for a product (async, non-blocking)
-   *
-   * @param id - Product ID
-   * @private
-   */
   private async incrementViewCount(id: string): Promise<void> {
     await prisma.product.update({
       where: { id },
@@ -408,25 +344,15 @@ export class ProductsService {
     });
   }
 
-  /**
-   * Build Prisma where clause from filters and search query
-   *
-   * @param filters - Product filters
-   * @param query - Search query
-   * @returns Prisma where clause
-   * @private
-   */
   private buildWhereClause(filters: ProductFilters, query?: string): any {
     const where: any = {
       isActive: true,
     };
 
-    // Category filter
     if (filters.categoryId) {
       where.categoryId = filters.categoryId;
     }
 
-    // Price range filter
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
       where.price = {};
       if (filters.minPrice !== undefined) {
@@ -437,7 +363,6 @@ export class ProductsService {
       }
     }
 
-    // Stock filters
     if (filters.inStock === true) {
       where.quantity = { gt: 0 };
     }
@@ -445,7 +370,6 @@ export class ProductsService {
       where.quantity = { lte: 10, gt: 0 };
     }
 
-    // Badge filters
     if (filters.isNew === true) {
       where.isNew = true;
     }
@@ -459,7 +383,6 @@ export class ProductsService {
       where.hasPromotion = true;
     }
 
-    // Search query (search across multiple fields)
     if (query && query.trim().length > 0) {
       const searchTerm = query.trim();
       where.OR = [
@@ -474,14 +397,6 @@ export class ProductsService {
     return where;
   }
 
-  /**
-   * Build Prisma orderBy clause from sort parameters
-   *
-   * @param sortBy - Sort field
-   * @param order - Sort order
-   * @returns Prisma orderBy clause
-   * @private
-   */
   private buildOrderByClause(sortBy: string, order: string): any[] {
     const orderDirection = order === 'asc' ? 'asc' : 'desc';
 
@@ -499,15 +414,6 @@ export class ProductsService {
     }
   }
 
-  /**
-   * Calculate pagination metadata
-   *
-   * @param total - Total number of items
-   * @param page - Current page
-   * @param limit - Items per page
-   * @returns Pagination metadata
-   * @private
-   */
   private calculatePagination(total: number, page: number, limit: number): PaginationMeta {
     const totalPages = Math.ceil(total / limit);
 
@@ -521,16 +427,6 @@ export class ProductsService {
     };
   }
 
-  /**
-   * Validate unique fields (slug, article, SKU)
-   *
-   * @param slug - Product slug
-   * @param article - Product article
-   * @param sku - Product SKU
-   * @param excludeId - Product ID to exclude from check (for updates)
-   * @throws {ConflictError} If any field already exists
-   * @private
-   */
   private async validateUniqueFields(slug?: string, article?: string, sku?: string, excludeId?: string): Promise<void> {
     const where: any[] = [];
 
@@ -569,13 +465,6 @@ export class ProductsService {
     }
   }
 
-  /**
-   * Validate price logic (promotionPrice and discountPrice must be less than price)
-   *
-   * @param data - Product data with prices
-   * @throws {BadRequestError} If price logic is invalid
-   * @private
-   */
   private validatePriceLogic(data: {
     price: number | any;
     promotionPrice?: number | null | any;
@@ -605,5 +494,4 @@ export class ProductsService {
   }
 }
 
-// Export singleton instance
 export const productsService = new ProductsService();

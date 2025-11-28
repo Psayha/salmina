@@ -200,7 +200,7 @@ export default function Home() {
               : allProducts.map((product) => (
                   <ProductCard
                     key={product.id}
-                    {...product}
+                    id={product.id} slug={product.slug} name={product.name} description={product.description} price={product.price} discountPrice={product.discountPrice} promotionPrice={product.promotionPrice} imageUrl={product.images?.[0]}
                     onAddToCart={handleAddToCart}
                     onClick={handleProductClick}
                   />

@@ -57,7 +57,18 @@ export function ProductSection({
                 ))
               : products.map((product) => (
                   <div key={product.id} className="w-[160px] sm:w-[180px]">
-                    <ProductCard {...product} onAddToCart={onAddToCart} onClick={onProductClick} />
+                    <ProductCard
+                      id={product.id}
+                      slug={product.slug}
+                      name={product.name}
+                      description={product.description}
+                      price={product.price}
+                      discountPrice={product.discountPrice}
+                      promotionPrice={product.promotionPrice}
+                      imageUrl={product.images?.[0]}
+                      onAddToCart={onAddToCart}
+                      onClick={onProductClick}
+                    />
                   </div>
                 ))}
           </div>
