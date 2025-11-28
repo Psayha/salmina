@@ -134,6 +134,57 @@ export async function uploadMultiple(req: Request, res: Response) {
 }
 
 /**
+ * List all uploaded files
+ */
+export async function listFiles(_req: Request, res: Response) {
+  try {
+    await ensureUploadDir();
+
+    const files = await fs.readdir(UPLOAD_DIR);
+    const fileStats = await Promise.all(
+      files
+        .filter((file) => !file.startsWith('.')) // Skip hidden files
+        .map(async (filename) => {
+          const filePath = path.join(UPLOAD_DIR, filename);
+          try {
+            const stat = await fs.stat(filePath);
+            return {
+              filename,
+              url: `/uploads/${filename}`,
+              size: stat.size,
+              createdAt: stat.birthtime,
+              modifiedAt: stat.mtime,
+            };
+          } catch {
+            return null;
+          }
+        }),
+    );
+
+    // Filter out null values and sort by creation date (newest first)
+    const validFiles = fileStats
+      .filter((f): f is NonNullable<typeof f> => f !== null)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    logger.info(`Listed ${validFiles.length} files`);
+
+    res.json({
+      success: true,
+      data: {
+        files: validFiles,
+        total: validFiles.length,
+      },
+    });
+  } catch (error) {
+    logger.error('List files error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to list files',
+    });
+  }
+}
+
+/**
  * Delete file
  */
 export async function deleteFile(req: Request, res: Response) {

@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, Tags, ShoppingCart, Users } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, ImageIcon } from 'lucide-react';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Обзор', href: '/admin' },
   { icon: Package, label: 'Товары', href: '/admin/products' },
-  { icon: Tags, label: 'Категории', href: '/admin/categories' },
   { icon: ShoppingCart, label: 'Заказы', href: '/admin/orders' },
+  { icon: ImageIcon, label: 'Фото', href: '/admin/uploads' },
   { icon: Users, label: 'Юзеры', href: '/admin/users' },
 ];
 
