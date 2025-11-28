@@ -58,6 +58,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const cart = await cartApi.addToCart({ productId, quantity });
+
+      // Save session token if present
+      if (cart.sessionToken && typeof window !== 'undefined') {
+        localStorage.setItem('sessionToken', cart.sessionToken);
+      }
+
       set({ cart, isLoading: false });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Ошибка добавления в корзину';
@@ -73,6 +79,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const cart = await cartApi.updateCartItem(itemId, { quantity });
+
+      // Save session token if present
+      if (cart.sessionToken && typeof window !== 'undefined') {
+        localStorage.setItem('sessionToken', cart.sessionToken);
+      }
+
       set({ cart, isLoading: false });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Ошибка обновления корзины';
@@ -88,6 +100,12 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const cart = await cartApi.removeCartItem(itemId);
+
+      // Save session token if present
+      if (cart.sessionToken && typeof window !== 'undefined') {
+        localStorage.setItem('sessionToken', cart.sessionToken);
+      }
+
       set({ cart, isLoading: false });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Ошибка удаления из корзины';
