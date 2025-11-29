@@ -117,10 +117,10 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
         slug: formData.slug,
         description: formData.description,
         article: formData.article.toUpperCase(),
-        weight: parseFloat(formData.weight),
-        price: parseFloat(formData.price),
+        weight: parseFloat(formData.weight) || 0,
+        price: parseFloat(formData.price) || 0,
         discountPrice: formData.hasPromotion && formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
-        quantity: parseInt(formData.quantity),
+        quantity: parseInt(formData.quantity) || 0,
         categoryId: formData.categoryId,
         isActive: formData.isActive,
         hasPromotion: formData.hasPromotion,
@@ -163,7 +163,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-gray-700 p-6 space-y-4">
           <div>
             <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
@@ -374,7 +374,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-shadow font-light disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Save className="w-5 h-5" />
             <span>{isSubmitting ? 'Сохранение...' : 'Сохранить'}</span>
