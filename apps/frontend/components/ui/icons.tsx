@@ -16,9 +16,13 @@ export const CartIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export const HeartIcon = (props: SVGProps<SVGSVGElement>) => (
+interface HeartIconProps extends SVGProps<SVGSVGElement> {
+  filled?: boolean;
+}
+
+export const HeartIcon = ({ filled, ...props }: HeartIconProps) => (
   <svg
-    fill="none"
+    fill={filled ? 'currentColor' : 'none'}
     stroke="currentColor"
     viewBox="0 0 24 24"
     {...props}

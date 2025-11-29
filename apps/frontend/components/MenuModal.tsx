@@ -2,10 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Heart, ShoppingBag, Search, Package, Settings, HelpCircle } from 'lucide-react';
+import { X, Package, Settings, HelpCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useCartStore } from '@/store/useCartStore';
-import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 interface MenuModalProps {
@@ -18,13 +16,9 @@ const ADMIN_USER_ID = 887567962;
 export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
-  const { cart } = useCartStore();
-  const { favoriteIds } = useFavoritesStore();
   const haptic = useTelegramHaptic();
 
   const isAdmin = user?.telegramId === String(ADMIN_USER_ID);
-  const cartCount = cart?.totals?.itemsCount || 0;
-  const favoritesCount = favoriteIds.length;
 
   const handleNavigate = (path: string) => {
     haptic?.impactOccurred('light');
@@ -32,12 +26,9 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
     onClose();
   };
 
+  // Simplified menu - only items not in BottomNav or Header
   const menuItems = [
-    { icon: User, label: 'Профиль', path: '/profile', badge: null },
-    { icon: Heart, label: 'Избранное', path: '/favorites', badge: favoritesCount > 0 ? favoritesCount : null },
-    { icon: ShoppingBag, label: 'Корзина', path: '/cart', badge: cartCount > 0 ? cartCount : null },
     { icon: Package, label: 'Мои заказы', path: '/orders', badge: null },
-    { icon: Search, label: 'Поиск', path: '/search', badge: null },
     { icon: HelpCircle, label: 'Поддержка', path: '/support', badge: null },
   ];
 
@@ -81,27 +72,20 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
 
               {/* Menu Items */}
               <div className="p-3">
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {menuItems.map((item, index) => {
                     const Icon = item.icon;
                     return (
                       <motion.button
                         key={item.path}
                         onClick={() => handleNavigate(item.path)}
-                        className="relative flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.03 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        <div className="relative">
-                          <Icon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-                          {item.badge !== null && (
-                            <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-[9px] font-bold text-white">
-                              {item.badge > 9 ? '9+' : item.badge}
-                            </span>
-                          )}
-                        </div>
+                        <Icon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                         <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                           {item.label}
                         </span>
