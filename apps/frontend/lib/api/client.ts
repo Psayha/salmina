@@ -75,22 +75,45 @@ apiClient.interceptors.request.use(
   },
 );
 
+// Flag to prevent multiple simultaneous re-login attempts
+let isReloginInProgress = false;
+let reloginPromise: Promise<boolean> | null = null;
+
 /**
  * Response interceptor - handle errors globally
  */
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Try to refresh token
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+
+    // Skip re-login for auth endpoints to avoid infinite loops
+    if (originalRequest?.url?.includes('/auth/')) {
+      return Promise.reject(error);
+    }
+
+    if (error.response?.status === 401 && !originalRequest?._retry) {
+      originalRequest._retry = true;
+
+      // Try to refresh token first
       try {
         await refreshAuthToken();
         // Retry original request
-        return apiClient.request(error.config as AxiosRequestConfig);
+        return apiClient.request(originalRequest);
       } catch {
-        // Refresh failed, clear auth and redirect
+        // Refresh failed, try re-login with Telegram
+        try {
+          const success = await reloginWithTelegram();
+          if (success) {
+            // Retry original request with new token
+            return apiClient.request(originalRequest);
+          }
+        } catch {
+          // Re-login also failed
+        }
+
+        // All auth attempts failed, clear auth
         clearAuth();
-        // Optionally notify user or redirect to login
       }
     }
 
@@ -138,6 +161,54 @@ function clearAuth(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
+}
+
+/**
+ * Re-login with Telegram initData
+ * Used when both access and refresh tokens are invalid
+ */
+async function reloginWithTelegram(): Promise<boolean> {
+  if (typeof window === 'undefined') return false;
+
+  // Prevent multiple simultaneous re-login attempts
+  if (isReloginInProgress && reloginPromise) {
+    return reloginPromise;
+  }
+
+  // Check if Telegram WebApp is available
+  const telegram = window.Telegram?.WebApp;
+  if (!telegram?.initData) {
+    return false;
+  }
+
+  isReloginInProgress = true;
+  reloginPromise = (async () => {
+    try {
+      // Call auth endpoint directly with axios to avoid interceptor loop
+      const response = await axios.post(`${getApiBaseUrl()}/auth/telegram`, {
+        initData: telegram.initData,
+      });
+
+      const { accessToken, refreshToken } = response.data.data;
+
+      if (accessToken && refreshToken) {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        console.log('[Auth] Re-login successful');
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('[Auth] Re-login failed:', error);
+      return false;
+    } finally {
+      isReloginInProgress = false;
+      reloginPromise = null;
+    }
+  })();
+
+  return reloginPromise;
 }
 
 /**
