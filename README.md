@@ -41,14 +41,26 @@
 ```
 salmina/
 ├── apps/
-│   ├── frontend/          # Next.js приложение
+│   ├── frontend/          # Next.js 16 приложение (App Router)
+│   │   ├── app/           # Страницы и layouts
+│   │   ├── components/    # React компоненты
+│   │   ├── contexts/      # React contexts
+│   │   ├── lib/           # Утилиты и API клиент
+│   │   └── store/         # Zustand stores
 │   └── backend/           # Express API сервер
+│       ├── src/
+│       │   ├── modules/   # API модули (13 модулей)
+│       │   ├── middleware/# Middleware (auth, rate-limit, etc.)
+│       │   ├── services/  # Общие сервисы
+│       │   └── config/    # Конфигурация
+│       └── prisma/        # Схема БД и миграции
 ├── packages/
 │   ├── shared/            # Общие утилиты
 │   └── types/             # Shared TypeScript типы
 ├── docs/                  # Документация
 ├── files/                 # Техническое задание
-└── scripts/               # Скрипты
+├── scripts/               # Скрипты (audit, backup)
+└── .github/workflows/     # CI/CD (test, deploy)
 ```
 
 ## Быстрый старт
@@ -111,7 +123,7 @@ pnpm db:studio        # Prisma Studio GUI
 
 ## API Модули
 
-Backend содержит 9 модулей с 51 endpoint:
+Backend содержит 13 модулей с 70+ endpoints:
 
 | Модуль | Endpoints | Описание |
 |--------|-----------|----------|
@@ -124,6 +136,10 @@ Backend содержит 9 модулей с 51 endpoint:
 | Promocodes | 5 | Промокоды |
 | Promotions | 4 | Акции и баннеры |
 | Legal | 4 | Юридические документы |
+| Upload | 3 | Загрузка файлов |
+| Stats | 1 | Статистика (админ) |
+| Security | 2 | Безопасность |
+| Backup | 3 | Резервное копирование (админ) |
 
 Полная документация API: [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md)
 

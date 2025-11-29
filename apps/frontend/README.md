@@ -4,19 +4,23 @@
 
 ## 🚀 Технологии
 
-- **Next.js 14+** - App Router, Server/Client Components
-- **TypeScript** - Строгая типизация
-- **Tailwind CSS** - Utility-first CSS framework
+- **Next.js 16** - App Router, Server/Client Components
+- **React 19** - Concurrent features
+- **TypeScript 5.6** - Строгая типизация
+- **Tailwind CSS 4** - Utility-first CSS framework
 - **Zustand** - State management с persist middleware
 - **React Query** - Server state management
 - **Axios** - HTTP client с interceptors
 - **Telegram Mini Apps SDK** - WebApp интеграция
+- **Framer Motion** - Анимации
+- **React Hook Form + Zod** - Формы и валидация
 
 ## 📁 Структура проекта
 
 ```
 apps/frontend/
 ├── app/                          # Next.js App Router
+│   ├── admin/                   # Админ-панель
 │   ├── cart/                    # Страница корзины
 │   ├── category/[slug]/         # Страница категории (динамическая)
 │   ├── checkout/                # Оформление заказа
@@ -26,9 +30,12 @@ apps/frontend/
 │   ├── product/[slug]/          # Страница товара (динамическая)
 │   ├── profile/                 # Профиль пользователя
 │   ├── search/                  # Поиск с фильтрами
+│   ├── settings/                # Настройки
+│   ├── support/                 # Поддержка
 │   ├── layout.tsx              # Root layout с Providers
 │   ├── page.tsx                # Главная страница
-│   └── globals.css             # Глобальные стили
+│   ├── globals.css             # Глобальные стили
+│   └── global-error.tsx        # Глобальная обработка ошибок
 ├── components/                  # React компоненты
 │   ├── ui/                     # UI Kit компоненты
 │   │   ├── Button.tsx          # Кнопка с вариантами
@@ -41,6 +48,8 @@ apps/frontend/
 │   ├── Header.tsx              # Шапка приложения
 │   ├── ProductCard.tsx         # Карточка товара
 │   └── Providers.tsx           # React Query + App Init
+├── contexts/                    # React Contexts
+│   └── TelegramContext.tsx     # Telegram WebApp context
 ├── lib/                         # Утилиты и библиотеки
 │   ├── api/                    # API клиент
 │   │   ├── endpoints/          # API endpoints
@@ -51,8 +60,6 @@ apps/frontend/
 │   │   ├── client.ts          # Axios instance с interceptors
 │   │   ├── types.ts           # TypeScript типы
 │   │   └── index.ts           # Exports
-│   ├── telegram/               # Telegram SDK
-│   │   └── useTelegram.ts     # Hooks для Telegram
 │   └── utils.ts                # Общие утилиты
 ├── store/                       # Zustand stores
 │   ├── useAuthStore.ts         # Авторизация
@@ -178,6 +185,22 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api
 - История заказов
 - Детальный просмотр заказа
 - Статусы заказов с цветовой индикацией
+
+### Настройки (/settings)
+- Настройки уведомлений
+- Язык интерфейса
+- Другие параметры
+
+### Поддержка (/support)
+- FAQ
+- Контактные данные
+- Форма обратной связи
+
+### Админ-панель (/admin)
+- Управление товарами
+- Управление заказами
+- Управление пользователями
+- Статистика
 
 ## 🔄 State Management
 
