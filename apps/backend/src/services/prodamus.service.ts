@@ -174,23 +174,24 @@ class ProdamusService {
     const expectedSignature = this.generateSignature(dataToVerify);
 
     // Compare signatures using constant-time comparison
-    try {
-      const isValid = crypto.timingSafeEqual(
-        Buffer.from(expectedSignature),
-        Buffer.from(receivedSignature),
-      );
+    const expectedBuffer = Buffer.from(expectedSignature);
+    const receivedBuffer = Buffer.from(receivedSignature);
 
-      if (isValid) {
-        logger.info(`Webhook signature verified successfully for order ${webhookData.order_num}`);
-      } else {
-        logger.error(`Invalid webhook signature for order ${webhookData.order_num}`);
-      }
-
-      return isValid;
-    } catch (error) {
-      logger.error('Webhook signature verification error:', error);
+    // Buffers must have same length for timingSafeEqual
+    if (expectedBuffer.length !== receivedBuffer.length) {
+      logger.error(`Invalid webhook signature for order ${webhookData.order_num}: length mismatch`);
       return false;
     }
+
+    const isValid = crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+
+    if (isValid) {
+      logger.info(`Webhook signature verified successfully for order ${webhookData.order_num}`);
+    } else {
+      logger.error(`Invalid webhook signature for order ${webhookData.order_num}`);
+    }
+
+    return isValid;
   }
 
   /**
