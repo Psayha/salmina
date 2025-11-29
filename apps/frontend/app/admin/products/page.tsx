@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getProducts, deleteProduct } from '@/lib/api/endpoints/products';
-import { Product } from '@/lib/api/types';
+import { getCategories } from '@/lib/api/endpoints/categories';
+import { Product, Category } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { Toast, useToast } from '@/components/ui/Toast';
 import { Modal } from '@/components/ui/Modal';
@@ -25,8 +26,10 @@ export default function ProductsPage() {
   const haptic = useTelegramHaptic();
   const toast = useToast();
   const [data, setData] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(0);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; productId: string; productName: string }>({
     isOpen: false,
@@ -42,11 +45,16 @@ export default function ProductsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getProducts({ limit: 100 });
-        setData(Array.isArray(response?.items) ? response.items : []);
+        const [productsResponse, categoriesData] = await Promise.all([
+          getProducts({ limit: 100 }),
+          getCategories(),
+        ]);
+        setData(Array.isArray(productsResponse?.items) ? productsResponse.items : []);
+        setCategories(Array.isArray(categoriesData) ? categoriesData : []);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
+        console.error('Failed to fetch data:', error);
         setData([]);
+        setCategories([]);
       } finally {
         setIsLoading(false);
       }
@@ -55,19 +63,26 @@ export default function ProductsPage() {
   }, []);
 
   const filteredData = useMemo(() => {
-    if (!searchQuery) return data;
-    const query = searchQuery.toLowerCase();
-    return Array.isArray(data)
-      ? data.filter(
-          (product) => product.name.toLowerCase().includes(query) || product.article.toLowerCase().includes(query),
-        )
-      : [];
-  }, [data, searchQuery]);
+    let result = Array.isArray(data) ? data : [];
 
-  // Reset page when search changes
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (product) => product.name.toLowerCase().includes(query) || product.article.toLowerCase().includes(query),
+      );
+    }
+
+    if (selectedCategory) {
+      result = result.filter((product) => product.categoryId === selectedCategory);
+    }
+
+    return result;
+  }, [data, searchQuery, selectedCategory]);
+
+  // Reset page when search or filter changes
   useEffect(() => {
     setCurrentPage(0);
-  }, [searchQuery]);
+  }, [searchQuery, selectedCategory]);
 
   const handleDeleteClick = useCallback(
     (e: React.MouseEvent, productId: string, productName: string) => {
@@ -246,16 +261,30 @@ export default function ProductsPage() {
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
-          <input
-            type="text"
-            placeholder="Поиск по названию или артикулу..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
-          />
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <input
+              type="text"
+              placeholder="Поиск по названию или артикулу..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+            />
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white sm:w-48"
+          >
+            <option value="">Все категории</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <AdminCardGrid

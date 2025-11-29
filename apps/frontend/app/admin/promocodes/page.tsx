@@ -1,7 +1,7 @@
 'use client';
 
-import { Edit, Trash, Plus, Copy, Ticket, Percent, AlertCircle } from 'lucide-react';
-import { useEffect, useState, useCallback } from 'react';
+import { Edit, Trash, Plus, Copy, Ticket, Percent, AlertCircle, Search } from 'lucide-react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { promocodesApi, Promocode, DiscountType } from '@/lib/api/endpoints/promocodes';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -15,6 +15,7 @@ export default function PromocodesPage() {
   const toast = useToast();
   const [data, setData] = useState<Promocode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; promocodeId: string; promocodeCode: string }>({
     isOpen: false,
@@ -45,6 +46,17 @@ export default function PromocodesPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    const query = searchQuery.toLowerCase();
+    return data.filter((promocode) => promocode.code?.toLowerCase().includes(query));
+  }, [data, searchQuery]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
 
   const handleDeleteClick = (e: React.MouseEvent, promocode: Promocode) => {
     e.stopPropagation();
@@ -225,11 +237,11 @@ export default function PromocodesPage() {
       />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-light text-gray-900 dark:text-white">Промокоды</h1>
             <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-              Управление промокодами и скидками ({data.length} шт.)
+              Управление промокодами и скидками ({filteredData.length} шт.)
             </p>
           </div>
           <button
@@ -244,8 +256,20 @@ export default function PromocodesPage() {
           </button>
         </div>
 
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <input
+            type="text"
+            placeholder="Поиск по коду промокода..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          />
+        </div>
+
         <AdminCardGrid
-          data={data}
+          data={filteredData}
           renderCard={renderPromocodeCard}
           emptyMessage="Промокодов пока нет"
           pageSize={9}
