@@ -2,7 +2,7 @@
  * Security API endpoints
  */
 
-import { apiClient } from '../client';
+import { apiClient, ApiResponse } from '../client';
 
 export interface BannedIPInfo {
   ip: string;
@@ -26,34 +26,32 @@ export interface SecurityStatus {
   firewall: FirewallStatus;
 }
 
+/**
+ * Get full security status
+ */
+export async function getStatus(): Promise<SecurityStatus> {
+  const response = await apiClient.get<ApiResponse<SecurityStatus>>('/security/status');
+  return response.data.data;
+}
+
+/**
+ * Get fail2ban status and banned IPs
+ */
+export async function getFail2banStatus(): Promise<Fail2banStatus> {
+  const response = await apiClient.get<ApiResponse<Fail2banStatus>>('/security/fail2ban');
+  return response.data.data;
+}
+
+/**
+ * Get firewall status
+ */
+export async function getFirewallStatus(): Promise<FirewallStatus> {
+  const response = await apiClient.get<ApiResponse<FirewallStatus>>('/security/firewall');
+  return response.data.data;
+}
+
 export const securityApi = {
-  /**
-   * Get full security status
-   */
-  async getStatus(): Promise<SecurityStatus> {
-    const response = await apiClient.get<{ success: boolean; data: SecurityStatus }>(
-      '/api/security/status'
-    );
-    return response.data;
-  },
-
-  /**
-   * Get fail2ban status and banned IPs
-   */
-  async getFail2banStatus(): Promise<Fail2banStatus> {
-    const response = await apiClient.get<{ success: boolean; data: Fail2banStatus }>(
-      '/api/security/fail2ban'
-    );
-    return response.data;
-  },
-
-  /**
-   * Get firewall status
-   */
-  async getFirewallStatus(): Promise<FirewallStatus> {
-    const response = await apiClient.get<{ success: boolean; data: FirewallStatus }>(
-      '/api/security/firewall'
-    );
-    return response.data;
-  },
+  getStatus,
+  getFail2banStatus,
+  getFirewallStatus,
 };
