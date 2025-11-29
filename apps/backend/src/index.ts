@@ -35,6 +35,7 @@ import legalRoutes from './modules/legal/index.js';
 import { uploadRoutes } from './modules/upload/index.js';
 import { statsRoutes } from './modules/stats/index.js';
 import backupRoutes from './modules/backup/backup.routes.js';
+import securityRoutes from './modules/security/security.routes.js';
 import webhooksRoutes from './routes/webhooks.routes.js';
 import healthRoutes from './routes/health.routes.js';
 
@@ -147,6 +148,7 @@ app.use('/api/legal', sanitizeBody, legalRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/stats', statsRoutes);
 app.use('/api/backups', backupRoutes);
+app.use('/api/security', securityRoutes);
 app.use('/webhooks', webhooksRoutes);
 
 // 404 handler
