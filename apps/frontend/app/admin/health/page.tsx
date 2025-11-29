@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Trash2, Plus, RotateCcw } from 'lucide-react';
+import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Trash2, Plus, RotateCcw, Shield, Ban } from 'lucide-react';
 import { healthApi, HealthCheckResponse } from '@/lib/api/endpoints/health';
 import { backupApi, BackupStatus } from '@/lib/api/endpoints/backup';
+import { securityApi, SecurityStatus } from '@/lib/api/endpoints/security';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 export default function HealthPage() {
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
   const [backups, setBackups] = useState<BackupStatus | null>(null);
+  const [security, setSecurity] = useState<SecurityStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [backupLoading, setBackupLoading] = useState(false);
+  const [securityLoading, setSecurityLoading] = useState(false);
   const [creatingBackup, setCreatingBackup] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -43,6 +46,18 @@ export default function HealthPage() {
       console.error('Failed to fetch backups:', err);
     } finally {
       setBackupLoading(false);
+    }
+  };
+
+  const fetchSecurity = async () => {
+    try {
+      setSecurityLoading(true);
+      const data = await securityApi.getStatus();
+      setSecurity(data);
+    } catch (err) {
+      console.error('Failed to fetch security status:', err);
+    } finally {
+      setSecurityLoading(false);
     }
   };
 
@@ -98,6 +113,7 @@ export default function HealthPage() {
   useEffect(() => {
     fetchHealth();
     fetchBackups();
+    fetchSecurity();
 
     if (!autoRefresh) return;
 
@@ -109,6 +125,7 @@ export default function HealthPage() {
     haptic?.impactOccurred('light');
     fetchHealth();
     fetchBackups();
+    fetchSecurity();
   };
 
   const formatUptime = (seconds: number): string => {
@@ -409,6 +426,106 @@ export default function HealthPage() {
               <div className="text-center py-8">
                 <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-500" />
                 <p className="mt-2 text-gray-500">Загрузка бэкапов...</p>
+              </div>
+            )}
+          </div>
+
+          {/* Security Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Безопасность
+              </h3>
+            </div>
+
+            {security && (
+              <>
+                {/* Security Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Fail2ban</div>
+                    <div className={`text-lg font-bold ${security.fail2ban.available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {security.fail2ban.available ? 'Активен' : 'Не активен'}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Заблокировано IP</div>
+                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                      {security.fail2ban.totalBanned}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Jails активных</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {security.fail2ban.jails.length}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Firewall</div>
+                    <div className={`text-lg font-bold ${security.firewall.enabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {security.firewall.enabled ? 'Активен' : 'Не активен'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Banned IPs List */}
+                {security.fail2ban.bannedIPs.length > 0 ? (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Заблокированные IP адреса
+                    </h4>
+                    <div className="space-y-2">
+                      {security.fail2ban.bannedIPs.map((item, index) => (
+                        <div
+                          key={`${item.ip}-${index}`}
+                          className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-xl"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Ban className="w-4 h-4 text-red-500" />
+                            <span className="font-mono text-sm text-gray-900 dark:text-white">
+                              {item.ip}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                            {item.jail}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+                    <Shield className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Нет заблокированных IP</p>
+                  </div>
+                )}
+
+                {/* Active Jails */}
+                {security.fail2ban.jails.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Активные Jails
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {security.fail2ban.jails.map((jail) => (
+                        <span
+                          key={jail}
+                          className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm"
+                        >
+                          {jail}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {securityLoading && !security && (
+              <div className="text-center py-8">
+                <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-500" />
+                <p className="mt-2 text-gray-500">Загрузка статуса безопасности...</p>
               </div>
             )}
           </div>
