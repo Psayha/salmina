@@ -1,27 +1,60 @@
 'use client';
 
-import { DataTable } from '@/components/admin/DataTable';
-import { ColumnDef, Row } from '@tanstack/react-table';
-import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock } from 'lucide-react';
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, User as UserIcon } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
 import { User } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { Toast, useToast } from '@/components/ui/Toast';
+import { Modal } from '@/components/ui/Modal';
+import { AdminCardGrid, CardWrapper } from '@/components/admin/AdminCardGrid';
 
-const UserActionsCell = ({ row, onUpdate }: { row: Row<User>; onUpdate: () => void }) => {
-  const [isUpdating, setIsUpdating] = useState(false);
+export default function UsersPage() {
+  const router = useRouter();
   const haptic = useTelegramHaptic();
-  const user = row.original;
+  const toast = useToast();
+  const [data, setData] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [actionModal, setActionModal] = useState<{
+    isOpen: boolean;
+    type: 'role' | 'block';
+    user: User | null;
+  }>({
+    isOpen: false,
+    type: 'role',
+    user: null,
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useTelegramBackButton(() => {
+    router.push('/admin');
+  });
+
+  const fetchData = useCallback(async () => {
+    try {
+      const users = await adminApi.getUsers();
+      setData(Array.isArray(users) ? users : []);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      setData([]);
+      toast.error('Ошибка загрузки пользователей');
+    } finally {
+      setIsLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleToggleRole = async () => {
-    const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
-    const confirmMessage =
-      newRole === 'ADMIN'
-        ? `Назначить пользователя ${user.firstName} ${user.lastName} администратором?`
-        : `Снять права администратора с ${user.firstName} ${user.lastName}?`;
+    if (!actionModal.user) return;
 
-    if (!confirm(confirmMessage)) return;
+    const user = actionModal.user;
+    const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN';
 
     setIsUpdating(true);
     haptic?.impactOccurred('medium');
@@ -29,22 +62,22 @@ const UserActionsCell = ({ row, onUpdate }: { row: Row<User>; onUpdate: () => vo
     try {
       await adminApi.updateUserRole(user.id, newRole);
       haptic?.notificationOccurred('success');
-      onUpdate();
+      toast.success(newRole === 'ADMIN' ? 'Пользователь назначен администратором' : 'Права администратора сняты');
+      fetchData();
+      setActionModal({ isOpen: false, type: 'role', user: null });
     } catch (error) {
       console.error('Failed to update user role:', error);
       haptic?.notificationOccurred('error');
-      alert('Ошибка при изменении роли');
+      toast.error('Ошибка при изменении роли');
     } finally {
       setIsUpdating(false);
     }
   };
 
   const handleToggleBlock = async () => {
-    const confirmMessage = user.isActive
-      ? `Заблокировать пользователя ${user.firstName} ${user.lastName}?`
-      : `Разблокировать пользователя ${user.firstName} ${user.lastName}?`;
+    if (!actionModal.user) return;
 
-    if (!confirm(confirmMessage)) return;
+    const user = actionModal.user;
 
     setIsUpdating(true);
     haptic?.impactOccurred('medium');
@@ -52,177 +85,209 @@ const UserActionsCell = ({ row, onUpdate }: { row: Row<User>; onUpdate: () => vo
     try {
       if (user.isActive) {
         await adminApi.blockUser(user.id);
+        toast.success('Пользователь заблокирован');
       } else {
         await adminApi.unblockUser(user.id);
+        toast.success('Пользователь разблокирован');
       }
       haptic?.notificationOccurred('success');
-      onUpdate();
+      fetchData();
+      setActionModal({ isOpen: false, type: 'block', user: null });
     } catch (error) {
       console.error('Failed to toggle user block:', error);
       haptic?.notificationOccurred('error');
-      alert('Ошибка при изменении статуса');
+      toast.error('Ошибка при изменении статуса');
     } finally {
       setIsUpdating(false);
     }
   };
 
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={handleToggleRole}
-        disabled={isUpdating}
-        className="p-2 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg text-purple-500 dark:text-purple-400 transition-colors disabled:opacity-50"
-        title={user.role === 'ADMIN' ? 'Снять права админа' : 'Назначить админом'}
-      >
-        <UserCog className="w-4 h-4" />
-      </button>
-      <button
-        onClick={handleToggleBlock}
-        disabled={isUpdating}
-        className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
-          user.isActive
-            ? 'hover:bg-red-50 dark:hover:bg-red-900/30 text-red-500'
-            : 'hover:bg-green-50 dark:hover:bg-green-900/30 text-green-500'
-        }`}
-        title={user.isActive ? 'Заблокировать' : 'Разблокировать'}
-      >
-        {user.isActive ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-      </button>
-    </div>
-  );
-};
+  const getInitials = (user: User) => {
+    const first = user.firstName?.[0] || '';
+    const last = user.lastName?.[0] || '';
+    return (first + last).toUpperCase() || 'U';
+  };
 
-const createColumns = (onUpdate: () => void): ColumnDef<User>[] => [
-  {
-    accessorKey: 'firstName',
-    header: 'Имя',
-    cell: ({ row }) => (
-      <div className="font-medium text-gray-900 dark:text-white">
-        {row.original.firstName} {row.original.lastName}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'telegramId',
-    header: 'Telegram ID',
-    cell: ({ row }) => (
-      <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">{row.getValue('telegramId')}</span>
-    ),
-  },
-  {
-    accessorKey: 'role',
-    header: 'Роль',
-    cell: ({ row }) => {
-      const role = row.getValue('role') as string;
-      return (
-        <div className="flex items-center gap-1.5">
-          {role === 'ADMIN' && <Shield className="w-3 h-3 text-purple-500 dark:text-purple-400" />}
-          <span
-            className={`text-sm ${role === 'ADMIN' ? 'text-purple-600 dark:text-purple-400 font-medium' : 'text-gray-600 dark:text-gray-300'}`}
-          >
-            {role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
-          </span>
+  const renderUserCard = (user: User) => {
+    return (
+      <CardWrapper key={user.id}>
+        <div className="p-4 space-y-4">
+          {/* Header with Avatar */}
+          <div className="flex items-start gap-3">
+            {/* Avatar */}
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-medium text-lg ${
+                user.role === 'ADMIN'
+                  ? 'bg-gradient-to-br from-purple-500 to-violet-600'
+                  : 'bg-gradient-to-br from-gray-400 to-gray-500'
+              }`}
+            >
+              {getInitials(user)}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                {user.firstName} {user.lastName}
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                ID: {user.telegramId}
+              </p>
+            </div>
+
+            {/* Status Badge */}
+            <span
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                user.isActive
+                  ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'
+                  : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'
+              }`}
+            >
+              {user.isActive ? (
+                <>
+                  <CheckCircle className="w-3 h-3" />
+                  <span className="hidden sm:inline">Активен</span>
+                </>
+              ) : (
+                <>
+                  <Ban className="w-3 h-3" />
+                  <span className="hidden sm:inline">Заблок.</span>
+                </>
+              )}
+            </span>
+          </div>
+
+          {/* Role & Date */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-1.5">
+              {user.role === 'ADMIN' && <Shield className="w-4 h-4 text-purple-500" />}
+              <span
+                className={
+                  user.role === 'ADMIN'
+                    ? 'text-purple-600 dark:text-purple-400 font-medium'
+                    : 'text-gray-600 dark:text-gray-400'
+                }
+              >
+                {user.role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
+              </span>
+            </div>
+            <span className="text-gray-500 dark:text-gray-400 text-xs">
+              {new Date(user.createdAt).toLocaleDateString('ru-RU')}
+            </span>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+            <button
+              onClick={() => {
+                haptic?.impactOccurred('light');
+                setActionModal({ isOpen: true, type: 'role', user });
+              }}
+              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm font-medium"
+            >
+              <UserCog className="w-4 h-4" />
+              {user.role === 'ADMIN' ? 'Снять админа' : 'Сделать админом'}
+            </button>
+            <button
+              onClick={() => {
+                haptic?.impactOccurred('light');
+                setActionModal({ isOpen: true, type: 'block', user });
+              }}
+              className={`p-2 rounded-xl transition-colors ${
+                user.isActive
+                  ? 'bg-red-50 dark:bg-red-500/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-500/30'
+                  : 'bg-green-50 dark:bg-green-500/20 text-green-500 hover:bg-green-100 dark:hover:bg-green-500/30'
+              }`}
+              title={user.isActive ? 'Заблокировать' : 'Разблокировать'}
+            >
+              {user.isActive ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'isActive',
-    header: 'Статус',
-    cell: ({ row }) => {
-      const isActive = row.getValue('isActive') as boolean;
-      return (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${
-            isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          }`}
-        >
-          {isActive ? (
-            <>
-              <CheckCircle className="w-3 h-3" /> Активен
-            </>
-          ) : (
-            <>
-              <Ban className="w-3 h-3" /> Заблокирован
-            </>
-          )}
-        </span>
-      );
-    },
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Дата регистрации',
-    cell: ({ row: { getValue } }) => (
-      <div className="text-gray-500 dark:text-gray-400 text-sm">
-        {new Date(getValue('createdAt')).toLocaleDateString('ru-RU')}
-      </div>
-    ),
-  },
-  {
-    id: 'actions',
-    header: 'Действия',
-    cell: ({ row }) => <UserActionsCell row={row} onUpdate={onUpdate} />,
-  },
-];
-
-export default function UsersPage() {
-  const router = useRouter();
-  const haptic = useTelegramHaptic();
-  const [data, setData] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Telegram back button - возврат в dashboard
-  useTelegramBackButton(() => {
-    router.push('/admin');
-  });
-
-  const fetchData = useCallback(async () => {
-    try {
-      console.log('Fetching users...');
-      const users = await adminApi.getUsers();
-      console.log('Users received:', users, 'Count:', users?.length);
-      // Ensure users is always an array
-      setData(Array.isArray(users) ? users : []);
-      if (users && users.length > 0) {
-        haptic?.notificationOccurred('success');
-      }
-    } catch (error: any) {
-      console.error('Failed to fetch users:', error);
-      console.error('Error response:', error?.response?.data);
-      setData([]);
-      haptic?.notificationOccurred('error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [haptic]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const columns = useMemo(() => createColumns(fetchData), [fetchData]);
+      </CardWrapper>
+    );
+  };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка пользователей...</div>
+      <div className="space-y-6">
+        <div>
+          <div className="h-8 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-4 w-56 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-2" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl p-4 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-5 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                  <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-light text-gray-900 dark:text-white">Пользователи</h1>
-        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-          Управление пользователями и правами доступа ({data.length} шт.)
-        </p>
-      </div>
+    <>
+      <Toast toasts={toast.toasts} removeToast={toast.removeToast} />
 
-      <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
-        <DataTable columns={columns} data={data} />
+      {/* Role Modal */}
+      <Modal
+        isOpen={actionModal.isOpen && actionModal.type === 'role'}
+        onClose={() => setActionModal({ isOpen: false, type: 'role', user: null })}
+        onConfirm={handleToggleRole}
+        title={actionModal.user?.role === 'ADMIN' ? 'Снять права администратора?' : 'Назначить администратором?'}
+        description={
+          actionModal.user?.role === 'ADMIN'
+            ? `Снять права администратора с ${actionModal.user?.firstName} ${actionModal.user?.lastName}?`
+            : `Назначить пользователя ${actionModal.user?.firstName} ${actionModal.user?.lastName} администратором?`
+        }
+        confirmText={actionModal.user?.role === 'ADMIN' ? 'Снять' : 'Назначить'}
+        cancelText="Отмена"
+        type={actionModal.user?.role === 'ADMIN' ? 'danger' : 'default'}
+        isLoading={isUpdating}
+      />
+
+      {/* Block Modal */}
+      <Modal
+        isOpen={actionModal.isOpen && actionModal.type === 'block'}
+        onClose={() => setActionModal({ isOpen: false, type: 'block', user: null })}
+        onConfirm={handleToggleBlock}
+        title={actionModal.user?.isActive ? 'Заблокировать пользователя?' : 'Разблокировать пользователя?'}
+        description={
+          actionModal.user?.isActive
+            ? `Заблокировать пользователя ${actionModal.user?.firstName} ${actionModal.user?.lastName}? Он потеряет доступ к системе.`
+            : `Разблокировать пользователя ${actionModal.user?.firstName} ${actionModal.user?.lastName}?`
+        }
+        confirmText={actionModal.user?.isActive ? 'Заблокировать' : 'Разблокировать'}
+        cancelText="Отмена"
+        type={actionModal.user?.isActive ? 'danger' : 'default'}
+        isLoading={isUpdating}
+      />
+
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Пользователи</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
+            Управление пользователями и правами доступа ({data.length} шт.)
+          </p>
+        </div>
+
+        <AdminCardGrid
+          data={data}
+          renderCard={renderUserCard}
+          emptyMessage="Пользователи не найдены"
+          pageSize={9}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
       </div>
-    </div>
+    </>
   );
 }

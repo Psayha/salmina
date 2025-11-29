@@ -1,135 +1,50 @@
 'use client';
 
-import { DataTable } from '@/components/admin/DataTable';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Eye, ShoppingCart, Clock, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ordersApi } from '@/lib/api/endpoints/orders';
 import { Order } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
-import { Eye } from 'lucide-react';
+import { Toast, useToast } from '@/components/ui/Toast';
+import { AdminCardGrid, CardWrapper } from '@/components/admin/AdminCardGrid';
 
-const OrderStatusCell = ({ row }: { row: Row<Order> }) => {
-  const [status, setStatus] = useState(row.getValue('status') as Order['status']);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const haptic = useTelegramHaptic();
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency: 'RUB',
+    maximumFractionDigits: 0,
+  }).format(price);
+}
 
-  const handleStatusChange = async (newStatus: Order['status']) => {
-    if (newStatus === status) return;
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
-    setIsUpdating(true);
-    haptic?.impactOccurred('medium');
-
-    try {
-      await ordersApi.updateStatus(row.original.id, newStatus);
-      setStatus(newStatus);
-      haptic?.notificationOccurred('success');
-    } catch (error) {
-      console.error('Failed to update order status:', error);
-      haptic?.notificationOccurred('error');
-      alert('Ошибка при обновлении статуса');
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const styles = {
-    PAID: 'bg-green-100 text-green-700 border-green-200',
-    PENDING: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-    PROCESSING: 'bg-orange-100 text-orange-700 border-orange-200',
-    SHIPPED: 'bg-blue-100 text-blue-700 border-blue-200',
-    DELIVERED: 'bg-purple-100 text-purple-700 border-purple-200',
-    CANCELLED: 'bg-red-100 text-red-700 border-red-200',
-  };
-
-  return (
-    <select
-      value={status}
-      onChange={(e) => handleStatusChange(e.target.value as Order['status'])}
-      disabled={isUpdating}
-      className={`px-2 py-1 rounded-lg text-xs font-medium border cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 disabled:opacity-50 ${
-        styles[status as keyof typeof styles] || 'bg-gray-100 text-gray-700 border-gray-200'
-      }`}
-    >
-      <option value="PAID">Оплачен</option>
-      <option value="PROCESSING">В обработке</option>
-      <option value="SHIPPED">Отправлен</option>
-      <option value="DELIVERED">Доставлен</option>
-      <option value="CANCELLED">Отменен</option>
-    </select>
-  );
+const statusConfig: Record<Order['status'], { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
+  PAID: { label: 'Оплачен', color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400', icon: CheckCircle },
+  PENDING: { label: 'Ожидает', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400', icon: Clock },
+  PROCESSING: { label: 'В обработке', color: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400', icon: Package },
+  SHIPPED: { label: 'Отправлен', color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400', icon: Truck },
+  DELIVERED: { label: 'Доставлен', color: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400', icon: CheckCircle },
+  CANCELLED: { label: 'Отменен', color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400', icon: XCircle },
 };
-
-const OrderActionsCell = ({ row }: { row: Row<Order> }) => {
-  const router = useRouter();
-  const haptic = useTelegramHaptic();
-
-  return (
-    <div className="flex items-center justify-end gap-2">
-      <button
-        onClick={() => {
-          haptic?.impactOccurred('light');
-          router.push(`/admin/orders/${row.original.id}`);
-        }}
-        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 transition-colors"
-      >
-        <Eye className="w-4 h-4" />
-      </button>
-    </div>
-  );
-};
-
-const columns: ColumnDef<Order>[] = [
-  {
-    accessorKey: 'orderNumber',
-    header: 'Номер',
-    cell: ({ row }) => <div className="font-medium text-gray-900 dark:text-white">{row.getValue('orderNumber')}</div>,
-  },
-  {
-    accessorKey: 'customerName',
-    header: 'Клиент',
-    cell: ({ row }) => <div className="text-gray-600 dark:text-gray-300">{row.getValue('customerName')}</div>,
-  },
-  {
-    accessorKey: 'totalAmount',
-    header: 'Сумма',
-    cell: ({ row }) => {
-      const total = parseFloat(row.getValue('totalAmount'));
-      const formatted = new Intl.NumberFormat('ru-RU', {
-        style: 'currency',
-        currency: 'RUB',
-        maximumFractionDigits: 0,
-      }).format(total);
-      return <div className="font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: 'status',
-    header: 'Статус',
-    cell: ({ row }) => <OrderStatusCell row={row} />,
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Дата',
-    cell: ({ row }) => (
-      <div className="text-gray-500 dark:text-gray-400 text-sm">
-        {new Date(row.getValue('createdAt')).toLocaleDateString('ru-RU')}
-      </div>
-    ),
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => <OrderActionsCell row={row} />,
-  },
-];
 
 export default function OrdersPage() {
   const router = useRouter();
   const haptic = useTelegramHaptic();
+  const toast = useToast();
   const [data, setData] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
-  // Telegram back button - возврат в dashboard
   useTelegramBackButton(() => {
     router.push('/admin');
   });
@@ -138,40 +53,155 @@ export default function OrdersPage() {
     async function fetchData() {
       try {
         const orders = await ordersApi.getOrders();
-        // Ensure orders is always an array
         setData(Array.isArray(orders) ? orders : []);
-        haptic?.notificationOccurred('success');
       } catch (error) {
         console.error('Failed to fetch orders:', error);
         setData([]);
-        haptic?.notificationOccurred('error');
+        toast.error('Ошибка загрузки заказов');
       } finally {
         setIsLoading(false);
       }
     }
     fetchData();
-  }, [haptic]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
+    setUpdatingOrderId(orderId);
+    haptic?.impactOccurred('medium');
+
+    try {
+      await ordersApi.updateStatus(orderId, newStatus);
+      setData((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      haptic?.notificationOccurred('success');
+      toast.success('Статус обновлен');
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+      haptic?.notificationOccurred('error');
+      toast.error('Ошибка обновления статуса');
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
+  const handleViewOrder = (orderId: string) => {
+    haptic?.impactOccurred('light');
+    router.push(`/admin/orders/${orderId}`);
+  };
+
+  const renderOrderCard = (order: Order) => {
+    const config = statusConfig[order.status] || statusConfig.PENDING;
+    const StatusIcon = config.icon;
+
+    return (
+      <CardWrapper key={order.id}>
+        <div className="p-4 space-y-4">
+          {/* Header */}
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">
+                #{order.orderNumber}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {order.customerName}
+              </p>
+            </div>
+            <span className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
+              <StatusIcon className="w-3 h-3" />
+              {config.label}
+            </span>
+          </div>
+
+          {/* Amount & Date */}
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-semibold text-purple-600 dark:text-purple-400">
+              {formatPrice(order.totalAmount)}
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {formatDate(order.createdAt)}
+            </span>
+          </div>
+
+          {/* Status Selector */}
+          <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+            <select
+              value={order.status}
+              onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
+              disabled={updatingOrderId === order.id}
+              className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 cursor-pointer"
+            >
+              <option value="PAID">Оплачен</option>
+              <option value="PROCESSING">В обработке</option>
+              <option value="SHIPPED">Отправлен</option>
+              <option value="DELIVERED">Доставлен</option>
+              <option value="CANCELLED">Отменен</option>
+            </select>
+          </div>
+
+          {/* View Button */}
+          <button
+            onClick={() => handleViewOrder(order.id)}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-purple-50 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-500/30 transition-colors text-sm font-medium"
+          >
+            <Eye className="w-4 h-4" />
+            Подробнее
+          </button>
+        </div>
+      </CardWrapper>
+    );
+  };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-gray-600 dark:text-gray-300 font-light">Загрузка заказов...</div>
+      <div className="space-y-6">
+        <div>
+          <div className="h-8 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-4 w-48 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-2" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl p-4 space-y-4">
+              <div className="flex justify-between">
+                <div className="space-y-2">
+                  <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                  <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                </div>
+                <div className="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse" />
+              </div>
+              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+              <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказы</h1>
-        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-          Управление заказами клиентов ({data.length} шт.)
-        </p>
-      </div>
+    <>
+      <Toast toasts={toast.toasts} removeToast={toast.removeToast} />
 
-      <div className="bg-white/60 dark:bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg border border-white/30 dark:border-white/10 overflow-hidden">
-        <DataTable columns={columns} data={data} />
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказы</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
+            Управление заказами клиентов ({data.length} шт.)
+          </p>
+        </div>
+
+        <AdminCardGrid
+          data={data}
+          renderCard={renderOrderCard}
+          emptyMessage="Заказов пока нет"
+          pageSize={9}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
       </div>
-    </div>
+    </>
   );
 }
