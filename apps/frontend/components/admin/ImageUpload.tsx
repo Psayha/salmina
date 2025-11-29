@@ -192,7 +192,7 @@ export function ImageUpload({ value = [], onChange, maxFiles = 10, maxSizeMB = 5
               <button
                 type="button"
                 onClick={() => removeImage(index)}
-                className="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
