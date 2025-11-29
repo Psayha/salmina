@@ -25,7 +25,7 @@ export const ProductCard = memo(function ProductCard({
   slug,
   id,
   name,
-  description,
+  description: _description,
   price,
   discountPrice,
   promotionPrice,
