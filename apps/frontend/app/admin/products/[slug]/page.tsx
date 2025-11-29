@@ -23,19 +23,15 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
     slug: '',
     description: '',
     article: '',
-    sku: '',
     weight: '',
     price: '',
     discountPrice: '',
-    promotionPrice: '',
     quantity: '0',
     categoryId: '',
     isActive: true,
     hasPromotion: false,
-    promotionLabel: '',
     isNew: false,
     isHit: false,
-    isDiscount: false,
     images: '',
   });
 
@@ -56,19 +52,15 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
           slug: productData.slug,
           description: productData.description || '',
           article: productData.article,
-          sku: productData.sku,
           weight: productData.weight.toString(),
           price: productData.price.toString(),
           discountPrice: productData.discountPrice?.toString() || '',
-          promotionPrice: productData.promotionPrice?.toString() || '',
           quantity: productData.quantity.toString(),
           categoryId: productData.categoryId || '',
           isActive: productData.isActive,
           hasPromotion: productData.hasPromotion,
-          promotionLabel: productData.promotionLabel || '',
           isNew: productData.isNew || false,
           isHit: productData.isHit || false,
-          isDiscount: productData.isDiscount || false,
           images: productData.images.join('\n'),
         });
       } catch (error) {
@@ -94,7 +86,6 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
       !formData.slug ||
       !formData.description ||
       !formData.article ||
-      !formData.sku ||
       !formData.weight ||
       !formData.price ||
       !formData.categoryId
@@ -112,7 +103,6 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
     }
 
     setIsSubmitting(true);
-    haptic?.impactOccurred('medium');
 
     try {
       const images = formData.images
@@ -127,19 +117,15 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
         slug: formData.slug,
         description: formData.description,
         article: formData.article.toUpperCase(),
-        sku: formData.sku,
         weight: parseFloat(formData.weight),
         price: parseFloat(formData.price),
-        discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
-        promotionPrice: formData.promotionPrice ? parseFloat(formData.promotionPrice) : undefined,
+        discountPrice: formData.hasPromotion && formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
         quantity: parseInt(formData.quantity),
         categoryId: formData.categoryId,
         isActive: formData.isActive,
         hasPromotion: formData.hasPromotion,
-        promotionLabel: formData.promotionLabel || undefined,
         isNew: formData.isNew,
         isHit: formData.isHit,
-        isDiscount: formData.isDiscount,
         images,
       });
 
@@ -224,7 +210,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 Артикул <span className="text-red-500">*</span>
@@ -239,20 +225,6 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 required
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Заглавные буквы, цифры, дефисы</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
-                SKU <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.sku}
-                onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
-                placeholder="SKU-001"
-                required
-              />
             </div>
 
             <div>
@@ -278,7 +250,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
             <select
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              className="w-full h-[46px] px-4 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               required
             >
               <option value="">Выберите категорию</option>
@@ -290,7 +262,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
             </select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
                 Цена <span className="text-red-500">*</span>
@@ -303,18 +275,6 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
                 className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
                 placeholder="0.00"
                 required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Цена со скидкой</label>
-              <input
-                type="number"
-                step="0.01"
-                value={formData.discountPrice}
-                onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
-                placeholder="0.00"
               />
             </div>
 
@@ -342,7 +302,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Первое изображение будет основным</p>
           </div>
 
-          <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex flex-wrap items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -357,7 +317,7 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
               <input
                 type="checkbox"
                 checked={formData.hasPromotion}
-                onChange={(e) => setFormData({ ...formData, hasPromotion: e.target.checked })}
+                onChange={(e) => setFormData({ ...formData, hasPromotion: e.target.checked, discountPrice: e.target.checked ? formData.discountPrice : '' })}
                 className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
               />
               <span className="text-sm font-light text-gray-700 dark:text-gray-300">Акция</span>
@@ -382,42 +342,23 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
               />
               <span className="text-sm font-light text-gray-700 dark:text-gray-300">Хит</span>
             </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.isDiscount}
-                onChange={(e) => setFormData({ ...formData, isDiscount: e.target.checked })}
-                className="w-4 h-4 text-pink-500 border-gray-300 dark:border-gray-600 rounded focus:ring-pink-500"
-              />
-              <span className="text-sm font-light text-gray-700 dark:text-gray-300">Скидка</span>
-            </label>
           </div>
 
           {formData.hasPromotion && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Цена по акции</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.promotionPrice}
-                  onChange={(e) => setFormData({ ...formData, promotionPrice: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
-                  placeholder="0.00"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Текст акции</label>
-                <input
-                  type="text"
-                  value={formData.promotionLabel}
-                  onChange={(e) => setFormData({ ...formData, promotionLabel: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
-                  placeholder="Скидка 20%"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+                Цена со скидкой <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.discountPrice}
+                onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
+                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+                placeholder="0.00"
+                required
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Эта цена будет показана вместо основной</p>
             </div>
           )}
         </div>
