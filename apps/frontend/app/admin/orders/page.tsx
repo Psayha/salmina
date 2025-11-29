@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, ShoppingCart, Clock, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, Clock, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ordersApi } from '@/lib/api/endpoints/orders';
@@ -29,7 +29,6 @@ function formatDate(dateString: string): string {
 
 const statusConfig: Record<Order['status'], { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
   PAID: { label: 'Оплачен', color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400', icon: CheckCircle },
-  PENDING: { label: 'Ожидает', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400', icon: Clock },
   PROCESSING: { label: 'В обработке', color: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400', icon: Package },
   SHIPPED: { label: 'Отправлен', color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400', icon: Truck },
   DELIVERED: { label: 'Доставлен', color: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400', icon: CheckCircle },
@@ -94,7 +93,7 @@ export default function OrdersPage() {
   };
 
   const renderOrderCard = (order: Order) => {
-    const config = statusConfig[order.status] || statusConfig.PENDING;
+    const config = statusConfig[order.status] || statusConfig.PAID;
     const StatusIcon = config.icon;
 
     return (

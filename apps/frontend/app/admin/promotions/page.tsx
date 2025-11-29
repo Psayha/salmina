@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Trash, Plus, Tag, Percent, Megaphone } from 'lucide-react';
+import { Edit, Trash, Plus, Percent, Megaphone } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
