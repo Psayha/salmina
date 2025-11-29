@@ -98,62 +98,59 @@ export default function CategoriesPage() {
 
     return (
       <CardWrapper key={category.id} onClick={() => handleCardClick(category.id)}>
-        {/* Image */}
-        <div className="relative h-32 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={category.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <FolderTree className="w-12 h-12 text-orange-300 dark:text-orange-600" />
-            </div>
-          )}
-          {/* Status Badge */}
-          <div className="absolute top-2 right-2">
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
-                category.isActive
-                  ? 'bg-green-500/90 text-white'
-                  : 'bg-gray-500/90 text-white'
-              }`}
-            >
-              {category.isActive ? 'Активна' : 'Скрыта'}
-            </span>
+        <div className="flex gap-3 p-3">
+          {/* Image - small square */}
+          <div className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={category.name}
+                fill
+                className="object-cover"
+                sizes="64px"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <FolderTree className="w-6 h-6 text-orange-300 dark:text-orange-600" />
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          {/* Name & Count */}
-          <div className="flex items-center justify-between">
-            <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1">
-              {category.name}
-            </h3>
-            <span className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">
-              {category._count?.products || 0} шт.
+          {/* Content */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
+                {category.name}
+              </h3>
+              <span
+                className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                  category.isActive
+                    ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                }`}
+              >
+                {category.isActive ? 'Актив' : 'Скрыта'}
+              </span>
+            </div>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {category._count?.products || 0} товаров
             </span>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col gap-1 flex-shrink-0">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleCardClick(category.id);
               }}
-              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-xl hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors text-sm font-medium"
+              className="p-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors"
             >
               <Pencil className="w-4 h-4" />
-              Редактировать
             </button>
             <button
               onClick={(e) => handleDeleteClick(e, category)}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
+              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -175,11 +172,11 @@ export default function CategoriesPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl overflow-hidden">
-              <div className="h-32 bg-gray-200 dark:bg-gray-700 animate-pulse" />
-              <div className="p-4 space-y-3">
-                <div className="h-5 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl p-3 flex gap-3">
+              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               </div>
             </div>
           ))}
