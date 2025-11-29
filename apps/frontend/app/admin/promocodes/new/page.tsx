@@ -13,7 +13,7 @@ export default function NewPromocodePage() {
 
   // Form state
   const [code, setCode] = useState('');
-  const [discountType, setDiscountType] = useState<DiscountType>(DiscountType.PERCENTAGE);
+  const [discountType, setDiscountType] = useState<DiscountType>(DiscountType.PERCENT);
   const [discountValue, setDiscountValue] = useState('');
   const [minOrderAmount, setMinOrderAmount] = useState('');
   const [maxDiscountAmount, setMaxDiscountAmount] = useState('');
@@ -118,11 +118,11 @@ export default function NewPromocodePage() {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => {
-                setDiscountType(DiscountType.PERCENTAGE);
+                setDiscountType(DiscountType.PERCENT);
                 haptic?.impactOccurred('light');
               }}
               className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors ${
-                discountType === DiscountType.PERCENTAGE
+                discountType === DiscountType.PERCENT
                   ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 border-2 border-cyan-500'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
@@ -158,10 +158,10 @@ export default function NewPromocodePage() {
               value={discountValue}
               onChange={(e) => setDiscountValue(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              placeholder={discountType === DiscountType.PERCENTAGE ? '10' : '500'}
+              placeholder={discountType === DiscountType.PERCENT ? '10' : '500'}
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-              {discountType === DiscountType.PERCENTAGE ? '%' : '₽'}
+              {discountType === DiscountType.PERCENT ? '%' : '₽'}
             </span>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default function NewPromocodePage() {
             />
           </div>
 
-          {discountType === DiscountType.PERCENTAGE && (
+          {discountType === DiscountType.PERCENT && (
             <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Макс. размер скидки (₽)

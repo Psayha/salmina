@@ -133,7 +133,7 @@ export default function PromocodesPage() {
           {/* Discount & Status */}
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1 text-lg font-semibold">
-              {promocode.discountType === DiscountType.PERCENTAGE ? (
+              {promocode.discountType === DiscountType.PERCENT ? (
                 <span className="text-green-600 dark:text-green-400 flex items-center gap-1">
                   <Percent className="w-4 h-4" />
                   {promocode.discountValue}%
