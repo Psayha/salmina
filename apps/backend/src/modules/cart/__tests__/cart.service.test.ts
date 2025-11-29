@@ -55,7 +55,9 @@ describe('CartService', () => {
     prismaMock = {
       cart: {
         findFirst: jest.fn(),
+        findUnique: jest.fn(),
         create: jest.fn(),
+        update: jest.fn(),
       },
       product: {
         findUnique: jest.fn(),
@@ -153,17 +155,46 @@ describe('CartService', () => {
     it('должен найти корзину по sessionToken', async () => {
       // Arrange
       const sessionCart = { ...mockCart, userId: null, items: [] };
-      prismaMock.cart.findFirst.mockResolvedValue(sessionCart);
+      prismaMock.cart.findUnique.mockResolvedValue(sessionCart);
 
       // Act
       const result = await cartService.getOrCreateCart(undefined, 'session-token-123');
 
       // Assert
       expect(result).toEqual(sessionCart);
-      expect(prismaMock.cart.findFirst).toHaveBeenCalledWith({
+      expect(prismaMock.cart.findUnique).toHaveBeenCalledWith({
         where: { sessionToken: 'session-token-123' },
         include: expect.any(Object),
       });
+    });
+
+    it('должен связать сессионную корзину с пользователем при входе', async () => {
+      // Arrange
+      const sessionCart = { ...mockCart, userId: null, items: [] };
+      const linkedCart = { ...mockCart, items: [] };
+      prismaMock.cart.findFirst.mockResolvedValue(null); // No cart by userId
+      prismaMock.cart.findUnique.mockResolvedValue(sessionCart); // Found by sessionToken
+      prismaMock.cart.update.mockResolvedValue(linkedCart); // Link to user
+
+      // Act
+      const result = await cartService.getOrCreateCart('user-1', 'session-token-123');
+
+      // Assert
+      expect(result).toEqual(linkedCart);
+      expect(prismaMock.cart.findFirst).toHaveBeenCalledWith({
+        where: { userId: 'user-1' },
+        include: expect.any(Object),
+      });
+      expect(prismaMock.cart.findUnique).toHaveBeenCalledWith({
+        where: { sessionToken: 'session-token-123' },
+        include: expect.any(Object),
+      });
+      expect(prismaMock.cart.update).toHaveBeenCalledWith({
+        where: { id: 'cart-1' },
+        data: { userId: 'user-1' },
+        include: expect.any(Object),
+      });
+      expect(prismaMock.cart.create).not.toHaveBeenCalled();
     });
   });
 
