@@ -18,7 +18,10 @@ export const AdminSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200 dark:border-gray-700 z-50 hidden md:flex flex-col">
+    <aside
+      className="fixed left-0 top-0 h-full w-64 bg-white/80 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200 dark:border-gray-700 z-50 hidden md:flex flex-col"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+    >
       <div className="p-6 border-b border-gray-100 dark:border-gray-700">
         <h1 className="text-xl font-bold bg-linear-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
           Salmina Admin
