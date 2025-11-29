@@ -29,6 +29,23 @@
 
 Документация модулей находится в `apps/backend/src/modules/*/README.md`:
 
-- [Auth](../apps/backend/src/modules/auth/README.md) - Аутентификация
-- [Users](../apps/backend/src/modules/users/README.md) - Пользователи
-- [Products](../apps/backend/src/modules/products/README.md) - Товары
+### Core модули (с документацией)
+- [Auth](../apps/backend/src/modules/auth/README.md) - JWT + Telegram аутентификация
+- [Users](../apps/backend/src/modules/users/README.md) - Управление пользователями
+- [Products](../apps/backend/src/modules/products/README.md) - Каталог товаров
+
+### Дополнительные модули
+- **Categories** - Древовидная структура категорий
+- **Cart** - Корзина (session + user support)
+- **Orders** - Заказы и их статусы
+- **Promocodes** - Промокоды и скидки
+- **Promotions** - Акции и баннеры
+- **Legal** - Юридические документы
+- **Upload** - Загрузка файлов (изображения)
+- **Stats** - Статистика (админ)
+- **Security** - Безопасность
+- **Backup** - Резервное копирование (админ)
+
+**Итого:** 13 модулей, 70+ endpoints
+
+Подробная документация: [modules/README.md](modules/README.md)
