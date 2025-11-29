@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, Clock, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ordersApi } from '@/lib/api/endpoints/orders';
