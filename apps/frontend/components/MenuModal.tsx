@@ -55,27 +55,27 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
             onClick={onClose}
           />
 
-          {/* Modal - appears from top */}
+          {/* Modal - appears below header */}
           <motion.div
-            className="fixed top-0 left-0 right-0 z-[101] mx-auto max-w-md"
+            className="fixed left-0 right-0 z-[101] mx-auto max-w-md px-3"
             style={{
-              paddingTop: 'max(env(safe-area-inset-top), 12px)',
+              top: 'calc(var(--safe-top, 0px) + 56px)',
             }}
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 400 }}
           >
-            <div className="mx-3 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Меню</h2>
+              <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-800">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white">Меню</h2>
                 <motion.button
                   onClick={onClose}
-                  className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                  <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                 </motion.button>
               </div>
 

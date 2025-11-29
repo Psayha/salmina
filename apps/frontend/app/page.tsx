@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ import { Promotion } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { Stories } from '@/components/Stories';
 
+const VIEWED_STORIES_KEY = 'salmina_viewed_stories';
+
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -21,7 +23,27 @@ export default function Home() {
   // Stories state
   const [showStories, setShowStories] = useState(false);
   const [storiesStartIndex, setStoriesStartIndex] = useState(0);
-  const [viewedStories, setViewedStories] = useState<Set<string>>(new Set());
+  const [viewedStories, setViewedStories] = useState<Set<string>>(() => {
+    // Инициализируем из localStorage на клиенте
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(VIEWED_STORIES_KEY);
+      if (saved) {
+        try {
+          return new Set(JSON.parse(saved));
+        } catch {
+          return new Set();
+        }
+      }
+    }
+    return new Set();
+  });
+
+  // Сохраняем просмотренные акции в localStorage
+  useEffect(() => {
+    if (viewedStories.size > 0) {
+      localStorage.setItem(VIEWED_STORIES_KEY, JSON.stringify([...viewedStories]));
+    }
+  }, [viewedStories]);
 
   // React Query - данные кешируются автоматически
   const { data: categoriesData = [] } = useQuery({
