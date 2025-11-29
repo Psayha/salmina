@@ -15,6 +15,9 @@ export interface ProductCardProps {
   promotionPrice?: number;
   emoji?: string;
   imageUrl?: string;
+  isNew?: boolean;
+  isHit?: boolean;
+  hasPromotion?: boolean;
   onAddToCart?: (id: string) => void;
   onClick?: (slug: string) => void;
 }
@@ -29,6 +32,9 @@ export const ProductCard = memo(function ProductCard({
   promotionPrice,
   emoji = '✨',
   imageUrl,
+  isNew,
+  isHit,
+  hasPromotion,
   onAddToCart,
   onClick,
 }: ProductCardProps) {
@@ -53,7 +59,7 @@ export const ProductCard = memo(function ProductCard({
       aria-label={`Товар: ${name}`}
     >
       {/* Image */}
-      <div className="w-full aspect-square bg-white/30 dark:bg-white/5 backdrop-blur-sm flex items-center justify-center border-b border-[var(--card-border)] shrink-0 overflow-hidden">
+      <div className="relative w-full aspect-square bg-white/30 dark:bg-white/5 backdrop-blur-sm flex items-center justify-center border-b border-[var(--card-border)] shrink-0 overflow-hidden">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -66,6 +72,25 @@ export const ProductCard = memo(function ProductCard({
         ) : (
           <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">{emoji}</span>
         )}
+
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+          {isNew && (
+            <span className="px-2 py-0.5 text-[10px] font-medium bg-blue-500 text-white rounded-full shadow-sm">
+              Новинка
+            </span>
+          )}
+          {isHit && (
+            <span className="px-2 py-0.5 text-[10px] font-medium bg-orange-500 text-white rounded-full shadow-sm">
+              Хит
+            </span>
+          )}
+          {hasPromotion && (
+            <span className="px-2 py-0.5 text-[10px] font-medium bg-red-500 text-white rounded-full shadow-sm">
+              Акция
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Content */}

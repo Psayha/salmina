@@ -12,7 +12,6 @@ import { promotionsApi } from '@/lib/api/endpoints/promotions';
 import { productsApi, categoriesApi } from '@/lib/api';
 import { Promotion } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
-import { ProductSection } from '@/components/ProductSection';
 import { Stories } from '@/components/Stories';
 
 export default function Home() {
@@ -35,24 +34,9 @@ export default function Home() {
     queryFn: promotionsApi.getPromotions,
   });
 
-  const { data: newProductsData, isLoading: isLoadingNew } = useQuery({
-    queryKey: ['products', 'new'],
-    queryFn: () => productsApi.getProducts({ isNew: true, limit: 8 }),
-  });
-
-  const { data: hitProductsData, isLoading: isLoadingHit } = useQuery({
-    queryKey: ['products', 'hit'],
-    queryFn: () => productsApi.getProducts({ isHit: true, limit: 8 }),
-  });
-
-  const { data: discountProductsData, isLoading: isLoadingDiscount } = useQuery({
-    queryKey: ['products', 'discount'],
-    queryFn: () => productsApi.getProducts({ isDiscount: true, limit: 8 }),
-  });
-
   const { data: allProductsData, isLoading: isLoadingAll } = useQuery({
     queryKey: ['products', 'all'],
-    queryFn: () => productsApi.getProducts({ limit: 20 }),
+    queryFn: () => productsApi.getProducts({ limit: 50 }),
   });
 
   // Подготовка данных
@@ -60,9 +44,6 @@ export default function Home() {
     { id: 'all', name: 'Все товары', slug: 'all' },
     ...(Array.isArray(categoriesData) ? categoriesData : []),
   ];
-  const newProducts = newProductsData?.items || [];
-  const hitProducts = hitProductsData?.items || [];
-  const discountProducts = discountProductsData?.items || [];
   const allProducts = allProductsData?.items || [];
 
 
@@ -166,41 +147,26 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Product Sections */}
-        <ProductSection
-          title="Новинки"
-          products={newProducts}
-          isLoading={isLoadingNew}
-          onProductClick={handleProductClick}
-          onAddToCart={handleAddToCart}
-        />
-
-        <ProductSection
-          title="Хиты продаж"
-          products={hitProducts}
-          isLoading={isLoadingHit}
-          onProductClick={handleProductClick}
-          onAddToCart={handleAddToCart}
-        />
-
-        <ProductSection
-          title="Скидки"
-          products={discountProducts}
-          isLoading={isLoadingDiscount}
-          onProductClick={handleProductClick}
-          onAddToCart={handleAddToCart}
-        />
-
         {/* All Products Grid */}
         <div className="px-4">
-          <h2 className="text-xl font-light text-gray-900 mb-4">Все товары</h2>
+          <h2 className="text-xl font-light text-gray-900 dark:text-white mb-4">Все товары</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {isLoadingAll
-              ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+              ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : allProducts.map((product) => (
                   <ProductCard
                     key={product.id}
-                    id={product.id} slug={product.slug} name={product.name} description={product.description} price={product.price} discountPrice={product.discountPrice} promotionPrice={product.promotionPrice} imageUrl={product.images?.[0]}
+                    id={product.id}
+                    slug={product.slug}
+                    name={product.name}
+                    description={product.description}
+                    price={product.price}
+                    discountPrice={product.discountPrice}
+                    promotionPrice={product.promotionPrice}
+                    imageUrl={product.images?.[0]}
+                    isNew={product.isNew}
+                    isHit={product.isHit}
+                    hasPromotion={product.hasPromotion}
                     onAddToCart={handleAddToCart}
                     onClick={handleProductClick}
                   />
