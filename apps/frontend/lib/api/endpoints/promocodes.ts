@@ -2,7 +2,7 @@ import { apiClient } from '../client';
 import { ApiResponse } from '../types';
 
 export enum DiscountType {
-  PERCENTAGE = 'PERCENTAGE',
+  PERCENT = 'PERCENT',
   FIXED = 'FIXED',
 }
 
