@@ -2,7 +2,8 @@
 
 import { memo } from 'react';
 import Image from 'next/image';
-import { CartIcon } from './ui/icons';
+import { CartIcon, HeartIcon } from './ui/icons';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 
 export interface ProductCardProps {
   id: string;
@@ -37,6 +38,9 @@ export const ProductCard = memo(function ProductCard({
   onAddToCart,
   onClick,
 }: ProductCardProps) {
+  const { toggleFavorite, isFavorite } = useFavoritesStore();
+  const isInFavorites = isFavorite(id);
+
   // Calculate final price (priority: promotionPrice > discountPrice > price)
   const finalPrice = promotionPrice || discountPrice || price;
   const hasDiscount = finalPrice < price;
@@ -44,6 +48,11 @@ export const ProductCard = memo(function ProductCard({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToCart?.(id);
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(id);
   };
 
   const handleClick = () => {
@@ -93,6 +102,19 @@ export const ProductCard = memo(function ProductCard({
           </div>
         )}
 
+        {/* Favorite button - top right */}
+        <button
+          onClick={handleToggleFavorite}
+          className={`absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full z-10 transition-all duration-200 active:scale-95 ${
+            isInFavorites
+              ? 'bg-pink-500 text-white'
+              : 'bg-white/80 dark:bg-gray-900/80 text-gray-400 hover:text-pink-500'
+          }`}
+          aria-label={isInFavorites ? 'Удалить из избранного' : 'Добавить в избранное'}
+        >
+          <HeartIcon className="w-4 h-4" filled={isInFavorites} />
+        </button>
+
         {/* Quick add button - appears on hover */}
         <button
           onClick={handleAddToCart}
@@ -103,9 +125,9 @@ export const ProductCard = memo(function ProductCard({
         </button>
       </div>
 
-      {/* Content - simplified */}
-      <div className="p-3 flex flex-col grow">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">{name}</h3>
+      {/* Content - fixed height */}
+      <div className="p-3 flex flex-col h-[88px]">
+        <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 min-h-[40px]">{name}</h3>
 
         {/* Price */}
         <div className="mt-auto flex items-baseline gap-2">
