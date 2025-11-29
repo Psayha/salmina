@@ -244,30 +244,20 @@ export default function ProductsPage() {
       />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-2xl font-light text-gray-900 dark:text-white">Товары</h1>
-            <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-              Управление каталогом товаров ({filteredData.length} шт.)
-            </p>
-          </div>
-          <Link
-            href="/admin/products/new"
-            onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 font-light"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Добавить</span>
-          </Link>
+        <div>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Товары</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
+            Управление каталогом товаров ({filteredData.length} шт.)
+          </p>
         </div>
 
-        {/* Search & Filter */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Search, Filter & Add */}
+        <div className="flex gap-3 items-center">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
-              placeholder="Поиск по названию или артикулу..."
+              placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
@@ -276,15 +266,22 @@ export default function ProductsPage() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white sm:w-48"
+            className="px-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white w-40 flex-shrink-0"
           >
-            <option value="">Все категории</option>
+            <option value="">Все</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}
           </select>
+          <Link
+            href="/admin/products/new"
+            onClick={() => haptic?.impactOccurred('light')}
+            className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 flex-shrink-0"
+          >
+            <Plus className="w-6 h-6" />
+          </Link>
         </div>
 
         <AdminCardGrid
