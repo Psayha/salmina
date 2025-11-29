@@ -28,17 +28,39 @@ class CartService {
   async getOrCreateCart(userId?: string, sessionToken?: string): Promise<CartWithItems> {
     logger.info('Getting or creating cart', { userId, hasSessionToken: !!sessionToken });
 
-    // Try to find existing cart
-    let cart = await prisma.cart.findFirst({
-      where: userId ? { userId } : { sessionToken },
-      include: {
-        items: {
-          include: {
-            product: true,
-          },
+    const includeItems = {
+      items: {
+        include: {
+          product: true,
         },
       },
-    });
+    };
+
+    // Try to find existing cart by userId first
+    let cart = userId
+      ? await prisma.cart.findFirst({
+          where: { userId },
+          include: includeItems,
+        })
+      : null;
+
+    // If not found by userId, try to find by sessionToken
+    if (!cart && sessionToken) {
+      cart = await prisma.cart.findUnique({
+        where: { sessionToken },
+        include: includeItems,
+      });
+
+      // If found session cart and userId provided, link cart to user
+      if (cart && userId) {
+        cart = await prisma.cart.update({
+          where: { id: cart.id },
+          data: { userId },
+          include: includeItems,
+        });
+        logger.info(`Cart ${cart.id} linked to user ${userId}`);
+      }
+    }
 
     // Create new cart if not found
     if (!cart) {
@@ -51,13 +73,7 @@ class CartService {
           sessionToken: sessionToken || generateRandomToken(32),
           expiresAt,
         },
-        include: {
-          items: {
-            include: {
-              product: true,
-            },
-          },
-        },
+        include: includeItems,
       });
 
       logger.info(`Cart created: ${cart.id}`);
