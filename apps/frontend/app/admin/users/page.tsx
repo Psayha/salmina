@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, User as UserIcon } from 'lucide-react';
+import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
@@ -250,7 +250,7 @@ export default function UsersPage() {
         }
         confirmText={actionModal.user?.role === 'ADMIN' ? 'Снять' : 'Назначить'}
         cancelText="Отмена"
-        type={actionModal.user?.role === 'ADMIN' ? 'danger' : 'default'}
+        type={actionModal.user?.role === 'ADMIN' ? 'danger' : 'info'}
         isLoading={isUpdating}
       />
 
@@ -267,7 +267,7 @@ export default function UsersPage() {
         }
         confirmText={actionModal.user?.isActive ? 'Заблокировать' : 'Разблокировать'}
         cancelText="Отмена"
-        type={actionModal.user?.isActive ? 'danger' : 'default'}
+        type={actionModal.user?.isActive ? 'danger' : 'info'}
         isLoading={isUpdating}
       />
 
