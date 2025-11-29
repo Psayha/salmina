@@ -1,7 +1,7 @@
 'use client';
 
-import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock } from 'lucide-react';
-import { useEffect, useState, useCallback } from 'react';
+import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, Search } from 'lucide-react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
 import { User } from '@/lib/api/types';
@@ -16,6 +16,7 @@ export default function UsersPage() {
   const toast = useToast();
   const [data, setData] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [actionModal, setActionModal] = useState<{
     isOpen: boolean;
@@ -49,6 +50,22 @@ export default function UsersPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    const query = searchQuery.toLowerCase();
+    return data.filter(
+      (user) =>
+        user.firstName?.toLowerCase().includes(query) ||
+        user.lastName?.toLowerCase().includes(query) ||
+        user.telegramId?.toString().includes(query)
+    );
+  }, [data, searchQuery]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
 
   const handleToggleRole = async () => {
     if (!actionModal.user) return;
@@ -275,12 +292,24 @@ export default function UsersPage() {
         <div>
           <h1 className="text-2xl font-light text-gray-900 dark:text-white">Пользователи</h1>
           <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-            Управление пользователями и правами доступа ({data.length} шт.)
+            Управление пользователями и правами доступа ({filteredData.length} шт.)
           </p>
         </div>
 
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <input
+            type="text"
+            placeholder="Поиск по имени или Telegram ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          />
+        </div>
+
         <AdminCardGrid
-          data={data}
+          data={filteredData}
           renderCard={renderUserCard}
           emptyMessage="Пользователи не найдены"
           pageSize={9}

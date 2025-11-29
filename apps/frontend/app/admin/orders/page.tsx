@@ -1,7 +1,7 @@
 'use client';
 
-import { Eye, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Eye, Truck, Package, CheckCircle, XCircle, Search } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { ordersApi } from '@/lib/api/endpoints/orders';
 import { Order } from '@/lib/api/types';
@@ -41,6 +41,7 @@ export default function OrdersPage() {
   const toast = useToast();
   const [data, setData] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
@@ -64,6 +65,21 @@ export default function OrdersPage() {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    const query = searchQuery.toLowerCase();
+    return data.filter(
+      (order) =>
+        order.orderNumber?.toLowerCase().includes(query) ||
+        order.customerName?.toLowerCase().includes(query)
+    );
+  }, [data, searchQuery]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
 
   const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
     setUpdatingOrderId(orderId);
@@ -188,12 +204,24 @@ export default function OrdersPage() {
         <div>
           <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказы</h1>
           <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-            Управление заказами клиентов ({data.length} шт.)
+            Управление заказами клиентов ({filteredData.length} шт.)
           </p>
         </div>
 
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <input
+            type="text"
+            placeholder="Поиск по номеру заказа или имени клиента..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          />
+        </div>
+
         <AdminCardGrid
-          data={data}
+          data={filteredData}
           renderCard={renderOrderCard}
           emptyMessage="Заказов пока нет"
           pageSize={9}

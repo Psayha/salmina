@@ -1,7 +1,7 @@
 'use client';
 
-import { Edit, Trash, Plus, Megaphone } from 'lucide-react';
-import { useEffect, useState, useCallback } from 'react';
+import { Edit, Trash, Plus, Megaphone, Search } from 'lucide-react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ export default function PromotionsPage() {
   const toast = useToast();
   const [data, setData] = useState<Promotion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; promotionId: string; promotionTitle: string }>({
     isOpen: false,
@@ -47,6 +48,21 @@ export default function PromotionsPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    const query = searchQuery.toLowerCase();
+    return data.filter(
+      (promotion) =>
+        promotion.title?.toLowerCase().includes(query) ||
+        promotion.description?.toLowerCase().includes(query)
+    );
+  }, [data, searchQuery]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
 
   const handleDeleteClick = (e: React.MouseEvent, promotion: Promotion) => {
     e.stopPropagation();
@@ -214,11 +230,11 @@ export default function PromotionsPage() {
       />
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-2xl font-light text-gray-900 dark:text-white">Акции</h1>
             <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-              Управление акциями и скидками ({data.length} шт.)
+              Управление акциями и скидками ({filteredData.length} шт.)
             </p>
           </div>
           <Link
@@ -231,8 +247,20 @@ export default function PromotionsPage() {
           </Link>
         </div>
 
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+          <input
+            type="text"
+            placeholder="Поиск по названию или описанию..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          />
+        </div>
+
         <AdminCardGrid
-          data={data}
+          data={filteredData}
           renderCard={renderPromotionCard}
           emptyMessage="Акций пока нет"
           pageSize={9}
