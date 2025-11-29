@@ -1,13 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package } from 'lucide-react';
+import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Download, Trash2, Plus, RotateCcw } from 'lucide-react';
 import { healthApi, HealthCheckResponse } from '@/lib/api/endpoints/health';
+import { backupApi, BackupStatus, BackupInfo } from '@/lib/api/endpoints/backup';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 export default function HealthPage() {
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
+  const [backups, setBackups] = useState<BackupStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [creatingBackup, setCreatingBackup] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
@@ -30,10 +34,71 @@ export default function HealthPage() {
     }
   };
 
+  const fetchBackups = async () => {
+    try {
+      setBackupLoading(true);
+      const data = await backupApi.getBackups();
+      setBackups(data);
+    } catch (err) {
+      console.error('Failed to fetch backups:', err);
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
+  const handleCreateBackup = async () => {
+    if (creatingBackup) return;
+
+    try {
+      setCreatingBackup(true);
+      haptic?.impactOccurred('medium');
+      await backupApi.createBackup();
+      haptic?.notificationOccurred('success');
+      await fetchBackups();
+    } catch (err) {
+      haptic?.notificationOccurred('error');
+      console.error('Failed to create backup:', err);
+      alert('Ошибка создания бэкапа');
+    } finally {
+      setCreatingBackup(false);
+    }
+  };
+
+  const handleDeleteBackup = async (filename: string) => {
+    if (!confirm(`Удалить бэкап ${filename}?`)) return;
+
+    try {
+      haptic?.impactOccurred('medium');
+      await backupApi.deleteBackup(filename);
+      haptic?.notificationOccurred('success');
+      await fetchBackups();
+    } catch (err) {
+      haptic?.notificationOccurred('error');
+      console.error('Failed to delete backup:', err);
+      alert('Ошибка удаления бэкапа');
+    }
+  };
+
+  const handleRestoreBackup = async (filename: string) => {
+    if (!confirm(`ВНИМАНИЕ! Восстановление из бэкапа ${filename} перезапишет все текущие данные. Продолжить?`)) return;
+    if (!confirm('Вы уверены? Это действие необратимо!')) return;
+
+    try {
+      haptic?.impactOccurred('heavy');
+      await backupApi.restoreBackup(filename);
+      haptic?.notificationOccurred('success');
+      alert('Бэкап успешно восстановлен');
+    } catch (err) {
+      haptic?.notificationOccurred('error');
+      console.error('Failed to restore backup:', err);
+      alert('Ошибка восстановления бэкапа');
+    }
+  };
+
   useEffect(() => {
     fetchHealth();
+    fetchBackups();
 
-    // Auto-refresh every 10 seconds if enabled
     if (!autoRefresh) return;
 
     const interval = setInterval(fetchHealth, 10000);
@@ -43,6 +108,7 @@ export default function HealthPage() {
   const handleRefresh = () => {
     haptic?.impactOccurred('light');
     fetchHealth();
+    fetchBackups();
   };
 
   const formatUptime = (seconds: number): string => {
@@ -92,12 +158,11 @@ export default function HealthPage() {
               System Health
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Мониторинг состояния системы в реальном времени
+              Мониторинг состояния системы и бэкапов
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Auto-refresh toggle */}
             <button
               onClick={() => {
                 setAutoRefresh(!autoRefresh);
@@ -112,7 +177,6 @@ export default function HealthPage() {
               {autoRefresh ? 'Auto ✓' : 'Manual'}
             </button>
 
-            {/* Refresh button */}
             <button
               onClick={handleRefresh}
               disabled={loading}
@@ -123,7 +187,6 @@ export default function HealthPage() {
           </div>
         </div>
 
-        {/* Last update */}
         <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
           <Clock className="w-4 h-4" />
           Последнее обновление: {lastUpdate.toLocaleTimeString('ru-RU')}
@@ -206,11 +269,6 @@ export default function HealthPage() {
                     {health.checks.database}
                   </span>
                 </div>
-                {health.checks.database === 'ok' && (
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    ✓ Подключение установлено
-                  </div>
-                )}
               </div>
             </div>
 
@@ -223,7 +281,7 @@ export default function HealthPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">Redis</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Кэш и очереди</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Кэш и сессии</p>
                   </div>
                 </div>
                 {getStatusIcon(health.checks.redis)}
@@ -242,13 +300,117 @@ export default function HealthPage() {
                     {health.checks.redis}
                   </span>
                 </div>
-                {health.checks.redis === 'ok' && (
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    ✓ Подключение установлено
-                  </div>
-                )}
               </div>
             </div>
+          </div>
+
+          {/* Backups Section */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Archive className="w-5 h-5" />
+                Бэкапы базы данных
+              </h3>
+
+              <button
+                onClick={handleCreateBackup}
+                disabled={creatingBackup}
+                className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all disabled:opacity-50"
+              >
+                {creatingBackup ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                {creatingBackup ? 'Создание...' : 'Создать бэкап'}
+              </button>
+            </div>
+
+            {backups && (
+              <>
+                {/* Backup Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Всего бэкапов</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{backups.backupCount}</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Общий размер</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{backups.totalSize}</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Последний бэкап</div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {backups.lastBackup
+                        ? new Date(backups.lastBackup).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' })
+                        : 'Нет'}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Следующий бэкап</div>
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {backups.nextBackup
+                        ? new Date(backups.nextBackup).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+                        : '-'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Backup List */}
+                {backups.backups.length > 0 ? (
+                  <div className="space-y-3">
+                    {backups.backups.map((backup) => (
+                      <div
+                        key={backup.filename}
+                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl"
+                      >
+                        <div className="flex items-center gap-4">
+                          <Archive className="w-5 h-5 text-blue-500" />
+                          <div>
+                            <div className="font-medium text-gray-900 dark:text-white text-sm">
+                              {backup.filename}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              {backup.sizeFormatted} • {backup.age}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleRestoreBackup(backup.filename)}
+                            className="p-2 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-all"
+                            title="Восстановить"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBackup(backup.filename)}
+                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
+                            title="Удалить"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Archive className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Нет бэкапов</p>
+                    <p className="text-sm">Создайте первый бэкап кнопкой выше</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {backupLoading && !backups && (
+              <div className="text-center py-8">
+                <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-500" />
+                <p className="mt-2 text-gray-500">Загрузка бэкапов...</p>
+              </div>
+            )}
           </div>
 
           {/* System Info */}
@@ -285,8 +447,8 @@ export default function HealthPage() {
           {/* Info */}
           <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
             <p className="text-sm text-blue-600 dark:text-blue-400">
-              💡 <strong>Совет:</strong> Эта страница автоматически обновляется каждые 10 секунд.
-              Вы можете отключить автообновление кнопкой "Auto" и обновлять вручную.
+              💡 <strong>Совет:</strong> Бэкапы создаются автоматически каждый день в 3:00.
+              Хранится последние 7 бэкапов. Вы можете создать бэкап вручную в любое время.
             </p>
           </div>
         </>

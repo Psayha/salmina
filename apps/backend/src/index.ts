@@ -34,6 +34,7 @@ import promotionsRoutes from './modules/promotions/index.js';
 import legalRoutes from './modules/legal/index.js';
 import { uploadRoutes } from './modules/upload/index.js';
 import { statsRoutes } from './modules/stats/index.js';
+import backupRoutes from './modules/backup/backup.routes.js';
 import webhooksRoutes from './routes/webhooks.routes.js';
 import healthRoutes from './routes/health.routes.js';
 
@@ -145,6 +146,7 @@ app.use('/api/promotions', sanitizeBody, promotionsRoutes);
 app.use('/api/legal', sanitizeBody, legalRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin/stats', statsRoutes);
+app.use('/api/backups', backupRoutes);
 app.use('/webhooks', webhooksRoutes);
 
 // 404 handler
