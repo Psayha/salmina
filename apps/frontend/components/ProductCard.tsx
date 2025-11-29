@@ -2,7 +2,6 @@
 
 import { memo } from 'react';
 import Image from 'next/image';
-import { Button } from './ui/Button';
 import { CartIcon } from './ui/icons';
 
 export interface ProductCardProps {
@@ -53,76 +52,71 @@ export const ProductCard = memo(function ProductCard({
 
   return (
     <div
-      className="group bg-[var(--card-bg)] backdrop-blur-md rounded-2xl overflow-hidden border border-[var(--card-border)] shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full cursor-pointer"
+      className="group bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full cursor-pointer"
       onClick={handleClick}
       role="article"
       aria-label={`Товар: ${name}`}
     >
       {/* Image */}
-      <div className="relative w-full aspect-square bg-white/30 dark:bg-white/5 backdrop-blur-sm flex items-center justify-center border-b border-[var(--card-border)] shrink-0 overflow-hidden">
+      <div className="relative w-full aspect-square bg-gray-50 dark:bg-gray-800 flex items-center justify-center shrink-0 overflow-hidden">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt={name}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-[1.02] transition-transform duration-300 ease-out"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             unoptimized
           />
         ) : (
-          <span className="text-6xl group-hover:scale-105 transition-transform duration-500 ease-out">{emoji}</span>
+          <span className="text-5xl opacity-60">{emoji}</span>
         )}
 
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
-          {isNew && (
-            <span className="px-2 py-0.5 text-[10px] font-medium bg-blue-500 text-white rounded-full shadow-sm">
-              Новинка
-            </span>
-          )}
-          {isHit && (
-            <span className="px-2 py-0.5 text-[10px] font-medium bg-orange-500 text-white rounded-full shadow-sm">
-              Хит
-            </span>
-          )}
-          {hasPromotion && (
-            <span className="px-2 py-0.5 text-[10px] font-medium bg-red-500 text-white rounded-full shadow-sm">
-              Акция
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-2.5 space-y-1 flex flex-col grow">
-        <h3 className="text-sm font-normal text-[var(--foreground)] tracking-wide uppercase">{name}</h3>
-
-        {description && (
-          <p className="text-xs text-[var(--foreground)]/70 font-light line-clamp-2 grow">{description}</p>
-        )}
-
-        {/* Price & Add to Cart */}
-        <div className="pt-1.5 flex items-center justify-between border-t border-[var(--card-border)] shrink-0">
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-[var(--foreground)]">
-              {finalPrice.toLocaleString('ru-RU')} ₽
-            </span>
-            {hasDiscount && (
-              <span className="text-xs text-[var(--foreground)]/60 line-through">
-                {price.toLocaleString('ru-RU')} ₽
+        {/* Badges - minimal style */}
+        {(isNew || isHit || hasPromotion) && (
+          <div className="absolute top-2 left-2 flex gap-1 z-10">
+            {hasPromotion && (
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-rose-500 text-white rounded-full">
+                %
+              </span>
+            )}
+            {isNew && (
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-emerald-500 text-white rounded-full">
+                NEW
+              </span>
+            )}
+            {isHit && (
+              <span className="px-2 py-0.5 text-[10px] font-medium bg-amber-500 text-white rounded-full">
+                HIT
               </span>
             )}
           </div>
+        )}
 
-          <Button
-            variant="icon"
-            size="sm"
-            onClick={handleAddToCart}
-            aria-label="Добавить в корзину"
-            className="shrink-0"
-          >
-            <CartIcon className="w-4 h-4 text-[var(--foreground)]/80" />
-          </Button>
+        {/* Quick add button - appears on hover */}
+        <button
+          onClick={handleAddToCart}
+          className="absolute bottom-2 right-2 w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 active:scale-95 z-10"
+          aria-label="Добавить в корзину"
+        >
+          <CartIcon className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+        </button>
+      </div>
+
+      {/* Content - simplified */}
+      <div className="p-3 flex flex-col grow">
+        <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 mb-1">{name}</h3>
+
+        {/* Price */}
+        <div className="mt-auto flex items-baseline gap-2">
+          <span className="text-base font-semibold text-gray-900 dark:text-white">
+            {finalPrice.toLocaleString('ru-RU')} ₽
+          </span>
+          {hasDiscount && (
+            <span className="text-xs text-gray-400 line-through">
+              {price.toLocaleString('ru-RU')} ₽
+            </span>
+          )}
         </div>
       </div>
     </div>

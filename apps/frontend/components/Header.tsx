@@ -1,6 +1,6 @@
 'use client';
 
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Search } from 'lucide-react';
 
 interface HeaderProps {
   cartItemsCount?: number;
@@ -9,7 +9,7 @@ interface HeaderProps {
   onSearchClick?: () => void;
 }
 
-export const Header = ({ cartItemsCount = 0, onMenuClick, onCartClick }: HeaderProps) => {
+export const Header = ({ cartItemsCount = 0, onMenuClick, onCartClick, onSearchClick }: HeaderProps) => {
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50"
@@ -17,13 +17,21 @@ export const Header = ({ cartItemsCount = 0, onMenuClick, onCartClick }: HeaderP
         paddingTop: 'var(--safe-top, 0px)',
       }}
     >
-      <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-center gap-3">
+      <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-center gap-2">
         {/* Menu Button */}
         <button
           onClick={onMenuClick}
-          className="px-5 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
+          className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
         >
           <span className="text-xs font-medium text-gray-800 tracking-wide">MENU</span>
+        </button>
+
+        {/* Search Button */}
+        <button
+          onClick={onSearchClick}
+          className="p-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
+        >
+          <Search className="w-5 h-5 text-gray-800" strokeWidth={2} />
         </button>
 
         {/* Cart Icon */}
