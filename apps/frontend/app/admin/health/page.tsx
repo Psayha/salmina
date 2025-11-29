@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Download, Trash2, Plus, RotateCcw } from 'lucide-react';
+import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Trash2, Plus, RotateCcw } from 'lucide-react';
 import { healthApi, HealthCheckResponse } from '@/lib/api/endpoints/health';
-import { backupApi, BackupStatus, BackupInfo } from '@/lib/api/endpoints/backup';
+import { backupApi, BackupStatus } from '@/lib/api/endpoints/backup';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 export default function HealthPage() {
