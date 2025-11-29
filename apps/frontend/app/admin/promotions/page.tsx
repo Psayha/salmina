@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Trash, Plus, Percent, Megaphone } from 'lucide-react';
+import { Edit, Trash, Plus, Megaphone } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -90,87 +90,79 @@ export default function PromotionsPage() {
 
     return (
       <CardWrapper key={promotion.id} onClick={() => handleCardClick(promotion.id)}>
-        {/* Image */}
-        <div className="relative h-32 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={promotion.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              unoptimized
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Megaphone className="w-12 h-12 text-red-300 dark:text-red-600" />
-            </div>
-          )}
-          {/* Status & Discount Badge */}
-          <div className="absolute top-2 left-2 right-2 flex items-start justify-between">
-            <span
-              className={`px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
-                promotion.isActive
-                  ? 'bg-green-500/90 text-white'
-                  : 'bg-gray-500/90 text-white'
-              }`}
-            >
-              {promotion.isActive ? 'Активна' : 'Скрыта'}
-            </span>
-            {(promotion.discountPercent || promotion.discountAmount) && (
-              <span className="px-2 py-1 rounded-full text-xs font-medium bg-pink-500/90 text-white backdrop-blur-sm flex items-center gap-1">
-                {promotion.discountPercent ? (
-                  <>
-                    <Percent className="w-3 h-3" />
-                    {promotion.discountPercent}%
-                  </>
-                ) : (
-                  <>{Number(promotion.discountAmount).toLocaleString()} ₽</>
-                )}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          {/* Title & Description */}
-          <div>
-            <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1">
-              {promotion.title}
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
-              {promotion.description}
-            </p>
-          </div>
-
-          {/* Dates */}
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            {!from && !to ? (
-              'Бессрочно'
+        <div className="flex gap-3 p-3">
+          {/* Image - small square */}
+          <div className="relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900/30 dark:to-pink-900/30">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={promotion.title}
+                fill
+                className="object-cover"
+                sizes="80px"
+                unoptimized
+              />
             ) : (
-              <span>
-                {from && `с ${from} `}
-                {to && `по ${to}`}
-              </span>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Megaphone className="w-8 h-8 text-red-300 dark:text-red-600" />
+              </div>
             )}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0 flex flex-col justify-between">
+            {/* Top: Title, Status, Discount */}
+            <div>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
+                  {promotion.title}
+                </h3>
+                <span
+                  className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
+                    promotion.isActive
+                      ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  {promotion.isActive ? 'Актив' : 'Скрыта'}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">
+                {promotion.description}
+              </p>
+            </div>
+
+            {/* Bottom: Discount & Dates */}
+            <div className="flex items-center justify-between mt-1">
+              {(promotion.discountPercent || promotion.discountAmount) && (
+                <span className="text-sm font-semibold text-pink-600 dark:text-pink-400 flex items-center gap-0.5">
+                  {promotion.discountPercent ? (
+                    <>-{promotion.discountPercent}%</>
+                  ) : (
+                    <>-{Number(promotion.discountAmount).toLocaleString()} ₽</>
+                  )}
+                </span>
+              )}
+              <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                {!from && !to ? 'Бессрочно' : `${from || ''} — ${to || ''}`}
+              </span>
+            </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col gap-1 flex-shrink-0">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleCardClick(promotion.id);
               }}
-              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 bg-red-50 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors text-sm font-medium"
+              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
             >
               <Edit className="w-4 h-4" />
-              Редактировать
             </button>
             <button
               onClick={(e) => handleDeleteClick(e, promotion)}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-xl hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
+              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
             >
               <Trash className="w-4 h-4" />
             </button>
@@ -192,12 +184,12 @@ export default function PromotionsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl overflow-hidden">
-              <div className="h-32 bg-gray-200 dark:bg-gray-700 animate-pulse" />
-              <div className="p-4 space-y-3">
-                <div className="h-5 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+            <div key={i} className="bg-white/60 dark:bg-gray-800/60 rounded-2xl p-3 flex gap-3">
+              <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="h-3 w-1/2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                <div className="h-4 w-1/3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               </div>
             </div>
           ))}
