@@ -74,119 +74,128 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop with blur */}
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm"
             onClick={onClose}
           />
 
-          {/* Modal */}
+          {/* Bottom Sheet */}
           <motion.div
-            className="fixed left-0 right-0 z-[101] mx-auto max-w-md px-3"
-            style={{
-              top: 'calc(var(--safe-top, 0px) + 56px)',
-            }}
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="fixed bottom-0 left-0 right-0 z-[101] bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl max-h-[85vh] flex flex-col"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800">
-              {/* Header with Search Input */}
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+            </div>
+
+            {/* Header with Search Input */}
+            <div className="flex items-center justify-between px-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Поиск</h3>
+              <button
+                onClick={onClose}
+                className="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="px-6 py-4">
+              <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
                 <Search className="w-5 h-5 text-gray-400 shrink-0" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  placeholder="Поиск товаров..."
-                  className="flex-1 bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
+                  placeholder="Название товара..."
+                  className="flex-1 bg-transparent text-base text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
                   autoFocus
                 />
-                <motion.button
-                  onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors shrink-0"
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                </motion.button>
-              </div>
-
-              {/* Results */}
-              <div className="max-h-[60vh] overflow-y-auto">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="w-6 h-6 border-2 border-gray-200 border-t-pink-500 rounded-full animate-spin" />
-                  </div>
-                ) : results.length > 0 ? (
-                  <div className="p-2">
-                    {results.map((product) => (
-                      <motion.button
-                        key={product.id}
-                        onClick={() => handleProductClick(product.slug)}
-                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
-                          {product.images?.[0] ? (
-                            <Image
-                              src={product.images[0]}
-                              alt={product.name}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                              unoptimized
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl">
-                              ✨
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {product.name}
-                          </p>
-                          <p className="text-sm text-pink-500 font-semibold">
-                            {(product.promotionPrice || product.discountPrice || product.price).toLocaleString('ru-RU')} ₽
-                          </p>
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-                ) : searchQuery ? (
-                  <div className="py-8 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Ничего не найдено
-                    </p>
-                  </div>
-                ) : (
-                  <div className="py-8 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Введите название товара
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* View All Button */}
-              <div className="p-3 border-t border-gray-100 dark:border-gray-800">
-                <motion.button
-                  onClick={handleViewAll}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {searchQuery ? 'Показать все результаты' : 'Открыть каталог'}
-                  </span>
-                  <ArrowRight className="w-4 h-4 text-gray-500" />
-                </motion.button>
               </div>
             </div>
+
+            {/* Results */}
+            <div className="flex-1 overflow-y-auto px-6">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="w-6 h-6 border-2 border-gray-200 border-t-pink-500 rounded-full animate-spin" />
+                </div>
+              ) : results.length > 0 ? (
+                <div className="space-y-2 pb-4">
+                  {results.map((product) => (
+                    <button
+                      key={product.id}
+                      onClick={() => handleProductClick(product.slug)}
+                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0">
+                        {product.images?.[0] ? (
+                          <Image
+                            src={product.images[0]}
+                            alt={product.name}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-2xl">
+                            ✨
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {product.name}
+                        </p>
+                        <p className="text-sm text-pink-500 font-semibold">
+                          {(product.promotionPrice || product.discountPrice || product.price).toLocaleString('ru-RU')} ₽
+                        </p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-gray-400 shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              ) : searchQuery ? (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Ничего не найдено
+                  </p>
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Введите название товара
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* View All Button */}
+            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800">
+              <button
+                onClick={handleViewAll}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 transition-colors"
+              >
+                <span className="text-sm font-medium text-white">
+                  {searchQuery ? 'Показать все результаты' : 'Открыть каталог'}
+                </span>
+                <ArrowRight className="w-4 h-4 text-white" />
+              </button>
+            </div>
+
+            {/* Bottom padding */}
+            <div className="h-2" />
           </motion.div>
         </>
       )}

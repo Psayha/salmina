@@ -119,42 +119,25 @@ function SearchPageContent() {
 
   return (
     <div className="min-h-screen relative z-10 pb-24">
-      {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-4 py-4 space-y-3">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Каталог</h1>
-
-          {/* Categories with Filter Icon */}
-          <div className="flex gap-2 items-center overflow-x-auto scrollbar-hide">
-            {/* Filter Button */}
-            <button
-              onClick={() => {
-                haptic.impactOccurred('light');
-                setShowFilters(true);
-              }}
-              className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/50 dark:bg-white/10 border border-white/30 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 active:scale-95 transition-transform"
+      {/* Categories */}
+      <div className="px-4 pt-2 pb-3">
+        <div className="flex gap-2 items-center overflow-x-auto scrollbar-hide -mx-4 px-4">
+          <CategoryPill active={selectedCategory === 'all'} onClick={() => handleCategoryChange('all')}>
+            Все
+          </CategoryPill>
+          {categories.map((category) => (
+            <CategoryPill
+              key={category.id}
+              active={selectedCategory === category.id}
+              onClick={() => handleCategoryChange(category.id)}
             >
-              <SlidersHorizontal className="w-5 h-5" />
-            </button>
-
-            {/* Category Pills */}
-            <CategoryPill active={selectedCategory === 'all'} onClick={() => handleCategoryChange('all')}>
-              Все
+              {category.name}
             </CategoryPill>
-            {categories.map((category) => (
-              <CategoryPill
-                key={category.id}
-                active={selectedCategory === category.id}
-                onClick={() => handleCategoryChange(category.id)}
-              >
-                {category.name}
-              </CategoryPill>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="px-4 py-4 space-y-4">
+      <div className="px-4 space-y-4">
         {/* Results Count & Current Sort */}
         <div className="flex items-center justify-between">
           <p className="text-sm font-light text-gray-600 dark:text-gray-400">
