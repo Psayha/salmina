@@ -24,8 +24,14 @@ export interface Promocode {
 
 export interface ValidatePromocodeResponse {
   valid: boolean;
-  discount: number;
-  type: DiscountType;
+  discount?: number;
+  type?: DiscountType;
+  message?: string;
+  promocode?: {
+    discountType: DiscountType;
+    discountValue: number;
+    maxDiscountAmount?: number;
+  };
 }
 
 export const promocodesApi = {

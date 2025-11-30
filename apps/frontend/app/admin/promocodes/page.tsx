@@ -1,6 +1,6 @@
 'use client';
 
-import { Trash, Plus, Copy, Ticket, Percent, AlertCircle, Search, X, Save, DollarSign } from 'lucide-react';
+import { Trash, Plus, Copy, Ticket, Percent, Search, X, Save, DollarSign } from 'lucide-react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { promocodesApi, Promocode, DiscountType } from '@/lib/api/endpoints/promocodes';

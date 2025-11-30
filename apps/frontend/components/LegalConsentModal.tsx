@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, FileText, ChevronRight, Check } from 'lucide-react';
+import { FileText, ChevronRight, Check } from 'lucide-react';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
