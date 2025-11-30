@@ -1,22 +1,62 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { AnimatePresence, motion } from 'framer-motion';
+import { X, FileText, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { Button } from '@/components/ui';
 import { UserIcon } from '@/components/ui/icons';
+import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
+
+const documentLabels: Record<string, string> = {
+  [LegalDocumentType.TERMS]: 'Пользовательское соглашение',
+  [LegalDocumentType.PRIVACY]: 'Политика конфиденциальности',
+  [LegalDocumentType.OFFER]: 'Публичная оферта',
+  [LegalDocumentType.DELIVERY_PAYMENT]: 'Доставка и оплата',
+};
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuthStore();
   const { favoriteIds } = useFavoritesStore();
   const haptic = useTelegramHaptic();
+  const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
+  const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
 
   useTelegramBackButton(() => {
-    router.back();
+    if (selectedDocument) {
+      setSelectedDocument(null);
+    } else {
+      router.back();
+    }
   });
+
+  useEffect(() => {
+    async function fetchLegalDocuments() {
+      try {
+        const docs = await legalApi.getDocuments();
+        // Filter to only active documents
+        setLegalDocuments(docs.filter((doc) => doc.isActive));
+      } catch (error) {
+        console.error('Failed to fetch legal documents:', error);
+      }
+    }
+    fetchLegalDocuments();
+  }, []);
+
+  const handleDocumentClick = (doc: LegalDocument) => {
+    haptic.impactOccurred('light');
+    setSelectedDocument(doc);
+  };
+
+  const closeDocumentModal = () => {
+    haptic.impactOccurred('light');
+    setSelectedDocument(null);
+  };
 
   const handleLogout = async () => {
     try {
@@ -158,20 +198,33 @@ export default function ProfilePage() {
         </div>
 
         {/* Legal Links */}
-        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/30 dark:border-white/10 shadow-lg space-y-3">
-          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              Политика конфиденциальности
-            </p>
-          </button>
-          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              Пользовательское соглашение
-            </p>
-          </button>
-          <button onClick={() => haptic.impactOccurred('light')} className="w-full text-left">
-            <p className="text-sm font-light text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">О приложении</p>
-          </button>
+        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl border border-white/30 dark:border-white/10 shadow-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-white/20 dark:border-white/5">
+            <p className="text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-400">Документы</p>
+          </div>
+          <div className="divide-y divide-white/20 dark:divide-white/5">
+            {legalDocuments.length > 0 ? (
+              legalDocuments.map((doc) => (
+                <button
+                  key={doc.id}
+                  onClick={() => handleDocumentClick(doc)}
+                  className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/30 dark:hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                    <span className="text-sm font-light text-gray-700 dark:text-gray-300">
+                      {documentLabels[doc.type] || doc.title}
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                Документы загружаются...
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Logout Button */}
@@ -189,6 +242,60 @@ export default function ProfilePage() {
           <p className="text-xs font-light text-gray-500 dark:text-gray-400">Версия 1.0.0</p>
         </div>
       </div>
+
+      {/* Legal Document Modal */}
+      <AnimatePresence>
+        {selectedDocument && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeDocumentModal}
+              className="fixed inset-0 bg-black/50 z-50"
+            />
+            {/* Modal */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl max-h-[90vh] flex flex-col"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              {/* Handle */}
+              <div className="flex justify-center py-2">
+                <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+              </div>
+              {/* Header */}
+              <div className="px-4 pb-3 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                  {documentLabels[selectedDocument.type] || selectedDocument.title}
+                </h2>
+                <button
+                  onClick={closeDocumentModal}
+                  className="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              {/* Content */}
+              <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-light leading-relaxed">
+                  {selectedDocument.content}
+                </div>
+                <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                    Версия {selectedDocument.version} • Обновлено{' '}
+                    {new Date(selectedDocument.updatedAt).toLocaleDateString('ru-RU')}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
