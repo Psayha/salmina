@@ -76,15 +76,21 @@ export default function Home() {
     ...(Array.isArray(categoriesData) ? categoriesData : []),
   ];
   const allProducts: Product[] = allProductsData?.items || [];
-  const visibleProducts = allProducts.slice(0, visibleCount);
-  const hasMore = visibleCount < allProducts.length;
+
+  // Filter products by selected category
+  const filteredProducts = selectedCategory === 'all'
+    ? allProducts
+    : allProducts.filter((p) => p.categoryId === selectedCategory);
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
 
   // Infinite scroll - загрузка при достижении конца
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoadingAll) {
-          setVisibleCount((prev) => Math.min(prev + PRODUCTS_PER_PAGE, allProducts.length));
+          setVisibleCount((prev) => Math.min(prev + PRODUCTS_PER_PAGE, filteredProducts.length));
         }
       },
       { threshold: 0.1 }
@@ -95,7 +101,7 @@ export default function Home() {
     }
 
     return () => observer.disconnect();
-  }, [hasMore, isLoadingAll, allProducts.length]);
+  }, [hasMore, isLoadingAll, filteredProducts.length]);
 
   // Pull-to-refresh handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -150,11 +156,8 @@ export default function Home() {
 
   const handleCategoryChange = (categoryId: string) => {
     haptic.selectionChanged();
-    if (categoryId === 'all') {
-      setSelectedCategory(categoryId);
-    } else {
-      router.push(`/category/${categoryId}`);
-    }
+    setSelectedCategory(categoryId);
+    setVisibleCount(PRODUCTS_PER_PAGE); // Reset pagination when changing category
   };
 
   return (
@@ -262,7 +265,11 @@ export default function Home() {
 
         {/* All Products Grid */}
         <div className="px-4">
-          <h2 className="text-xl font-light text-gray-900 dark:text-white mb-4">Все товары</h2>
+          <h2 className="text-xl font-light text-gray-900 dark:text-white mb-4">
+            {selectedCategory === 'all'
+              ? 'Все товары'
+              : categories.find((c) => c.id === selectedCategory)?.name || 'Товары'}
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {isLoadingAll
               ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
@@ -299,8 +306,13 @@ export default function Home() {
             </div>
           )}
 
+          {/* Empty state */}
+          {!isLoadingAll && filteredProducts.length === 0 && (
+            <p className="text-center text-sm text-gray-400 py-8">В этой категории пока нет товаров</p>
+          )}
+
           {/* End of list */}
-          {!hasMore && allProducts.length > 0 && (
+          {!hasMore && filteredProducts.length > 0 && (
             <p className="text-center text-sm text-gray-400 py-8">Все товары загружены</p>
           )}
         </div>

@@ -56,16 +56,16 @@ export const BottomNav = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-6 left-4 right-4 z-40 mx-auto max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-[32px] shadow-2xl"
+      className="fixed bottom-4 left-4 right-4 z-40 mx-auto max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-[28px] shadow-2xl"
       style={{
-        paddingTop: '8px',
-        paddingBottom: 'max(env(safe-area-inset-bottom), 8px)',
+        paddingTop: '4px',
+        paddingBottom: 'max(env(safe-area-inset-bottom), 4px)',
       }}
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <div className="px-4 py-2">
+      <div className="px-4 py-1">
         <div className="flex items-center justify-between">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
@@ -75,7 +75,7 @@ export const BottomNav = () => {
               <button
                 key={item.href}
                 onClick={() => handleNavClick(item.href)}
-                className="relative flex flex-col items-center gap-1 p-1.5 transition-colors"
+                className="relative flex flex-col items-center gap-0.5 p-1 transition-colors"
               >
                 <div className="relative">
                   <Icon
