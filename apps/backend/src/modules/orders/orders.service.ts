@@ -132,7 +132,7 @@ class OrdersService {
             orderId: newOrder.id,
             productId: cartItem.productId,
             productName: cartItem.product.name,
-            productArticle: cartItem.product.article,
+            productArticle: cartItem.product.article ?? '',
             productImage: cartItem.product.images[0] || '',
             basePrice: cartItem.price,
             appliedPrice: cartItem.appliedPrice,

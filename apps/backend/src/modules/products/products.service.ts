@@ -194,17 +194,21 @@ export class ProductsService {
     await this.validateUniqueFields(data.slug, data.article, data.sku);
     this.validatePriceLogic(data);
 
-    const { categoryId, ...restData } = data;
-
     const product = await prisma.product.create({
       data: {
-        ...restData,
-        category: { connect: { id: categoryId } },
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        images: data.images,
+        category: { connect: { id: data.categoryId } },
         price: data.price,
         promotionPrice: data.promotionPrice ?? null,
         discountPrice: data.discountPrice ?? null,
+        article: data.article ?? null,
+        sku: data.sku ?? null,
         weight: data.weight,
         dimensions: data.dimensions ?? null,
+        quantity: data.quantity,
         composition: data.composition ?? null,
         delivery: data.delivery ?? null,
         characteristics: (data.characteristics as any) ?? null,
@@ -427,7 +431,7 @@ export class ProductsService {
     };
   }
 
-  private async validateUniqueFields(slug?: string, article?: string, sku?: string, excludeId?: string): Promise<void> {
+  private async validateUniqueFields(slug?: string, article?: string | null, sku?: string | null, excludeId?: string): Promise<void> {
     const where: any[] = [];
 
     if (slug) {

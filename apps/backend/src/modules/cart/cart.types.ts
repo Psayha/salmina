@@ -85,7 +85,7 @@ export interface CartItemDTO {
   productName: string;
   productSlug: string;
   productImage: string;
-  productArticle: string;
+  productArticle: string | null;
   basePrice: number;
   appliedPrice: number;
   hasPromotion: boolean;
