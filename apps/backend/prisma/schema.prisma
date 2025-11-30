@@ -107,8 +107,8 @@ model Product {
   price           Decimal   @db.Decimal(10, 2)
   promotionPrice  Decimal?  @db.Decimal(10, 2)
   discountPrice   Decimal?  @db.Decimal(10, 2)
-  article         String    @unique
-  sku             String    @unique
+  article         String?   @unique
+  sku             String?   @unique
   weight          Decimal   @db.Decimal(8, 2)
   dimensions      String?
   quantity        Int       @default(0)
