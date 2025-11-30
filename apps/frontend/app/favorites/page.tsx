@@ -8,7 +8,8 @@ import { useCartStore } from '@/store/useCartStore';
 import { productsApi } from '@/lib/api';
 import { Product } from '@/lib/api/types';
 import { ProductCard } from '@/components/ProductCard';
-import { EmptyState, Loading } from '@/components/ui';
+import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
+import { EmptyState } from '@/components/ui';
 import { HeartIcon } from '@/components/ui/icons';
 
 export default function FavoritesPage() {
@@ -69,7 +70,20 @@ export default function FavoritesPage() {
   };
 
   if (isLoading) {
-    return <Loading fullScreen size="lg" />;
+    return (
+      <div className="min-h-screen relative z-10 pb-8">
+        <div className="px-4 pt-2 pb-4">
+          <h1 className="text-lg font-light text-gray-900 dark:text-white">Избранное</h1>
+        </div>
+        <div className="px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

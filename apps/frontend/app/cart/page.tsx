@@ -87,7 +87,7 @@ export default function CartPage() {
   const isEmpty = !cart || validItems.length === 0;
 
   return (
-    <div className="min-h-screen relative z-10 pb-32">
+    <div className="min-h-screen relative z-10 pb-36">
       {/* Header */}
       <div className="px-4 pt-2 pb-4">
         <div className="flex items-center justify-between">
@@ -196,39 +196,42 @@ export default function CartPage() {
             </button>
           </div>
 
-          {/* Fixed Bottom Bar with Totals and Checkout */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white/60 dark:bg-white/10 backdrop-blur-md border-t border-white/30 dark:border-white/10 shadow-lg z-50">
-            <div className="px-4 py-4 space-y-3">
-              {/* Subtotal */}
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-light text-gray-600 dark:text-gray-300">Товары:</span>
-                <span className="text-base font-light text-gray-900 dark:text-white">
-                  {cart.totals.subtotal.toLocaleString('ru-RU')} ₽
-                </span>
-              </div>
-
-              {/* Discount */}
-              {cart.totals.discount > 0 && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-light text-gray-600 dark:text-gray-300">Скидка:</span>
-                  <span className="text-base font-light text-green-600 dark:text-green-400">
-                    −{cart.totals.discount.toLocaleString('ru-RU')} ₽
-                  </span>
+          {/* Fixed Bottom Bar - iOS style */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-t-3xl border-t border-white/30 dark:border-white/10 shadow-2xl z-50">
+            <div className="px-4 pt-4 pb-6">
+              {/* Info Row */}
+              <div className="flex items-center justify-between mb-3">
+                {/* Items count */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-white/10 px-3 py-1.5 rounded-full">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Товаров:</span>
+                    <span className="text-xs font-semibold text-gray-900 dark:text-white">{cart.totals.itemsCount}</span>
+                  </div>
+                  {cart.totals.discount > 0 && (
+                    <div className="flex items-center gap-1.5 bg-green-500/10 px-3 py-1.5 rounded-full">
+                      <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                        −{cart.totals.discount.toLocaleString('ru-RU')} ₽
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
 
-              {/* Total */}
-              <div className="flex justify-between items-center pt-3 border-t border-white/30 dark:border-white/10">
-                <span className="text-base font-light text-gray-900 dark:text-white">Итого:</span>
-                <span className="text-2xl font-light text-gray-900 dark:text-white">
-                  {cart.totals.total.toLocaleString('ru-RU')} ₽
-                </span>
+                {/* Total Price */}
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Итого</p>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
+                    {cart.totals.total.toLocaleString('ru-RU')} ₽
+                  </p>
+                </div>
               </div>
 
-              {/* Checkout Button */}
-              <Button onClick={handleCheckout} className="w-full py-4 text-base">
+              {/* Checkout Button - iOS style */}
+              <button
+                onClick={handleCheckout}
+                className="w-full py-4 rounded-2xl font-medium text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-200 bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30"
+              >
                 Оформить заказ
-              </Button>
+              </button>
             </div>
           </div>
         </>
