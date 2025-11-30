@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Header } from './Header';
 import { MenuModal } from './MenuModal';
 import { SearchModal } from './SearchModal';
+import { PageTransition } from './PageTransition';
 import { useState } from 'react';
 import { useCartStore } from '@/store/useCartStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
@@ -57,7 +58,9 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
         onSearchClick={handleSearchClick}
         onFavoritesClick={handleFavoritesClick}
       />
-      <main className="pt-28">{children}</main>
+      <main className="pt-28">
+        <PageTransition>{children}</PageTransition>
+      </main>
       <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />
       <SearchModal isOpen={showSearch} onClose={() => setShowSearch(false)} />
     </>

@@ -6,6 +6,7 @@ import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTele
 import { productsApi, categoriesApi } from '@/lib/api';
 import { Product, Category } from '@/lib/api/types';
 import { ProductCard } from '@/components/ProductCard';
+import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { CategoryPill } from '@/components/ui';
 import { useCartStore } from '@/store/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -157,8 +158,10 @@ function SearchPageContent() {
 
         {/* Results */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="w-10 h-10 border-2 border-gray-300 dark:border-gray-600 border-t-gray-900 dark:border-t-white rounded-full animate-spin"></div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
           </div>
         ) : products.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
