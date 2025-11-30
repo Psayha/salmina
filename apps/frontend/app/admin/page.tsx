@@ -125,33 +125,33 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               onClick={() => handleModuleClick(module.href)}
-              className={`relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group bg-gradient-to-br ${module.gradient} dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 border border-white/50 dark:border-white/10 shadow-lg`}
+              className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group bg-gradient-to-br ${module.gradient} dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 border border-white/50 dark:border-white/10 shadow-lg`}
             >
               {/* Фоновый градиент при ховере */}
               <div className={`absolute inset-0 bg-gradient-to-br ${module.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
 
               {/* Иконка */}
-              <div className="relative mb-4">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${module.color} shadow-lg`}>
-                  <Icon className="w-6 h-6 text-white" />
+              <div className="relative mb-3">
+                <div className={`inline-flex p-2.5 rounded-xl bg-gradient-to-br ${module.color} shadow-lg`}>
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
               </div>
 
               {/* Контент */}
-              <div className="relative space-y-1">
+              <div className="relative space-y-0.5">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  <h3 className="text-base font-medium text-gray-900 dark:text-white">
                     {module.title}
                   </h3>
-                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:translate-x-1 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-all" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:translate-x-1 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-all" />
                 </div>
-                <p className="text-sm font-light text-gray-600 dark:text-gray-300">
+                <p className="text-xs font-light text-gray-600 dark:text-gray-300 line-clamp-2">
                   {module.description}
                 </p>
               </div>
 
               {/* Декоративный элемент */}
-              <div className="absolute -right-8 -bottom-8 w-32 h-32 opacity-5">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 opacity-5">
                 <Icon className="w-full h-full" />
               </div>
             </motion.button>

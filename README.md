@@ -1,6 +1,6 @@
 # Telegram Shop - Salmina
 
-Интернет-магазин косметики в формате Telegram Mini App.
+Интернет-магазин косметики в формате Telegram Mini App с современным glassmorphism дизайном.
 
 **Версия:** 1.1.0
 **Статус:** Production
@@ -19,7 +19,9 @@
 - TypeScript 5.6
 - Tailwind CSS 4
 - Zustand (state management)
-- React Query
+- React Query (server state)
+- Framer Motion (animations)
+- Telegram Mini Apps SDK
 
 ### Backend
 - Node.js 20+
@@ -41,27 +43,68 @@
 ```
 salmina/
 ├── apps/
-│   ├── frontend/          # Next.js 16 приложение (App Router)
-│   │   ├── app/           # Страницы и layouts
-│   │   ├── components/    # React компоненты
-│   │   ├── contexts/      # React contexts
-│   │   ├── lib/           # Утилиты и API клиент
-│   │   └── store/         # Zustand stores
-│   └── backend/           # Express API сервер
+│   ├── frontend/              # Next.js 16 приложение
+│   │   ├── app/               # Страницы (32 страницы)
+│   │   │   ├── admin/         # Админ-панель (12 страниц)
+│   │   │   ├── cart/          # Корзина
+│   │   │   ├── category/      # Страница категории
+│   │   │   ├── checkout/      # Оформление заказа
+│   │   │   ├── favorites/     # Избранное
+│   │   │   ├── orders/        # История заказов
+│   │   │   ├── product/       # Страница товара
+│   │   │   ├── profile/       # Профиль
+│   │   │   ├── search/        # Поиск
+│   │   │   ├── settings/      # Настройки
+│   │   │   └── support/       # Поддержка
+│   │   ├── components/        # React компоненты (37 компонентов)
+│   │   │   ├── ui/            # UI Kit (10 компонентов)
+│   │   │   └── admin/         # Админ компоненты (7 компонентов)
+│   │   ├── contexts/          # React contexts
+│   │   ├── lib/               # API клиент и утилиты
+│   │   └── store/             # Zustand stores (auth, cart, favorites)
+│   └── backend/               # Express API сервер
 │       ├── src/
-│       │   ├── modules/   # API модули (13 модулей)
-│       │   ├── middleware/# Middleware (auth, rate-limit, etc.)
-│       │   ├── services/  # Общие сервисы
-│       │   └── config/    # Конфигурация
-│       └── prisma/        # Схема БД и миграции
+│       │   ├── modules/       # API модули (13 модулей)
+│       │   ├── middleware/    # Middleware
+│       │   ├── services/      # Общие сервисы
+│       │   └── config/        # Конфигурация
+│       └── prisma/            # Схема БД и миграции
 ├── packages/
-│   ├── shared/            # Общие утилиты
-│   └── types/             # Shared TypeScript типы
-├── docs/                  # Документация
-├── files/                 # Техническое задание
-├── scripts/               # Скрипты (audit, backup)
-└── .github/workflows/     # CI/CD (test, deploy)
+│   ├── shared/                # Общие утилиты
+│   └── types/                 # Shared TypeScript типы
+├── docs/                      # Документация
+├── files/                     # Техническое задание
+├── scripts/                   # Скрипты (audit, backup)
+└── .github/workflows/         # CI/CD
 ```
+
+## UI/UX Особенности
+
+### Дизайн
+- **Glassmorphism стиль** - полупрозрачные карточки с backdrop-blur
+- **Градиентный фон** - нежные розово-персиковые тона
+- **iOS-style элементы** - закругленные углы, плавные анимации
+- **Dark mode** - поддержка темной темы
+
+### Компоненты
+- **Stories** - Instagram-подобные истории для акций
+- **ProductCard** - карточка товара с анимациями
+- **PageTransition** - плавные переходы между страницами
+- **CollapsibleSection** - сворачиваемые секции
+- **BottomNav** - нижняя навигация с индикаторами
+- **Skeleton loading** - скелетоны для загрузки
+
+### Страница товара
+- Компактный bottom bar (наличие, количество, цена, кнопка)
+- Сворачиваемые секции (описание, состав, применение)
+- Галерея изображений
+- Похожие товары
+
+### Корзина
+- iOS-style bottom bar с итогом и кнопкой оформления
+- Управление количеством товаров
+- Применение промокодов
+- Расчет скидок
 
 ## Быстрый старт
 
@@ -131,7 +174,7 @@ Backend содержит 13 модулей с 70+ endpoints:
 | Users | 8 | Управление пользователями |
 | Products | 8 | Каталог товаров |
 | Categories | 6 | Категории |
-| Cart | 5 | Корзина |
+| Cart | 5 | Корзина (flat DTO структура) |
 | Orders | 6 | Заказы |
 | Promocodes | 5 | Промокоды |
 | Promotions | 4 | Акции и баннеры |
@@ -142,6 +185,49 @@ Backend содержит 13 модулей с 70+ endpoints:
 | Backup | 3 | Резервное копирование (админ) |
 
 Полная документация API: [docs/API_INTEGRATION.md](docs/API_INTEGRATION.md)
+
+## Frontend страницы
+
+### Пользовательские (20 страниц)
+- `/` - Главная (категории + stories + товары)
+- `/search` - Поиск с фильтрами и skeleton loading
+- `/category/[slug]` - Страница категории
+- `/product/[slug]` - Детальная страница товара
+- `/cart` - Корзина с iOS-style bottom bar
+- `/checkout` - Оформление заказа
+- `/checkout/success` - Успешный заказ
+- `/favorites` - Избранное со skeleton loading
+- `/orders` - История заказов
+- `/profile` - Профиль пользователя
+- `/settings` - Настройки
+- `/support` - Поддержка
+
+### Админ-панель (12 страниц)
+- `/admin` - Дашборд со статистикой
+- `/admin/products` - Управление товарами
+- `/admin/categories` - Управление категориями
+- `/admin/orders` - Управление заказами
+- `/admin/users` - Пользователи
+- `/admin/promocodes` - Промокоды
+- `/admin/promotions` - Акции и баннеры
+- `/admin/legal` - Юридические документы
+- `/admin/uploads` - Загруженные файлы
+- `/admin/analytics` - Аналитика
+- `/admin/health` - Состояние системы
+
+## State Management
+
+### Zustand Stores
+```typescript
+// AuthStore - авторизация
+const { user, isAuthenticated, loginWithTelegram, logout } = useAuthStore();
+
+// CartStore - корзина (с реактивными itemsCount и total)
+const { cart, itemsCount, total, addToCart, updateCartItem } = useCartStore();
+
+// FavoritesStore - избранное (с persist)
+const { favoriteIds, toggleFavorite, isFavorite } = useFavoritesStore();
+```
 
 ## Безопасность
 

@@ -14,16 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { isDark } = useTelegramTheme();
 
   useEffect(() => {
-    console.log('[AdminLayout] Auth state:', {
-      isLoading,
-      isAuthenticated,
-      userRole: user?.role,
-      userId: user?.id,
-      telegramId: user?.telegramId,
-    });
-
     if (!isLoading && (!isAuthenticated || user?.role !== 'ADMIN')) {
-      console.log('[AdminLayout] Access denied, redirecting to home');
       router.push('/');
     }
   }, [isAuthenticated, user, isLoading, router]);
@@ -37,11 +28,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   if (!isAuthenticated || user?.role !== 'ADMIN') {
-    console.log('[AdminLayout] Rendering null - not authenticated or not admin');
     return null;
   }
-
-  console.log('[AdminLayout] Rendering admin panel for user:', user.telegramId);
 
   return (
     <div
@@ -54,22 +42,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar - Desktop only */}
       <AdminSidebar />
 
-      {/* Header with Safe Area */}
-      <div
-        className="fixed top-0 left-0 right-0 z-40 md:left-64"
-        style={{
-          paddingTop: 'env(safe-area-inset-top)',
-        }}
-      >
-        <AdminHeader />
-      </div>
+      {/* Header */}
+      <AdminHeader />
 
       {/* Main Content with proper spacing */}
       <main
         className="px-4 max-w-7xl mx-auto w-full md:ml-64"
         style={{
-          paddingTop: 'calc(5rem + env(safe-area-inset-top))',
-          paddingBottom: 'calc(6rem + env(safe-area-inset-bottom))',
+          paddingTop: 'calc(3.5rem + var(--safe-top, env(safe-area-inset-top)))',
+          paddingBottom: 'calc(5rem + var(--safe-bottom, env(safe-area-inset-bottom)))',
         }}
       >
         {children}
