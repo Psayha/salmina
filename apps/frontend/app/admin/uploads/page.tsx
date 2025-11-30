@@ -118,14 +118,14 @@ export default function UploadsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Загруженные файлы</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Загруженные файлы</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
             Всего: {files.length} файлов
           </p>
         </div>
         <button
           onClick={handleRefresh}
-          className="p-2.5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="p-2 bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 shadow-lg hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
         >
           <RefreshCw className={`w-5 h-5 text-gray-600 dark:text-gray-300 ${isLoading ? 'animate-spin' : ''}`} />
         </button>
@@ -164,10 +164,39 @@ export default function UploadsPage() {
                 />
               </div>
 
-              {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+              {/* Mobile action buttons - always visible */}
+              <div className="absolute top-1 right-1 flex gap-1 sm:hidden">
                 <button
-                  onClick={() => handleCopyUrl(file)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyUrl(file);
+                  }}
+                  className="p-1.5 bg-black/60 backdrop-blur-sm rounded-full"
+                >
+                  {copiedUrl === file.filename ? (
+                    <Check className="w-3 h-3 text-green-400" />
+                  ) : (
+                    <Copy className="w-3 h-3 text-white" />
+                  )}
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(file);
+                  }}
+                  className="p-1.5 bg-red-500/80 backdrop-blur-sm rounded-full"
+                >
+                  <Trash2 className="w-3 h-3 text-white" />
+                </button>
+              </div>
+
+              {/* Desktop hover overlay */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex items-center justify-center gap-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyUrl(file);
+                  }}
                   className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
                   title="Копировать ссылку"
                 >
@@ -178,7 +207,10 @@ export default function UploadsPage() {
                   )}
                 </button>
                 <button
-                  onClick={() => handleDeleteClick(file)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteClick(file);
+                  }}
                   className="p-1.5 bg-red-500/50 backdrop-blur-sm rounded-full hover:bg-red-500/70 transition-colors"
                   title="Удалить"
                 >

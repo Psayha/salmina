@@ -13,6 +13,7 @@ export interface User {
   photoUrl?: string;
   role: 'USER' | 'ADMIN';
   hasAcceptedTerms: boolean;
+  termsAcceptedAt?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

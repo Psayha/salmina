@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, Pencil, Trash2, Search, FolderTree } from 'lucide-react';
+import { Plus, Trash2, Search, FolderTree } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -12,11 +12,16 @@ import { Toast, useToast } from '@/components/ui/Toast';
 import { Modal } from '@/components/ui/Modal';
 import { AdminCardGrid, CardWrapper } from '@/components/admin/AdminCardGrid';
 
+// Extended type with productCount from backend
+interface CategoryWithCount extends Category {
+  productCount?: number;
+}
+
 export default function CategoriesPage() {
   const router = useRouter();
   const haptic = useTelegramHaptic();
   const toast = useToast();
-  const [data, setData] = useState<Category[]>([]);
+  const [data, setData] = useState<CategoryWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
@@ -57,7 +62,7 @@ export default function CategoriesPage() {
   }, [searchQuery]);
 
   const handleDeleteClick = useCallback(
-    (e: React.MouseEvent, category: Category) => {
+    (e: React.MouseEvent, category: CategoryWithCount) => {
       e.stopPropagation();
       setDeleteModal({ isOpen: true, categoryId: category.id, categoryName: category.name });
       haptic?.impactOccurred('light');
@@ -89,12 +94,15 @@ export default function CategoriesPage() {
     router.push(`/admin/categories/${categoryId}`);
   };
 
-  const renderCategoryCard = (category: Category) => {
+  const renderCategoryCard = (category: CategoryWithCount) => {
     const imageUrl = category.image
       ? category.image.startsWith('http')
         ? category.image
         : `https://app.salminashop.ru${category.image}`
       : null;
+
+    // Get product count from either productCount or _count.products
+    const productCount = category.productCount ?? category._count?.products ?? 0;
 
     return (
       <CardWrapper key={category.id} onClick={() => handleCardClick(category.id)}>
@@ -117,7 +125,7 @@ export default function CategoriesPage() {
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between">
+          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
                 {category.name}
@@ -133,28 +141,17 @@ export default function CategoriesPage() {
               </span>
             </div>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {category._count?.products || 0} товаров
+              {productCount} товаров
             </span>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCardClick(category.id);
-              }}
-              className="p-2 bg-orange-50 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-500/30 transition-colors"
-            >
-              <Pencil className="w-4 h-4" />
-            </button>
-            <button
-              onClick={(e) => handleDeleteClick(e, category)}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Delete button only */}
+          <button
+            onClick={(e) => handleDeleteClick(e, category)}
+            className="self-center p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors flex-shrink-0"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </CardWrapper>
     );
@@ -168,7 +165,7 @@ export default function CategoriesPage() {
             <div className="h-8 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
             <div className="h-4 w-56 bg-gray-200 dark:bg-gray-700 rounded animate-pulse mt-2" />
           </div>
-          <div className="h-10 w-32 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+          <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
@@ -209,23 +206,23 @@ export default function CategoriesPage() {
         </div>
 
         {/* Search & Add */}
-        <div className="flex gap-3 items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="w-full pl-9 pr-3 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm"
             />
           </div>
           <Link
             href="/admin/categories/new"
             onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-orange-500/30 flex-shrink-0"
+            className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-orange-500/30 flex-shrink-0"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-5 h-5" />
           </Link>
         </div>
 

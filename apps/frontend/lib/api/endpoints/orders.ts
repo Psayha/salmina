@@ -11,6 +11,7 @@ export interface CreateOrderInput {
   deliveryMethod?: string;
   paymentMethod?: string;
   comment?: string;
+  promocodeCode?: string;
   items: { productId: string; quantity: number }[];
 }
 

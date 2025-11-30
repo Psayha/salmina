@@ -5,6 +5,7 @@ import { Header } from './Header';
 import { MenuModal } from './MenuModal';
 import { SearchModal } from './SearchModal';
 import { PageTransition } from './PageTransition';
+import { LegalConsentModal } from './LegalConsentModal';
 import { useState } from 'react';
 import { useCartStore } from '@/store/useCartStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
@@ -63,6 +64,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       </main>
       <MenuModal isOpen={showMenu} onClose={() => setShowMenu(false)} />
       <SearchModal isOpen={showSearch} onClose={() => setShowSearch(false)} />
+      <LegalConsentModal />
     </>
   );
 };

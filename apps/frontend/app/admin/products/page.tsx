@@ -124,6 +124,8 @@ export default function ProductsPage() {
         : `https://app.salminashop.ru${product.images[0]}`
       : null;
 
+    const categoryName = categories.find((c) => c.id === product.categoryId)?.name;
+
     return (
       <CardWrapper key={product.id} onClick={() => handleCardClick(product.slug)}>
         <div className="flex gap-3 p-3">
@@ -146,10 +148,17 @@ export default function ProductsPage() {
 
           {/* Content */}
           <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-            {/* Top: Name */}
-            <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
-              {product.name}
-            </h3>
+            {/* Top: Name & Category */}
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
+                {product.name}
+              </h3>
+              {categoryName && (
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 line-clamp-1">
+                  {categoryName}
+                </p>
+              )}
+            </div>
 
             {/* Bottom: Price & Badges */}
             <div className="flex items-center gap-2 flex-wrap">
