@@ -66,13 +66,20 @@ export interface Category {
 export interface CartItem {
   id: string;
   productId: string;
-  product: Product;
-  quantity: number;
-  price: number;
+  productName: string;
+  productSlug: string;
+  productImage: string;
+  productArticle: string | null;
+  basePrice: number;
   appliedPrice: number;
-  total: number;
   hasPromotion: boolean;
   allowPromocode: boolean;
+  quantity: number;
+  subtotal: number;
+  inStock: boolean;
+  availableQuantity: number;
+  // Legacy field for backwards compatibility
+  product?: Product;
 }
 
 export interface CartTotals {
