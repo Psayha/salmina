@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { X, ChevronLeft, ChevronRight, Tag, Percent } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Promotion } from '@/lib/api/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTelegramHaptic, useTelegramBackButton } from '@/lib/telegram/useTelegram';
+import Link from 'next/link';
 
 interface StoriesProps {
   promotions: Promotion[];
@@ -21,9 +22,15 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
   const timerRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const startTimeRef = useRef<number>(Date.now());
   const progressRef = useRef<number>(0);
+  const holdTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const isHoldingRef = useRef(false);
 
   const STORY_DURATION = 10000; // 10 seconds per story
+  const HOLD_DELAY = 150; // Delay before considering it a "hold" gesture
   const currentPromotion = promotions[currentIndex];
+
+  // Get the first product if available
+  const linkedProduct = currentPromotion.products?.[0];
 
   // Stable callback for BackButton
   const handleBackButtonClick = useCallback(() => {
@@ -100,8 +107,31 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
     }
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
+  // Touch handlers with hold-to-pause gesture (like Instagram)
+  const handleTouchStart = () => {
+    // Start hold timer
+    holdTimeoutRef.current = setTimeout(() => {
+      isHoldingRef.current = true;
+      setIsPaused(true);
+      haptic?.impactOccurred('light');
+    }, HOLD_DELAY);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // Clear hold timer
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+    }
+
+    // If was holding, just unpause
+    if (isHoldingRef.current) {
+      isHoldingRef.current = false;
+      setIsPaused(false);
+      return;
+    }
+
+    // Otherwise, navigate based on tap position
+    const touch = e.changedTouches[0];
     const x = touch.clientX;
     const width = window.innerWidth;
 
@@ -112,9 +142,67 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
     }
   };
 
+  const handleTouchCancel = () => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+    }
+    if (isHoldingRef.current) {
+      isHoldingRef.current = false;
+      setIsPaused(false);
+    }
+  };
+
+  // Mouse handlers for desktop
+  const handleMouseDown = () => {
+    holdTimeoutRef.current = setTimeout(() => {
+      isHoldingRef.current = true;
+      setIsPaused(true);
+    }, HOLD_DELAY);
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+    }
+
+    if (isHoldingRef.current) {
+      isHoldingRef.current = false;
+      setIsPaused(false);
+      return;
+    }
+
+    // Navigate on click
+    const x = e.clientX;
+    const width = window.innerWidth;
+
+    if (x < width / 3) {
+      goToPrevious();
+    } else if (x > (width * 2) / 3) {
+      goToNext();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (holdTimeoutRef.current) {
+      clearTimeout(holdTimeoutRef.current);
+    }
+    if (isHoldingRef.current) {
+      isHoldingRef.current = false;
+      setIsPaused(false);
+    }
+  };
+
   const handleClose = () => {
     haptic?.impactOccurred('medium');
     onClose();
+  };
+
+  // Get product image URL
+  const getProductImageUrl = (product: typeof linkedProduct) => {
+    if (!product?.images?.[0]) return null;
+    const img = product.images[0];
+    if (img.startsWith('http')) return img;
+    return `https://app.salminashop.ru${img.startsWith('/') ? '' : '/'}${img}`;
   };
 
   return (
@@ -125,14 +213,16 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] bg-black"
         onTouchStart={handleTouchStart}
-        onMouseDown={() => setIsPaused(true)}
-        onMouseUp={() => setIsPaused(false)}
-        onMouseLeave={() => setIsPaused(false)}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
       >
-        {/* Progress bars */}
-        <div className="absolute top-0 left-0 right-0 z-20 flex gap-1 p-3 pt-safe">
+        {/* Progress bars - positioned in the middle (where header usually is) */}
+        <div className="absolute top-[60px] left-0 right-0 z-20 flex gap-1 px-4">
           {promotions.map((_, index) => (
-            <div key={index} className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden">
+            <div key={index} className="flex-1 h-[3px] bg-white/30 rounded-full overflow-hidden">
               <div
                 className="h-full bg-white transition-all duration-100"
                 style={{
@@ -147,6 +237,13 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
             </div>
           ))}
         </div>
+
+        {/* Pause indicator */}
+        {isPaused && (
+          <div className="absolute top-[80px] left-1/2 -translate-x-1/2 z-20 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
+            <span className="text-white text-xs font-medium">Пауза</span>
+          </div>
+        )}
 
         {/* Close button */}
         <button
@@ -180,70 +277,113 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-            className="relative w-full h-full flex flex-col items-center justify-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="relative w-full h-full flex flex-col"
           >
-            {/* Background Image */}
+            {/* Full screen image */}
             {currentPromotion.image && (
               <div className="absolute inset-0">
                 <Image
-                  src={currentPromotion.image}
-                  alt={currentPromotion.title}
+                  src={
+                    currentPromotion.image.startsWith('http')
+                      ? currentPromotion.image
+                      : `https://app.salminashop.ru${currentPromotion.image}`
+                  }
+                  alt=""
                   fill
                   className="object-contain"
                   unoptimized
                   priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
               </div>
             )}
 
-            {/* Content overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 pb-safe text-white space-y-4 z-10">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-semibold">{currentPromotion.title}</h2>
-                {currentPromotion.description && (
-                  <p className="text-sm text-white/90 font-light leading-relaxed">
-                    {currentPromotion.description}
-                  </p>
-                )}
-              </div>
+            {/* Bottom overlay with product card and dates */}
+            <div className="absolute bottom-0 left-0 right-0 z-10 pb-safe">
+              {/* Gradient overlay for readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
 
-              {/* Discount badge */}
-              {(currentPromotion.discountPercent || currentPromotion.discountAmount) && (
-                <div className="flex items-center gap-2">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl shadow-lg">
-                    {currentPromotion.discountPercent ? (
-                      <>
-                        <Percent className="w-4 h-4" />
-                        <span className="font-bold text-lg">-{currentPromotion.discountPercent}%</span>
-                      </>
-                    ) : (
-                      <>
-                        <Tag className="w-4 h-4" />
-                        <span className="font-bold text-lg">
-                          -{Number(currentPromotion.discountAmount).toLocaleString()} ₽
-                        </span>
-                      </>
+              <div className="relative p-4 space-y-3">
+                {/* Dates */}
+                {(currentPromotion.validFrom || currentPromotion.validTo) && (
+                  <div className="flex items-center justify-center gap-2 text-white/80 text-xs">
+                    {currentPromotion.validFrom && (
+                      <span>
+                        с {new Date(currentPromotion.validFrom).toLocaleDateString('ru-RU')}
+                      </span>
+                    )}
+                    {currentPromotion.validFrom && currentPromotion.validTo && (
+                      <span>—</span>
+                    )}
+                    {currentPromotion.validTo && (
+                      <span>
+                        до {new Date(currentPromotion.validTo).toLocaleDateString('ru-RU')}
+                      </span>
                     )}
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Dates */}
-              {(currentPromotion.validFrom || currentPromotion.validTo) && (
-                <div className="text-xs text-white/70 space-y-1">
-                  {currentPromotion.validFrom && (
-                    <div>Начало: {new Date(currentPromotion.validFrom).toLocaleDateString('ru-RU')}</div>
-                  )}
-                  {currentPromotion.validTo && (
-                    <div>Окончание: {new Date(currentPromotion.validTo).toLocaleDateString('ru-RU')}</div>
-                  )}
-                </div>
-              )}
+                {/* Product card thumbnail */}
+                {linkedProduct && (
+                  <Link
+                    href={`/product/${linkedProduct.slug}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      haptic?.impactOccurred('medium');
+                    }}
+                    className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 active:scale-[0.98] transition-transform"
+                  >
+                    {/* Product image */}
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white/10 flex-shrink-0">
+                      {getProductImageUrl(linkedProduct) ? (
+                        <Image
+                          src={getProductImageUrl(linkedProduct)!}
+                          alt={linkedProduct.name}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white/50">
+                          <span className="text-2xl">📦</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product info */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-white font-medium text-sm line-clamp-1">
+                        {linkedProduct.name}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        {linkedProduct.promotionPrice || linkedProduct.discountPrice ? (
+                          <>
+                            <span className="text-white font-semibold">
+                              {Number(linkedProduct.promotionPrice || linkedProduct.discountPrice).toLocaleString()} ₽
+                            </span>
+                            <span className="text-white/50 text-sm line-through">
+                              {Number(linkedProduct.price).toLocaleString()} ₽
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-white font-semibold">
+                            {Number(linkedProduct.price).toLocaleString()} ₽
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Arrow indicator */}
+                    <div className="flex-shrink-0 text-white/70">
+                      <ChevronRight className="w-5 h-5" />
+                    </div>
+                  </Link>
+                )}
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
