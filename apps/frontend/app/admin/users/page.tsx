@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, Search, FileCheck, FileX } from 'lucide-react';
+import { Ban, CheckCircle, UserCog, Lock, Unlock, Search, FileCheck, FileX } from 'lucide-react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
@@ -155,17 +155,21 @@ export default function UsersPage() {
             {/* Badges */}
             <div className="flex items-center gap-1">
               {/* Legal status */}
-              {user.hasAcceptedTerms ? (
-                <FileCheck className="w-4 h-4 text-green-500" title="Доки приняты" />
-              ) : (
-                <FileX className="w-4 h-4 text-red-500" title="Доки не приняты" />
-              )}
+              <span title={user.hasAcceptedTerms ? 'Доки приняты' : 'Доки не приняты'}>
+                {user.hasAcceptedTerms ? (
+                  <FileCheck className="w-4 h-4 text-green-500" />
+                ) : (
+                  <FileX className="w-4 h-4 text-red-500" />
+                )}
+              </span>
               {/* Active status */}
-              {user.isActive ? (
-                <CheckCircle className="w-4 h-4 text-green-500" />
-              ) : (
-                <Ban className="w-4 h-4 text-red-500" />
-              )}
+              <span title={user.isActive ? 'Активен' : 'Заблокирован'}>
+                {user.isActive ? (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Ban className="w-4 h-4 text-red-500" />
+                )}
+              </span>
             </div>
           </div>
 
