@@ -43,14 +43,16 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter - only images
+// File filter - images and videos
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  const allowedImageMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  const allowedVideoMimes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo'];
+  const allowedMimes = [...allowedImageMimes, ...allowedVideoMimes];
 
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'));
+    cb(new Error('Invalid file type. Only JPEG, PNG, GIF, WebP images and MP4, WebM, MOV videos are allowed.'));
   }
 };
 

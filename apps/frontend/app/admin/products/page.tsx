@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, Pencil, Trash, Search, Package } from 'lucide-react';
+import { Plus, Trash, Search, Package, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -68,7 +68,7 @@ export default function ProductsPage() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
-        (product) => product.name.toLowerCase().includes(query) || product.article.toLowerCase().includes(query),
+        (product) => product.name.toLowerCase().includes(query) || product.article?.toLowerCase().includes(query),
       );
     }
 
@@ -128,75 +128,62 @@ export default function ProductsPage() {
       <CardWrapper key={product.id} onClick={() => handleCardClick(product.slug)}>
         <div className="flex gap-3 p-3">
           {/* Image - small square */}
-          <div className="relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
+          <div className="relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
             {imageUrl ? (
               <Image
                 src={imageUrl}
                 alt={product.name}
                 fill
                 className="object-cover"
-                sizes="80px"
+                sizes="64px"
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
-                <Package className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+                <Package className="w-6 h-6 text-gray-300 dark:text-gray-600" />
               </div>
             )}
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between">
-            {/* Top: Name, Category, Status */}
-            <div>
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
-                  {product.name}
-                </h3>
-                <span
-                  className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-                    product.isActive
-                      ? 'bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
-                  }`}
-                >
-                  {product.isActive ? 'Актив' : 'Черн.'}
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
-                {/* @ts-expect-error - category might be an object */}
-                {product.category?.name || 'Без категории'}
-              </p>
-            </div>
+          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+            {/* Top: Name */}
+            <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-sm">
+              {product.name}
+            </h3>
 
-            {/* Bottom: Price & Stock */}
-            <div className="flex items-center justify-between mt-1">
+            {/* Bottom: Price & Badges */}
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-semibold text-pink-600 dark:text-pink-400">
                 {formatPrice(product.price)}
               </span>
-              <span className={`text-xs ${product.quantity === 0 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-                {product.quantity} шт.
+              <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
+                product.quantity === 0
+                  ? 'border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400'
+                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+              }`}>
+                {product.quantity} шт
+              </span>
+              <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium border ${
+                product.isActive
+                  ? 'border-green-200 dark:border-green-500/30 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400'
+                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+              }`}>
+                {product.isActive ? (
+                  <CheckCircle className="w-3 h-3" />
+                ) : (
+                  <XCircle className="w-3 h-3" />
+                )}
               </span>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCardClick(product.slug);
-              }}
-              className="p-2 bg-pink-50 dark:bg-pink-500/20 text-pink-600 dark:text-pink-400 rounded-lg hover:bg-pink-100 dark:hover:bg-pink-500/30 transition-colors"
-            >
-              <Pencil className="w-4 h-4" />
-            </button>
-            <button
-              onClick={(e) => handleDeleteClick(e, product.id, product.name)}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
-            >
-              <Trash className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Delete button */}
+          <button
+            onClick={(e) => handleDeleteClick(e, product.id, product.name)}
+            className="self-center p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors flex-shrink-0"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
         </div>
       </CardWrapper>
     );
@@ -252,21 +239,21 @@ export default function ProductsPage() {
         </div>
 
         {/* Search, Filter & Add */}
-        <div className="flex gap-3 items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="w-full pl-9 pr-3 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm"
             />
           </div>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white w-40 flex-shrink-0"
+            className="px-3 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light shadow-lg text-gray-900 dark:text-white flex-shrink-0 text-sm max-w-[120px]"
           >
             <option value="">Все</option>
             {categories.map((category) => (
@@ -278,9 +265,9 @@ export default function ProductsPage() {
           <Link
             href="/admin/products/new"
             onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 flex-shrink-0"
+            className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-pink-500/30 flex-shrink-0"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-5 h-5" />
           </Link>
         </div>
 

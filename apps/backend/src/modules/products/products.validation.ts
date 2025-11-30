@@ -10,7 +10,6 @@ import {
   uuidSchema,
   paginationSchema,
   sortOrderSchema,
-  articleSchema,
 } from '../../common/utils/validators.js';
 
 /**
@@ -98,15 +97,6 @@ export const slugSchema = z
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must contain only lowercase letters, numbers, and hyphens');
 
 /**
- * SKU validation
- */
-export const skuSchema = z
-  .string()
-  .min(1)
-  .max(50)
-  .regex(/^[a-zA-Z0-9а-яА-ЯёЁ_\-]+$/, 'SKU must contain only letters, numbers, hyphens and underscores');
-
-/**
  * Images array schema
  */
 export const imagesSchema = z
@@ -132,8 +122,7 @@ export const createProductSchema = z.object({
       price: z.number().positive('Price must be positive'),
       promotionPrice: z.number().positive('Promotion price must be positive').nullable().optional(),
       discountPrice: z.number().positive('Discount price must be positive').nullable().optional(),
-      article: articleSchema,
-      sku: skuSchema.optional(),
+      article: z.string().max(100).optional(),
       weight: z.number().positive('Weight must be positive'),
       dimensions: z.string().max(100).nullable().optional(),
       quantity: z.number().int().min(0, 'Quantity cannot be negative'),
@@ -206,8 +195,7 @@ export const updateProductSchema = z.object({
       price: z.number().positive('Price must be positive').optional(),
       promotionPrice: z.number().positive('Promotion price must be positive').nullable().optional(),
       discountPrice: z.number().positive('Discount price must be positive').nullable().optional(),
-      article: articleSchema.optional(),
-      sku: skuSchema.optional(),
+      article: z.string().max(100).nullable().optional(),
       weight: z.number().positive('Weight must be positive').optional(),
       dimensions: z.string().max(100).nullable().optional(),
       quantity: z.number().int().min(0, 'Quantity cannot be negative').optional(),

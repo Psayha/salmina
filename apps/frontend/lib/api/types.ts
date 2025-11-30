@@ -24,8 +24,7 @@ export interface Product {
   name: string;
   slug: string;
   description?: string;
-  article: string;
-  sku: string;
+  article?: string;
   weight: number;
   price: number;
   discountPrice?: number;
