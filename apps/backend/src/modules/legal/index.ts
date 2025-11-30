@@ -26,6 +26,17 @@ router.get('/', asyncHandler(async (_req: TypedRequest, res) => {
   res.json({ success: true, data: documents });
 }));
 
+// GET /api/legal/admin/:type - Get specific document type regardless of status (admin)
+// Must be before /:type to avoid route conflict
+router.get('/admin/:type', authenticate, requireAdmin, asyncHandler(async (req: TypedRequest<never, { type: string }>, res) => {
+  const type = req.params.type.toUpperCase() as LegalDocumentType;
+  const document = await prisma.legalDocument.findFirst({
+    where: { type },
+    orderBy: { updatedAt: 'desc' },
+  });
+  res.json({ success: true, data: document });
+}));
+
 // GET /api/legal/:type - Get specific document type (public)
 router.get('/:type', asyncHandler(async (req: TypedRequest<never, { type: string }>, res) => {
   const type = req.params.type.toUpperCase() as LegalDocumentType;

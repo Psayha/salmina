@@ -32,6 +32,12 @@ export const legalApi = {
     return response.data.data;
   },
 
+  // Get document for admin (includes inactive)
+  getDocumentForAdmin: async (type: LegalDocumentType) => {
+    const response = await apiClient.get<ApiResponse<LegalDocument | null>>(`/legal/admin/${type.toLowerCase()}`);
+    return response.data.data;
+  },
+
   // Admin endpoints
   createDocument: async (data: Partial<LegalDocument>) => {
     const response = await apiClient.post<ApiResponse<LegalDocument>>('/legal', data);
