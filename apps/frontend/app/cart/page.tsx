@@ -86,6 +86,20 @@ export default function CartPage() {
   const validItems = cart?.items.filter((item) => item.product) || [];
   const isEmpty = !cart || validItems.length === 0;
 
+  // Debug logging
+  console.log('Cart debug:', {
+    hasCart: !!cart,
+    itemsCount: cart?.totals?.itemsCount,
+    rawItemsLength: cart?.items?.length,
+    validItemsLength: validItems.length,
+    items: cart?.items?.map(item => ({
+      id: item.id,
+      productId: item.productId,
+      hasProduct: !!item.product,
+      productName: item.product?.name
+    }))
+  });
+
   return (
     <div className="min-h-screen relative z-10 pb-36">
       {/* Header */}
