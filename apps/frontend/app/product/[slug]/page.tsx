@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
+import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { productsApi } from '@/lib/api';
 import { Product } from '@/lib/api/types';
@@ -19,11 +20,12 @@ export default function ProductPage() {
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  const { addToCart, isLoading: isAddingToCart } = useCartStore();
+  const { addToCart } = useCartStore();
+  const { toggleFavorite, isFavorite } = useFavoritesStore();
   const haptic = useTelegramHaptic();
 
   useTelegramBackButton(() => {
@@ -55,14 +57,17 @@ export default function ProductPage() {
   }, [slug, fetchProduct]);
 
   const handleAddToCart = async () => {
-    if (!product) return;
+    if (!product || isAddingToCart) return;
 
     try {
+      setIsAddingToCart(true);
       await addToCart(product.id, quantity);
       haptic.notificationOccurred('success');
     } catch (error) {
       haptic.notificationOccurred('error');
       console.error('Add to cart error:', error);
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -75,7 +80,8 @@ export default function ProductPage() {
   };
 
   const handleToggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+    if (!product) return;
+    toggleFavorite(product.id);
     haptic.impactOccurred('light');
   };
 
@@ -164,24 +170,27 @@ export default function ProductPage() {
           {/* Favorite Button */}
           <button
             onClick={handleToggleFavorite}
-            className="absolute top-4 right-4 w-11 h-11 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"
+            className={`absolute top-4 right-4 w-11 h-11 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-all ${
+              isFavorite(product.id) ? 'bg-pink-500' : 'bg-white/90 dark:bg-gray-800/90'
+            }`}
           >
             <HeartIcon
-              className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600 dark:text-gray-300'}`}
+              className={`w-6 h-6 ${isFavorite(product.id) ? 'text-white' : 'text-gray-600 dark:text-gray-300'}`}
+              filled={isFavorite(product.id)}
             />
           </button>
         </div>
 
         {/* Thumbnail Gallery */}
         {images.length > 1 && (
-          <div className="flex gap-2 p-4 overflow-x-auto">
+          <div className="flex gap-2 px-4 py-3 overflow-x-auto">
             {images.map((img, index) => (
               <button
                 key={index}
                 onClick={() => handleImageSelect(index)}
-                className={`relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                className={`relative w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
                   index === currentImageIndex
-                    ? 'border-blue-500 ring-2 ring-blue-500/30'
+                    ? 'border-pink-500 ring-2 ring-pink-500/30'
                     : 'border-gray-200 dark:border-gray-700'
                 }`}
               >
@@ -229,13 +238,13 @@ export default function ProductPage() {
         )}
 
         {/* Quantity Selector */}
-        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+        <div className="flex items-center justify-between bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/30 dark:border-white/10">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Количество</span>
           <div className="flex items-center gap-4">
             <button
               onClick={() => handleQuantityChange(-1)}
               disabled={quantity <= 1}
-              className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full shadow-sm flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-transform"
+              className="w-10 h-10 bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-full shadow-sm border border-white/30 dark:border-white/10 flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
             >
               −
             </button>
@@ -245,7 +254,7 @@ export default function ProductPage() {
             <button
               onClick={() => handleQuantityChange(1)}
               disabled={quantity >= 99}
-              className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full shadow-sm flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-transform"
+              className="w-10 h-10 bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-full shadow-sm border border-white/30 dark:border-white/10 flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
             >
               +
             </button>
@@ -317,7 +326,7 @@ export default function ProductPage() {
       </div>
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 p-4 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/60 dark:bg-white/10 backdrop-blur-md border-t border-white/30 dark:border-white/10 shadow-lg px-4 py-4 z-50">
         <Button
           onClick={handleAddToCart}
           disabled={isAddingToCart || product.quantity === 0}

@@ -69,13 +69,11 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen relative z-10 pb-8">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Настройки</h1>
-        </div>
+      <div className="px-4 pt-2 pb-4">
+        <h1 className="text-lg font-light text-gray-900 dark:text-white">Настройки</h1>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-4 space-y-4">
         {settingSections.map((section, sectionIndex) => (
           <div
             key={sectionIndex}
