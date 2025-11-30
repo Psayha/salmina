@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Upload, X, GripVertical, Play, Image as ImageIcon, Film } from 'lucide-react';
+import { Upload, X, Play, Image as ImageIcon, Film } from 'lucide-react';
 import Image from 'next/image';
 import { apiClient } from '@/lib/api/client';
 
@@ -103,7 +103,12 @@ export function ImageUpload({
         }
       }
 
-      onChange([...value, ...uploadedUrls]);
+      // If maxFiles is 1, replace instead of append
+      if (maxFiles === 1) {
+        onChange(uploadedUrls.slice(0, 1));
+      } else {
+        onChange([...value, ...uploadedUrls]);
+      }
     } catch (error) {
       console.error('Upload error:', error);
       alert('Ошибка загрузки файлов');
@@ -309,10 +314,6 @@ export function ImageUpload({
                     </div>
                   )}
 
-                  {/* Drag Handle */}
-                  <div className="absolute top-1 right-1 z-10 p-1 bg-black/40 backdrop-blur-sm rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                    <GripVertical className="w-3 h-3 text-white" />
-                  </div>
 
                   {/* Media Content */}
                   {isVideo ? (
@@ -352,45 +353,47 @@ export function ImageUpload({
                     />
                   )}
 
-                  {/* Remove Button */}
+                  {/* Remove Button - always visible */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       removeItem(index);
                     }}
-                    className="absolute bottom-1 right-1 z-10 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute top-1 right-1 z-10 w-6 h-6 rounded-full bg-red-500/90 backdrop-blur-sm text-white flex items-center justify-center shadow-lg hover:bg-red-600 active:scale-95 transition-all"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
 
-                  {/* Move buttons for mobile (touch) */}
-                  <div className="absolute bottom-1 left-1 z-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity sm:hidden">
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          moveItem(index, index - 1);
-                        }}
-                        className="w-6 h-6 rounded bg-black/50 backdrop-blur-sm text-white flex items-center justify-center text-xs"
-                      >
-                        ←
-                      </button>
-                    )}
-                    {index < value.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          moveItem(index, index + 1);
-                        }}
-                        className="w-6 h-6 rounded bg-black/50 backdrop-blur-sm text-white flex items-center justify-center text-xs"
-                      >
-                        →
-                      </button>
-                    )}
-                  </div>
+                  {/* Move buttons - always visible when multiple images */}
+                  {value.length > 1 && (
+                    <div className="absolute bottom-1 left-1 z-10 flex gap-1">
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveItem(index, index - 1);
+                          }}
+                          className="w-6 h-6 rounded bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs active:scale-95 transition-transform"
+                        >
+                          ←
+                        </button>
+                      )}
+                      {index < value.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            moveItem(index, index + 1);
+                          }}
+                          className="w-6 h-6 rounded bg-black/60 backdrop-blur-sm text-white flex items-center justify-center text-xs active:scale-95 transition-transform"
+                        >
+                          →
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
