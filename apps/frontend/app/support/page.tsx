@@ -73,13 +73,11 @@ export default function SupportPage() {
   return (
     <div className="min-h-screen relative z-10 pb-8">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Поддержка</h1>
-        </div>
+      <div className="px-4 pt-2 pb-4">
+        <h1 className="text-lg font-light text-gray-900 dark:text-white">Поддержка</h1>
       </div>
 
-      <div className="px-6 py-6 space-y-6">
+      <div className="px-4 space-y-4">
         {/* Contact Options */}
         <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
           <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">

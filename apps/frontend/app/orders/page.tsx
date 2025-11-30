@@ -154,14 +154,12 @@ export default function OrdersPage() {
     return (
       <div className="min-h-screen relative z-10 pb-8">
         {/* Header */}
-        <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-          <div className="px-6 py-6">
-            <h1 className="text-2xl font-light text-gray-900 dark:text-white">Заказ {order.orderNumber}</h1>
-            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">{formatDate(order.createdAt)}</p>
-          </div>
+        <div className="px-4 pt-2 pb-4">
+          <h1 className="text-lg font-light text-gray-900 dark:text-white">Заказ {order.orderNumber}</h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">{formatDate(order.createdAt)}</p>
         </div>
 
-        <div className="px-6 py-6 space-y-6">
+        <div className="px-4 space-y-4">
           {/* Status */}
           <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
             <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-3">Статус заказа</h2>
@@ -225,15 +223,15 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen relative z-10 pb-8">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Мои заказы</h1>
-          {!isEmpty && <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">Всего заказов: {orders.length}</p>}
+      <div className="px-4 pt-2 pb-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-light text-gray-900 dark:text-white">Мои заказы</h1>
+          {!isEmpty && <p className="text-sm font-light text-gray-600 dark:text-gray-400">Всего: {orders.length}</p>}
         </div>
       </div>
 
       {isEmpty ? (
-        <div className="flex items-center justify-center min-h-[60vh] px-6">
+        <div className="flex items-center justify-center min-h-[60vh] px-4">
           <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/30 dark:border-white/10 shadow-lg text-center max-w-md">
             <div className="w-24 h-24 mx-auto mb-6 bg-white/30 dark:bg-white/10 rounded-full flex items-center justify-center">
               <span className="text-5xl">📦</span>
@@ -244,7 +242,7 @@ export default function OrdersPage() {
           </div>
         </div>
       ) : (
-        <div className="px-6 py-6 space-y-4">
+        <div className="px-4 space-y-4">
           {orders.map((order) => (
             <button
               key={order.id}

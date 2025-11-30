@@ -19,9 +19,18 @@ export function Eruda() {
     script.onload = () => {
       // @ts-expect-error -- Eruda is loaded dynamically
       if (window.eruda) {
+        // Detect dark theme from system or Telegram
+        const isDark =
+          window.matchMedia('(prefers-color-scheme: dark)').matches ||
+          document.documentElement.classList.contains('dark');
+
         // @ts-expect-error -- Eruda is loaded dynamically
-        window.eruda.init();
-        console.log('[Eruda] DevTools loaded');
+        window.eruda.init({
+          defaults: {
+            theme: isDark ? 'Dark' : 'Light',
+          },
+        });
+        console.log('[Eruda] DevTools loaded with theme:', isDark ? 'Dark' : 'Light');
       }
     };
     document.body.appendChild(script);

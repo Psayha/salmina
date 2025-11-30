@@ -75,11 +75,11 @@ export default function FavoritesPage() {
   return (
     <div className="min-h-screen relative z-10 pb-8">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Избранное</h1>
+      <div className="px-4 pt-2 pb-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-light text-gray-900 dark:text-white">Избранное</h1>
           {products.length > 0 && (
-            <p className="text-sm font-light text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400">
               {products.length} {products.length === 1 ? 'товар' : 'товаров'}
             </p>
           )}
@@ -95,8 +95,8 @@ export default function FavoritesPage() {
           fullScreen
         />
       ) : (
-        <div className="px-6 py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="px-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
             {products.map((product) => (
               <div key={product.id} className="relative">
                 {/* Favorite button overlay */}
