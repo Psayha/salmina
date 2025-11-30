@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search } from 'lucide-react';
+import { X, Search, ChevronRight } from 'lucide-react';
 import { productsApi } from '@/lib/api';
 import { Product } from '@/lib/api/types';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -156,7 +156,7 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                           {(product.promotionPrice || product.discountPrice || product.price).toLocaleString('ru-RU')} ₽
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-gray-400 shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-gray-400 shrink-0" />
                     </button>
                   ))}
                 </div>
