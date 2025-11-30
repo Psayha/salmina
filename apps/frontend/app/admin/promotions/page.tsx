@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Trash, Plus, Megaphone, Search } from 'lucide-react';
+import { Trash, Plus, Megaphone, Search } from 'lucide-react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -165,24 +165,13 @@ export default function PromotionsPage() {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col gap-1 flex-shrink-0">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCardClick(promotion.id);
-              }}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-            </button>
-            <button
-              onClick={(e) => handleDeleteClick(e, promotion)}
-              className="p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors"
-            >
-              <Trash className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Delete button */}
+          <button
+            onClick={(e) => handleDeleteClick(e, promotion)}
+            className="self-center p-2 bg-red-50 dark:bg-red-500/20 text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/30 transition-colors flex-shrink-0"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
         </div>
       </CardWrapper>
     );
@@ -238,23 +227,23 @@ export default function PromotionsPage() {
         </div>
 
         {/* Search & Add */}
-        <div className="flex gap-3 items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1 min-w-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               placeholder="Поиск..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              className="w-full pl-9 pr-3 py-2.5 bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-light shadow-lg text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm"
             />
           </div>
           <Link
             href="/admin/promotions/new"
             onClick={() => haptic?.impactOccurred('light')}
-            className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-red-500/30 flex-shrink-0"
+            className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 shadow-lg shadow-red-500/30 flex-shrink-0"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="w-5 h-5" />
           </Link>
         </div>
 
