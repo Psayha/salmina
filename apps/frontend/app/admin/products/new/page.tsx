@@ -20,7 +20,6 @@ export default function NewProductPage() {
     name: '',
     slug: '',
     description: '',
-    article: '',
     weight: '',
     price: '',
     discountPrice: '',
@@ -57,19 +56,11 @@ export default function NewProductPage() {
       !formData.name ||
       !formData.slug ||
       !formData.description ||
-      !formData.article ||
       !formData.weight ||
       !formData.price ||
       !formData.categoryId
     ) {
       alert('Заполните все обязательные поля');
-      haptic?.notificationOccurred('error');
-      return;
-    }
-
-    // Validate article format (uppercase, numbers, dashes)
-    if (!/^[A-Z0-9-]+$/.test(formData.article)) {
-      alert('Артикул должен содержать только заглавные буквы, цифры и дефисы');
       haptic?.notificationOccurred('error');
       return;
     }
@@ -88,7 +79,6 @@ export default function NewProductPage() {
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
-        article: formData.article.toUpperCase(),
         weight: parseFloat(formData.weight) || 0,
         price: parseFloat(formData.price) || 0,
         discountPrice: formData.hasPromotion && formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
@@ -181,37 +171,19 @@ export default function NewProductPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
-                Артикул <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.article}
-                onChange={(e) => setFormData({ ...formData, article: e.target.value.toUpperCase() })}
-                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light uppercase text-gray-900 dark:text-white"
-                placeholder="ART-123"
-                pattern="[A-Z0-9-]+"
-                required
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Заглавные буквы, цифры, дефисы</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
-                Вес (г) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={formData.weight}
-                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
-                placeholder="100"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+              Вес (г) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              value={formData.weight}
+              onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              placeholder="100"
+              required
+            />
           </div>
 
           <div>
@@ -221,7 +193,7 @@ export default function NewProductPage() {
             <select
               value={formData.categoryId}
               onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-              className="w-full h-[46px] px-4 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
               required
             >
               <option value="">Выберите категорию</option>

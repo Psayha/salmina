@@ -26,10 +26,8 @@ export interface Product {
   promotionPrice?: number | null;
   /** Discount price (optional) */
   discountPrice?: number | null;
-  /** Product article number (unique) */
-  article: string;
-  /** Stock keeping unit (SKU, unique) */
-  sku: string;
+  /** Product article number (optional) */
+  article?: string | null;
   /** Product weight in kg */
   weight: number;
   /** Product dimensions (optional) */
@@ -117,10 +115,8 @@ export interface CreateProductDTO {
   promotionPrice?: number;
   /** Discount price (optional) */
   discountPrice?: number;
-  /** Product article number */
-  article: string;
-  /** Stock keeping unit (SKU) */
-  sku: string;
+  /** Product article number (optional) */
+  article?: string;
   /** Product weight in kg */
   weight: number;
   /** Product dimensions (optional) */

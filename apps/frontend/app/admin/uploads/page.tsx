@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Download, Copy, Check, ImageIcon, RefreshCw } from 'lucide-react';
+import { Trash2, Copy, Check, ImageIcon, RefreshCw } from 'lucide-react';
 import Image from 'next/image';
 import { uploadsApi, UploadedFile } from '@/lib/api/endpoints/uploads';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -133,9 +133,9 @@ export default function UploadsPage() {
 
       {/* Gallery Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
           ))}
         </div>
       ) : files.length === 0 ? (
@@ -144,11 +144,11 @@ export default function UploadsPage() {
           <p className="text-gray-500 dark:text-gray-400">Нет загруженных файлов</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-2">
           {files.map((file) => (
             <div
               key={file.filename}
-              className="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-500 transition-all hover:shadow-lg"
+              className="group relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-500 transition-all"
             >
               {/* Image */}
               <div
@@ -160,49 +160,30 @@ export default function UploadsPage() {
                   alt={file.filename}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 12.5vw"
                 />
               </div>
 
               {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
                 <button
                   onClick={() => handleCopyUrl(file)}
-                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                  className="p-1.5 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
                   title="Копировать ссылку"
                 >
                   {copiedUrl === file.filename ? (
-                    <Check className="w-5 h-5 text-green-400" />
+                    <Check className="w-4 h-4 text-green-400" />
                   ) : (
-                    <Copy className="w-5 h-5 text-white" />
+                    <Copy className="w-4 h-4 text-white" />
                   )}
                 </button>
-                <a
-                  href={getFullUrl(file.url)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                  title="Открыть в новой вкладке"
-                >
-                  <Download className="w-5 h-5 text-white" />
-                </a>
                 <button
                   onClick={() => handleDeleteClick(file)}
-                  className="p-2 bg-red-500/50 backdrop-blur-sm rounded-full hover:bg-red-500/70 transition-colors"
+                  className="p-1.5 bg-red-500/50 backdrop-blur-sm rounded-full hover:bg-red-500/70 transition-colors"
                   title="Удалить"
                 >
-                  <Trash2 className="w-5 h-5 text-white" />
+                  <Trash2 className="w-4 h-4 text-white" />
                 </button>
-              </div>
-
-              {/* File Info */}
-              <div className="p-2.5">
-                <p className="text-xs text-gray-700 dark:text-gray-300 truncate" title={file.filename}>
-                  {file.filename}
-                </p>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">
-                  {formatFileSize(file.size)}
-                </p>
               </div>
             </div>
           ))}
