@@ -273,17 +273,18 @@ Authorization: Bearer {accessToken}  // Для авторизованных
       {
         "id": "uuid",
         "productId": "uuid",
-        "product": {
-          "id": "uuid",
-          "name": "Крем для лица",
-          ...
-        },
-        "quantity": 2,
-        "price": 1500,
+        "productName": "Крем для лица",
+        "productSlug": "krem-dlya-litsa",
+        "productImage": "/uploads/products/image.jpg",
+        "productArticle": "ART-001",
+        "basePrice": 1500,
         "appliedPrice": 1500,
-        "total": 3000,
         "hasPromotion": false,
-        "allowPromocode": true
+        "allowPromocode": true,
+        "quantity": 2,
+        "subtotal": 3000,
+        "inStock": true,
+        "availableQuantity": 10
       }
     ],
     "totals": {
@@ -298,7 +299,10 @@ Authorization: Bearer {accessToken}  // Для авторизованных
     "updatedAt": "2024-01-01T00:00:00Z"
   }
 }
+
 ```
+
+**Важно:** Backend возвращает плоскую (flat) структуру `CartItem` без вложенного объекта `product`. Все данные о товаре доступны напрямую через поля `productName`, `productImage`, `productSlug` и т.д.
 
 #### POST /cart/items
 Добавить товар в корзину
