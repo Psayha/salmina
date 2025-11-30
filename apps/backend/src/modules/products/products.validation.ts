@@ -133,7 +133,7 @@ export const createProductSchema = z.object({
       promotionPrice: z.number().positive('Promotion price must be positive').nullable().optional(),
       discountPrice: z.number().positive('Discount price must be positive').nullable().optional(),
       article: articleSchema,
-      sku: skuSchema,
+      sku: skuSchema.optional(),
       weight: z.number().positive('Weight must be positive'),
       dimensions: z.string().max(100).nullable().optional(),
       quantity: z.number().int().min(0, 'Quantity cannot be negative'),
