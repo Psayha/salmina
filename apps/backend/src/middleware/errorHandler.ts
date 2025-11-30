@@ -48,6 +48,7 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
     message: error.message,
     code: error.code,
     statusCode: error.statusCode,
+    details: error.details,
     path: req.path,
     method: req.method,
     userId: (req as any).user?.userId,
