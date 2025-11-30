@@ -38,8 +38,8 @@ export interface Product {
   composition?: string | null;
   /** Delivery information (optional) */
   delivery?: string | null;
-  /** Product characteristics as JSON (optional) */
-  characteristics?: Record<string, unknown> | null;
+  /** Product characteristics (text or JSON, optional) */
+  characteristics?: string | Record<string, unknown> | null;
   /** Product application/usage (optional) */
   application?: string | null;
   /** Array of product image URLs */
@@ -128,7 +128,7 @@ export interface CreateProductDTO {
   /** Delivery information (optional) */
   delivery?: string;
   /** Product characteristics (optional) */
-  characteristics?: Record<string, unknown>;
+  characteristics?: string | Record<string, unknown>;
   /** Product application (optional) */
   application?: string;
   /** Product image URLs */
@@ -169,7 +169,7 @@ export interface UpdateProductDTO {
   /** Delivery information (optional) */
   delivery?: string;
   /** Product characteristics (optional) */
-  characteristics?: Record<string, unknown>;
+  characteristics?: string | Record<string, unknown>;
   /** Product application (optional) */
   application?: string;
   /** Product images (optional) */

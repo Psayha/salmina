@@ -104,7 +104,7 @@ export interface ProductListItem {
 export interface ProductDetail extends ProductListItem {
   composition: string | null;
   delivery: string | null;
-  characteristics: Record<string, unknown> | null;
+  characteristics: string | Record<string, unknown> | null;
   application: string | null;
 }
 
@@ -179,7 +179,7 @@ export interface CreateProductDTO {
   quantity: number;
   composition?: string | null;
   delivery?: string | null;
-  characteristics?: Record<string, unknown> | null;
+  characteristics?: string | Record<string, unknown> | null;
   application?: string | null;
   images: string[];
   isNew?: boolean;
@@ -207,7 +207,7 @@ export interface UpdateProductDTO {
   quantity?: number;
   composition?: string | null;
   delivery?: string | null;
-  characteristics?: Record<string, unknown> | null;
+  characteristics?: string | Record<string, unknown> | null;
   application?: string | null;
   images?: string[];
   isNew?: boolean;
@@ -314,7 +314,7 @@ export function toProductDetail(product: ProductWithCategory): ProductDetail {
     ...listItem,
     composition: product.composition,
     delivery: product.delivery,
-    characteristics: product.characteristics as Record<string, unknown> | null,
+    characteristics: product.characteristics as string | Record<string, unknown> | null,
     application: product.application,
   };
 }

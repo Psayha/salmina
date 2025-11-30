@@ -105,9 +105,12 @@ export const imagesSchema = z
   .max(10, 'Maximum 10 images allowed');
 
 /**
- * Characteristics schema (JSON object)
+ * Characteristics schema (text or JSON object)
  */
-export const characteristicsSchema = z.record(z.unknown()).nullable().optional();
+export const characteristicsSchema = z.union([
+  z.string().max(2000),
+  z.record(z.unknown())
+]).nullable().optional();
 
 /**
  * Create product schema
