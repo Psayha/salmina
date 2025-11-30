@@ -26,26 +26,47 @@ export function LegalConsentModal() {
 
   useEffect(() => {
     // Don't show modal if user already accepted terms
-    if (!user || user.hasAcceptedTerms) {
+    if (!user) {
       setIsOpen(false);
       setIsLoading(false);
       return;
     }
 
+    if (user.hasAcceptedTerms) {
+      console.log('[LegalConsent] User already accepted terms');
+      setIsOpen(false);
+      setIsLoading(false);
+      return;
+    }
+
+    console.log('[LegalConsent] User has NOT accepted terms, fetching documents...');
+
     // Fetch legal documents
     async function fetchDocuments() {
       try {
         const docs = await legalApi.getDocuments();
+        console.log('[LegalConsent] Fetched documents:', docs);
+
         const activeTerms = docs.find((d) => d.type === LegalDocumentType.TERMS && d.isActive);
         const activePrivacy = docs.find((d) => d.type === LegalDocumentType.PRIVACY && d.isActive);
 
-        // Only show modal if we have both required documents
-        if (activeTerms && activePrivacy) {
-          setDocuments([activeTerms, activePrivacy]);
+        console.log('[LegalConsent] Active TERMS:', activeTerms);
+        console.log('[LegalConsent] Active PRIVACY:', activePrivacy);
+
+        // Show modal if we have at least TERMS document
+        if (activeTerms) {
+          const docsToShow = [activeTerms];
+          if (activePrivacy) {
+            docsToShow.push(activePrivacy);
+          }
+          setDocuments(docsToShow);
           setIsOpen(true);
+          console.log('[LegalConsent] Opening modal with documents:', docsToShow.length);
+        } else {
+          console.warn('[LegalConsent] No active TERMS document found! Modal will not show.');
         }
       } catch (error) {
-        console.error('Failed to fetch legal documents:', error);
+        console.error('[LegalConsent] Failed to fetch legal documents:', error);
       } finally {
         setIsLoading(false);
       }
