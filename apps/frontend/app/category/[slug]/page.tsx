@@ -107,7 +107,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen relative z-10 pb-24">
+    <div className="min-h-screen relative z-10 pb-8">
       {/* Header */}
       <div className="sticky top-24 z-40 bg-white/60 backdrop-blur-md border-b border-white/30 shadow-lg">
         <div className="px-6 py-6">

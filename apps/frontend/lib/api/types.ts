@@ -38,6 +38,7 @@ export interface Product {
   isDiscount?: boolean;
   hasPromotion: boolean;
   promotionLabel?: string;
+  orderCount?: number;
   createdAt: string;
   updatedAt: string;
 }
