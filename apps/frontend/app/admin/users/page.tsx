@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, Search } from 'lucide-react';
+import { Shield, Ban, CheckCircle, UserCog, Lock, Unlock, Search, FileCheck, FileX } from 'lucide-react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { adminApi } from '@/lib/api/endpoints/admin';
@@ -174,7 +174,7 @@ export default function UsersPage() {
             </span>
           </div>
 
-          {/* Role & Date */}
+          {/* Role & Legal Status */}
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1.5">
               {user.role === 'ADMIN' && <Shield className="w-4 h-4 text-purple-500" />}
@@ -188,9 +188,24 @@ export default function UsersPage() {
                 {user.role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
               </span>
             </div>
-            <span className="text-gray-500 dark:text-gray-400 text-xs">
-              {new Date(user.createdAt).toLocaleDateString('ru-RU')}
-            </span>
+            <div className="flex items-center gap-1.5">
+              {user.hasAcceptedTerms ? (
+                <span className="flex items-center gap-1 text-green-600 dark:text-green-400" title={`Принято: ${user.termsAcceptedAt ? new Date(user.termsAcceptedAt).toLocaleDateString('ru-RU') : ''}`}>
+                  <FileCheck className="w-4 h-4" />
+                  <span className="text-xs">Доки</span>
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-red-500 dark:text-red-400" title="Документы не приняты">
+                  <FileX className="w-4 h-4" />
+                  <span className="text-xs">Нет</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Date */}
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            Регистрация: {new Date(user.createdAt).toLocaleDateString('ru-RU')}
           </div>
 
           {/* Actions */}
