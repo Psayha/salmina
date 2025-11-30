@@ -110,9 +110,20 @@ export default function ProductPage() {
       setIsAddingToCart(true);
       await addToCart(product.id, quantity);
       haptic.notificationOccurred('success');
-    } catch (error) {
+    } catch (error: unknown) {
       haptic.notificationOccurred('error');
-      console.error('Add to cart error:', error);
+      // Log detailed error info
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: unknown; status?: number } };
+        console.error('Add to cart error:', {
+          status: axiosError.response?.status,
+          data: axiosError.response?.data,
+          productId: product.id,
+          quantity
+        });
+      } else {
+        console.error('Add to cart error:', error);
+      }
     } finally {
       setIsAddingToCart(false);
     }
