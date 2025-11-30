@@ -97,10 +97,10 @@ export const slugSchema = z
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must contain only lowercase letters, numbers, and hyphens');
 
 /**
- * Images array schema
+ * Images array schema (accepts URLs or relative paths)
  */
 export const imagesSchema = z
-  .array(z.string().url('Each image must be a valid URL'))
+  .array(z.string().min(1, 'Image path cannot be empty'))
   .min(0, 'Images array is optional')
   .max(10, 'Maximum 10 images allowed');
 
