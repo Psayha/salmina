@@ -219,10 +219,10 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Progress bars - positioned in the middle (where header usually is) */}
-        <div className="absolute top-[60px] left-0 right-0 z-20 flex gap-1 px-4">
+        {/* Progress bars - centered between system buttons */}
+        <div className="absolute top-[60px] left-1/2 -translate-x-1/2 z-20 flex gap-1 w-[120px]">
           {promotions.map((_, index) => (
-            <div key={index} className="flex-1 h-[3px] bg-white/30 rounded-full overflow-hidden">
+            <div key={index} className="flex-1 h-[4px] bg-white/30 rounded-full overflow-hidden">
               <div
                 className="h-full bg-white transition-all duration-100"
                 style={{

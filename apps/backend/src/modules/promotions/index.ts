@@ -9,7 +9,14 @@ const router: Router = Router();
 // GET /api/promotions - Active promotions (public)
 router.get('/', asyncHandler(async (_req: TypedRequest, res) => {
   const promotions = await prisma.promotion.findMany({
+    where: { isActive: true },
     orderBy: { order: 'asc' },
+    include: {
+      products: {
+        select: { id: true, name: true, slug: true, price: true, promotionPrice: true, discountPrice: true, images: true },
+        take: 1, // Only first product for story thumbnail
+      },
+    },
   });
   res.json({ success: true, data: promotions });
 }));
@@ -22,6 +29,9 @@ router.get('/admin', authenticate, requireAdmin, asyncHandler(async (req: TypedR
     { page: Number(req.query.page), limit: Number(req.query.limit) },
     undefined,
     {
+      products: {
+        select: { id: true, name: true, slug: true, price: true, images: true },
+      },
       _count: {
         select: { products: true },
       },
