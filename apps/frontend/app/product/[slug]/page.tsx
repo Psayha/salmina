@@ -9,7 +9,54 @@ import { productsApi } from '@/lib/api';
 import { Product } from '@/lib/api/types';
 import { Button } from '@/components/ui';
 import { CartIcon, HeartIcon } from '@/components/ui/icons';
+import { ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+
+// Collapsible section component
+const CollapsibleSection = ({
+  title,
+  children,
+  defaultOpen = false
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-t border-gray-100 dark:border-gray-800">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-4 text-left"
+      >
+        <span className="text-sm font-semibold text-gray-900 dark:text-white">{title}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="w-5 h-5 text-gray-400" />
+        </motion.div>
+      </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="pb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function ProductPage() {
   const router = useRouter();
@@ -207,76 +254,50 @@ export default function ProductPage() {
       </div>
 
       {/* Product Info */}
-      <div className="px-4 py-5 space-y-4">
+      <div className="px-4 py-5 space-y-2">
         {/* Name */}
         <h1 className="text-xl font-semibold text-gray-900 dark:text-white leading-tight">
           {product.name}
         </h1>
 
         {/* Price Block */}
-        <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="flex items-baseline gap-3 pb-2">
+          <span className="text-2xl font-bold text-gray-900 dark:text-white">
             {finalPrice.toLocaleString('ru-RU')} ₽
           </span>
           {hasDiscount && (
-            <span className="text-lg text-gray-400 line-through">
+            <span className="text-base text-gray-400 line-through">
               {product.price.toLocaleString('ru-RU')} ₽
             </span>
           )}
         </div>
 
-        {/* Stock Info */}
-        {product.quantity !== undefined && (
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-2 h-2 rounded-full ${product.quantity > 0 ? 'bg-green-500' : 'bg-red-500'}`}
-            ></div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {product.quantity > 0 ? `В наличии: ${product.quantity} шт.` : 'Нет в наличии'}
-            </span>
-          </div>
+        {/* Collapsible Sections */}
+        {product.description && (
+          <CollapsibleSection title="Описание" defaultOpen>
+            {product.description}
+          </CollapsibleSection>
         )}
 
-        {/* Quantity Selector */}
-        <div className="flex items-center justify-between bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/30 dark:border-white/10">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Количество</span>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => handleQuantityChange(-1)}
-              disabled={quantity <= 1}
-              className="w-10 h-10 bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-full shadow-sm border border-white/30 dark:border-white/10 flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
-            >
-              −
-            </button>
-            <span className="text-xl font-semibold text-gray-900 dark:text-white w-8 text-center">
-              {quantity}
-            </span>
-            <button
-              onClick={() => handleQuantityChange(1)}
-              disabled={quantity >= 99}
-              className="w-10 h-10 bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-full shadow-sm border border-white/30 dark:border-white/10 flex items-center justify-center text-xl font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
-            >
-              +
-            </button>
-          </div>
-        </div>
+        {/* Application - placeholder for future field */}
+        {(product as Product & { application?: string }).application && (
+          <CollapsibleSection title="Применение">
+            {(product as Product & { application?: string }).application}
+          </CollapsibleSection>
+        )}
 
-        {/* Total Price */}
-        <div className="flex items-center justify-between py-3 border-t border-gray-100 dark:border-gray-800">
-          <span className="text-sm text-gray-600 dark:text-gray-400">Итого:</span>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
-            {(finalPrice * quantity).toLocaleString('ru-RU')} ₽
-          </span>
-        </div>
+        {/* Composition - placeholder for future field */}
+        {(product as Product & { composition?: string }).composition && (
+          <CollapsibleSection title="Состав">
+            {(product as Product & { composition?: string }).composition}
+          </CollapsibleSection>
+        )}
 
-        {/* Description */}
-        {product.description && (
-          <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Описание</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">
-              {product.description}
-            </p>
-          </div>
+        {/* Characteristics - placeholder for future field */}
+        {(product as Product & { characteristics?: string }).characteristics && (
+          <CollapsibleSection title="Характеристики">
+            {(product as Product & { characteristics?: string }).characteristics}
+          </CollapsibleSection>
         )}
 
         {/* Related Products */}
@@ -325,60 +346,70 @@ export default function ProductPage() {
         )}
       </div>
 
-      {/* Fixed Bottom Bar - iOS style */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-t-3xl border-t border-white/30 dark:border-white/10 shadow-2xl z-50">
-        <div className="px-4 pt-4 pb-6">
-          {/* Info Row */}
-          <div className="flex items-center justify-between mb-3">
-            {/* Stock & Quantity Info */}
-            <div className="flex items-center gap-3">
-              {product.quantity !== undefined && product.quantity > 0 && (
-                <div className="flex items-center gap-1.5 bg-green-500/10 px-3 py-1.5 rounded-full">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                  <span className="text-xs font-medium text-green-600 dark:text-green-400">
-                    {product.quantity} шт.
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-1.5 bg-gray-100 dark:bg-white/10 px-3 py-1.5 rounded-full">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Кол-во:</span>
-                <span className="text-xs font-semibold text-gray-900 dark:text-white">{quantity}</span>
+      {/* Fixed Bottom Bar - iOS style, single row */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-t-3xl border-t border-white/30 dark:border-white/10 shadow-2xl z-50">
+        <div className="px-3 pt-3 pb-6">
+          <div className="flex items-center gap-2">
+            {/* Stock indicator */}
+            {product.quantity !== undefined && product.quantity > 0 && (
+              <div className="flex items-center gap-1 bg-green-500/10 px-2 py-1.5 rounded-full shrink-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                <span className="text-xs font-medium text-green-600 dark:text-green-400">
+                  {product.quantity}
+                </span>
               </div>
+            )}
+
+            {/* Quantity controls */}
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                onClick={() => handleQuantityChange(-1)}
+                disabled={quantity <= 1}
+                className="w-8 h-8 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center text-lg font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
+              >
+                −
+              </button>
+              <span className="text-base font-semibold text-gray-900 dark:text-white w-6 text-center">
+                {quantity}
+              </span>
+              <button
+                onClick={() => handleQuantityChange(1)}
+                disabled={quantity >= (product.quantity || 99)}
+                className="w-8 h-8 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center text-lg font-light text-gray-700 dark:text-gray-200 disabled:opacity-40 active:scale-95 transition-all"
+              >
+                +
+              </button>
             </div>
 
-            {/* Total Price */}
-            <div className="text-right">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Итого</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
+            {/* Price */}
+            <div className="text-right shrink-0 ml-auto">
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
                 {(finalPrice * quantity).toLocaleString('ru-RU')} ₽
               </p>
             </div>
-          </div>
 
-          {/* Add to Cart Button - iOS style */}
-          <button
-            onClick={handleAddToCart}
-            disabled={isAddingToCart || product.quantity === 0}
-            className={`w-full py-4 rounded-2xl font-medium text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-200 ${
-              product.quantity === 0
-                ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-                : 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30'
-            }`}
-          >
-            {isAddingToCart ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>Добавление...</span>
-              </>
-            ) : product.quantity === 0 ? (
-              <span>Нет в наличии</span>
-            ) : (
-              <>
-                <CartIcon className="w-5 h-5" />
-                <span>Добавить в корзину</span>
-              </>
-            )}
-          </button>
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              disabled={isAddingToCart || product.quantity === 0}
+              className={`px-4 py-2.5 rounded-xl font-medium text-sm flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all duration-200 shrink-0 ${
+                product.quantity === 0
+                  ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                  : 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg shadow-pink-500/30'
+              }`}
+            >
+              {isAddingToCart ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              ) : product.quantity === 0 ? (
+                <span>Нет</span>
+              ) : (
+                <>
+                  <CartIcon className="w-4 h-4" />
+                  <span>В корзину</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
