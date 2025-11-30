@@ -118,7 +118,7 @@ function SearchPageContent() {
   const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label || 'Сортировка';
 
   return (
-    <div className="min-h-screen relative z-10 pb-24">
+    <div className="min-h-screen relative z-10 pb-8">
       {/* Categories */}
       <div className="px-4 pt-2 pb-3">
         <div className="flex gap-2 items-center overflow-x-auto scrollbar-hide -mx-4 px-4">

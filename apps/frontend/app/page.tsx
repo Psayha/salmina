@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { CategoryPill } from '@/components/ui/CategoryPill';
 import { ProductCard } from '@/components/ProductCard';
 import { useCartStore } from '@/store/useCartStore';
@@ -15,10 +15,13 @@ import { Promotion, Product } from '@/lib/api/types';
 import { ProductCardSkeleton } from '@/components/ProductCardSkeleton';
 import { StorySkeleton } from '@/components/StorySkeleton';
 import { Stories } from '@/components/Stories';
+import { SlidersHorizontal, X, Check } from 'lucide-react';
 
 const PRODUCTS_PER_PAGE = 10;
 
 const VIEWED_STORIES_KEY = 'salmina_viewed_stories';
+
+type SortOption = 'popular' | 'price_asc' | 'price_desc' | 'newest';
 
 export default function Home() {
   const router = useRouter();
@@ -26,6 +29,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [visibleCount, setVisibleCount] = useState(PRODUCTS_PER_PAGE);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>('popular');
+  const [showFilters, setShowFilters] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const pullStartY = useRef<number | null>(null);
   const [pullDistance, setPullDistance] = useState(0);
@@ -78,19 +83,34 @@ export default function Home() {
   const allProducts: Product[] = allProductsData?.items || [];
 
   // Filter products by selected category
-  const filteredProducts = selectedCategory === 'all'
+  const filteredByCategory = selectedCategory === 'all'
     ? allProducts
     : allProducts.filter((p) => p.categoryId === selectedCategory);
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredProducts.length;
+  // Sort products
+  const sortedProducts = [...filteredByCategory].sort((a, b) => {
+    switch (sortBy) {
+      case 'price_asc':
+        return Number(a.promotionPrice || a.discountPrice || a.price) - Number(b.promotionPrice || b.discountPrice || b.price);
+      case 'price_desc':
+        return Number(b.promotionPrice || b.discountPrice || b.price) - Number(a.promotionPrice || a.discountPrice || a.price);
+      case 'newest':
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      case 'popular':
+      default:
+        return (b.orderCount || 0) - (a.orderCount || 0);
+    }
+  });
+
+  const visibleProducts = sortedProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedProducts.length;
 
   // Infinite scroll - загрузка при достижении конца
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoadingAll) {
-          setVisibleCount((prev) => Math.min(prev + PRODUCTS_PER_PAGE, filteredProducts.length));
+          setVisibleCount((prev) => Math.min(prev + PRODUCTS_PER_PAGE, sortedProducts.length));
         }
       },
       { threshold: 0.1 }
@@ -101,7 +121,7 @@ export default function Home() {
     }
 
     return () => observer.disconnect();
-  }, [hasMore, isLoadingAll, filteredProducts.length]);
+  }, [hasMore, isLoadingAll, sortedProducts.length]);
 
   // Pull-to-refresh handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -157,8 +177,24 @@ export default function Home() {
   const handleCategoryChange = (categoryId: string) => {
     haptic.selectionChanged();
     setSelectedCategory(categoryId);
-    setVisibleCount(PRODUCTS_PER_PAGE); // Reset pagination when changing category
+    setVisibleCount(PRODUCTS_PER_PAGE);
   };
+
+  const handleSortChange = (value: SortOption) => {
+    setSortBy(value);
+    haptic.selectionChanged();
+    setShowFilters(false);
+    setVisibleCount(PRODUCTS_PER_PAGE);
+  };
+
+  const sortOptions = [
+    { value: 'popular' as const, label: 'Популярные' },
+    { value: 'newest' as const, label: 'Новинки' },
+    { value: 'price_asc' as const, label: 'Сначала дешевле' },
+    { value: 'price_desc' as const, label: 'Сначала дороже' },
+  ];
+
+  const currentSortLabel = sortOptions.find((o) => o.value === sortBy)?.label || 'Сортировка';
 
   return (
     <div
@@ -193,13 +229,12 @@ export default function Home() {
       )}
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto pb-24 relative z-10">
+      <main className="max-w-7xl mx-auto pb-8 relative z-10">
         {/* Stories/Banners Section */}
         <div className="mb-6 px-4">
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
             <div className="flex gap-3">
               {isLoadingPromotions ? (
-                // Skeleton while loading
                 Array.from({ length: 4 }).map((_, i) => <StorySkeleton key={i} />)
               ) : promotions.length > 0 ? (
                 promotions.map((promotion: Promotion, index: number) => {
@@ -215,7 +250,6 @@ export default function Home() {
                       }}
                       className="relative shrink-0"
                     >
-                      {/* Gradient border for unviewed stories */}
                       <div
                         className={`w-[100px] h-[100px] rounded-2xl p-[2px] ${
                           isViewed
@@ -245,7 +279,7 @@ export default function Home() {
         </div>
 
         {/* Categories Scroll */}
-        <div className="mb-8 px-4">
+        <div className="mb-4 px-4">
           <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
             <div className="flex gap-2">
               {categories
@@ -263,13 +297,26 @@ export default function Home() {
           </div>
         </div>
 
-        {/* All Products Grid */}
+        {/* Products Section */}
         <div className="px-4">
-          <h2 className="text-xl font-light text-gray-900 dark:text-white mb-4">
-            {selectedCategory === 'all'
-              ? 'Все товары'
-              : categories.find((c) => c.id === selectedCategory)?.name || 'Товары'}
-          </h2>
+          {/* Header with count and sort */}
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-light text-gray-600 dark:text-gray-400">
+              {isLoadingAll ? 'Загрузка...' : `${sortedProducts.length} товаров`}
+            </p>
+            <button
+              onClick={() => {
+                haptic.impactOccurred('light');
+                setShowFilters(true);
+              }}
+              className="text-sm font-light text-pink-500 flex items-center gap-1"
+            >
+              {currentSortLabel}
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Products Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {isLoadingAll
               ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
@@ -307,12 +354,12 @@ export default function Home() {
           )}
 
           {/* Empty state */}
-          {!isLoadingAll && filteredProducts.length === 0 && (
+          {!isLoadingAll && sortedProducts.length === 0 && (
             <p className="text-center text-sm text-gray-400 py-8">В этой категории пока нет товаров</p>
           )}
 
           {/* End of list */}
-          {!hasMore && filteredProducts.length > 0 && (
+          {!hasMore && sortedProducts.length > 0 && (
             <p className="text-center text-sm text-gray-400 py-8">Все товары загружены</p>
           )}
         </div>
@@ -326,6 +373,68 @@ export default function Home() {
           onClose={() => setShowStories(false)}
         />
       )}
+
+      {/* iOS-style Filter Modal */}
+      <AnimatePresence>
+        {showFilters && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              onClick={() => setShowFilters(false)}
+            />
+
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl"
+              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            >
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+              </div>
+
+              <div className="flex items-center justify-between px-6 pb-4 border-b border-gray-100 dark:border-gray-800">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">Сортировка</h3>
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="p-2 -mr-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="py-2">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSortChange(option.value)}
+                    className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <span
+                      className={`text-base ${
+                        sortBy === option.value
+                          ? 'text-pink-500 font-medium'
+                          : 'text-gray-700 dark:text-gray-300 font-light'
+                      }`}
+                    >
+                      {option.label}
+                    </span>
+                    {sortBy === option.value && <Check className="w-5 h-5 text-pink-500" />}
+                  </button>
+                ))}
+              </div>
+
+              <div className="h-6" />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

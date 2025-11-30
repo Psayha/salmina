@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Package, HelpCircle, Settings } from 'lucide-react';
+import { X, Package, HelpCircle, Settings, User } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -27,6 +27,7 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   };
 
   const menuItems = [
+    { icon: User, label: 'Профиль', path: '/profile' },
     { icon: Package, label: 'Мои заказы', path: '/orders' },
     { icon: HelpCircle, label: 'Поддержка', path: '/support' },
   ];
