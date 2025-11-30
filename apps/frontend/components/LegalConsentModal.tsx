@@ -4,24 +4,9 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, ChevronRight, Check } from 'lucide-react';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
+import { usersApi } from '@/lib/api/endpoints/users';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
-
-export const CONSENT_STORAGE_KEY = 'legal_consent_accepted';
-
-// Helper functions for consent management
-export function getConsentDate(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(CONSENT_STORAGE_KEY);
-}
-
-export function hasAcceptedConsent(): boolean {
-  return !!getConsentDate();
-}
-
-export function revokeConsent(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(CONSENT_STORAGE_KEY);
-}
+import { useAuthStore } from '@/store/useAuthStore';
 
 const documentLabels: Record<string, string> = {
   [LegalDocumentType.TERMS]: 'Пользовательское соглашение',
@@ -32,16 +17,18 @@ const documentLabels: Record<string, string> = {
 
 export function LegalConsentModal() {
   const haptic = useTelegramHaptic();
+  const { user, setUser } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [documents, setDocuments] = useState<LegalDocument[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAccepting, setIsAccepting] = useState(false);
 
   useEffect(() => {
-    // Check if user has already accepted
-    const hasAccepted = localStorage.getItem(CONSENT_STORAGE_KEY);
-    if (hasAccepted) {
+    // Don't show modal if user already accepted terms
+    if (!user || user.hasAcceptedTerms) {
       setIsOpen(false);
+      setIsLoading(false);
       return;
     }
 
@@ -65,12 +52,31 @@ export function LegalConsentModal() {
     }
 
     fetchDocuments();
-  }, []);
+  }, [user]);
 
-  const handleAccept = () => {
-    haptic?.notificationOccurred('success');
-    localStorage.setItem(CONSENT_STORAGE_KEY, new Date().toISOString());
-    setIsOpen(false);
+  const handleAccept = async () => {
+    if (isAccepting) return;
+
+    setIsAccepting(true);
+    try {
+      const result = await usersApi.acceptTerms();
+
+      if (result.success && user) {
+        // Update user in store with new terms acceptance status
+        setUser({
+          ...user,
+          hasAcceptedTerms: true,
+          termsAcceptedAt: result.termsAcceptedAt,
+        });
+        haptic?.notificationOccurred('success');
+        setIsOpen(false);
+      }
+    } catch (error) {
+      console.error('Failed to accept terms:', error);
+      haptic?.notificationOccurred('error');
+    } finally {
+      setIsAccepting(false);
+    }
   };
 
   const handleDocumentClick = (doc: LegalDocument) => {
@@ -83,7 +89,7 @@ export function LegalConsentModal() {
     setSelectedDocument(null);
   };
 
-  if (!isOpen || isLoading) return null;
+  if (!isOpen || isLoading || !user) return null;
 
   return (
     <AnimatePresence>
@@ -193,10 +199,17 @@ export function LegalConsentModal() {
                     </p>
                     <button
                       onClick={handleAccept}
-                      className="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-pink-500/30 hover:shadow-xl transition-shadow"
+                      disabled={isAccepting}
+                      className="w-full py-3.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-pink-500/30 hover:shadow-xl transition-shadow disabled:opacity-70"
                     >
-                      <Check className="w-5 h-5" />
-                      Принять и продолжить
+                      {isAccepting ? (
+                        <span>Сохранение...</span>
+                      ) : (
+                        <>
+                          <Check className="w-5 h-5" />
+                          Принять и продолжить
+                        </>
+                      )}
                     </button>
                   </div>
                 </motion.div>
