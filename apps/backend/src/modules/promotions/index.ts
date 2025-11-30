@@ -8,8 +8,23 @@ const router: Router = Router();
 
 // GET /api/promotions - Active promotions (public)
 router.get('/', asyncHandler(async (_req: TypedRequest, res) => {
+  const now = new Date();
   const promotions = await prisma.promotion.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      OR: [
+        { validFrom: null },
+        { validFrom: { lte: now } },
+      ],
+      AND: [
+        {
+          OR: [
+            { validTo: null },
+            { validTo: { gte: now } },
+          ],
+        },
+      ],
+    },
     orderBy: { order: 'asc' },
     include: {
       products: {

@@ -334,22 +334,22 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
                       e.stopPropagation();
                       haptic?.impactOccurred('medium');
                     }}
-                    className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 active:scale-[0.98] transition-transform"
+                    className="flex items-center gap-3 p-3 bg-white/15 backdrop-blur-xl rounded-3xl border border-white/20 active:scale-[0.97] transition-all duration-300 shadow-lg"
                   >
                     {/* Product image */}
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white/10 flex-shrink-0">
+                    <div className="relative w-14 h-14 rounded-2xl overflow-hidden bg-white/10 flex-shrink-0">
                       {getProductImageUrl(linkedProduct) ? (
                         <Image
                           src={getProductImageUrl(linkedProduct)!}
                           alt={linkedProduct.name}
                           fill
                           className="object-cover"
-                          sizes="64px"
+                          sizes="56px"
                           unoptimized
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-white/50">
-                          <span className="text-2xl">📦</span>
+                          <span className="text-xl">📦</span>
                         </div>
                       )}
                     </div>
@@ -359,18 +359,18 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
                       <h4 className="text-white font-medium text-sm line-clamp-1">
                         {linkedProduct.name}
                       </h4>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-2 mt-0.5">
                         {linkedProduct.promotionPrice || linkedProduct.discountPrice ? (
                           <>
-                            <span className="text-white font-semibold">
+                            <span className="text-white font-semibold text-sm">
                               {Number(linkedProduct.promotionPrice || linkedProduct.discountPrice).toLocaleString()} ₽
                             </span>
-                            <span className="text-white/50 text-sm line-through">
+                            <span className="text-white/50 text-xs line-through">
                               {Number(linkedProduct.price).toLocaleString()} ₽
                             </span>
                           </>
                         ) : (
-                          <span className="text-white font-semibold">
+                          <span className="text-white font-semibold text-sm">
                             {Number(linkedProduct.price).toLocaleString()} ₽
                           </span>
                         )}
@@ -378,8 +378,8 @@ export function Stories({ promotions, initialIndex, onClose }: StoriesProps) {
                     </div>
 
                     {/* Arrow indicator */}
-                    <div className="flex-shrink-0 text-white/70">
-                      <ChevronRight className="w-5 h-5" />
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                      <ChevronRight className="w-4 h-4 text-white" />
                     </div>
                   </Link>
                 )}
