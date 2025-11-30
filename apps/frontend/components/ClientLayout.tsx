@@ -50,6 +50,8 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
       <Header
         cartItemsCount={itemsCount}
         favoritesCount={favoriteIds.length}
+        pathname={pathname || '/'}
+        isSearchOpen={showSearch}
         onCartClick={handleCartClick}
         onMenuClick={handleMenuClick}
         onSearchClick={handleSearchClick}

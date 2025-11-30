@@ -115,10 +115,10 @@ export const ProductCard = memo(function ProductCard({
           <HeartIcon className="w-4 h-4" filled={isInFavorites} />
         </button>
 
-        {/* Quick add button - appears on hover */}
+        {/* Quick add button - always visible on mobile, hover on desktop */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-2 right-2 w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 active:scale-95 z-10"
+          className="absolute bottom-2 right-2 w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 z-10"
           aria-label="Добавить в корзину"
         >
           <CartIcon className="w-4 h-4 text-gray-700 dark:text-gray-300" />

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Search, ArrowRight } from 'lucide-react';
+import { X, Search } from 'lucide-react';
 import { productsApi } from '@/lib/api';
 import { Product } from '@/lib/api/types';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -56,12 +56,6 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const handleProductClick = (slug: string) => {
     haptic?.impactOccurred('light');
     router.push(`/product/${slug}`);
-    onClose();
-  };
-
-  const handleViewAll = () => {
-    haptic?.impactOccurred('light');
-    router.push(searchQuery ? `/search?q=${encodeURIComponent(searchQuery)}` : '/search');
     onClose();
   };
 
@@ -181,21 +175,8 @@ export const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
               )}
             </div>
 
-            {/* View All Button */}
-            <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800">
-              <button
-                onClick={handleViewAll}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-500 hover:bg-pink-600 transition-colors"
-              >
-                <span className="text-sm font-medium text-white">
-                  {searchQuery ? 'Показать все результаты' : 'Открыть каталог'}
-                </span>
-                <ArrowRight className="w-4 h-4 text-white" />
-              </button>
-            </div>
-
             {/* Bottom padding */}
-            <div className="h-2" />
+            <div className="h-4" />
           </motion.div>
         </>
       )}

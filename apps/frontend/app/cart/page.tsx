@@ -89,11 +89,11 @@ export default function CartPage() {
   return (
     <div className="min-h-screen relative z-10 pb-32">
       {/* Header */}
-      <div className="sticky top-24 z-40 bg-white/60 dark:bg-white/10 backdrop-blur-md border-b border-white/30 dark:border-white/10 shadow-lg">
-        <div className="px-6 py-6">
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Корзина</h1>
+      <div className="px-4 pt-2 pb-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-light text-gray-900 dark:text-white">Корзина</h1>
           {!isEmpty && (
-            <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
+            <p className="text-sm font-light text-gray-600 dark:text-gray-300">
               {cart.totals.itemsCount} {cart.totals.itemsCount === 1 ? 'товар' : 'товаров'}
             </p>
           )}
@@ -101,7 +101,7 @@ export default function CartPage() {
       </div>
 
       {isEmpty ? (
-        <div className="flex items-center justify-center min-h-[60vh] px-6">
+        <div className="flex items-center justify-center min-h-[60vh] px-4">
           <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/30 dark:border-white/10 shadow-lg text-center max-w-md">
             <CartIcon className="w-24 h-24 mx-auto mb-6 text-gray-400 dark:text-gray-500" />
             <h2 className="text-xl font-light text-gray-900 dark:text-white mb-3">Корзина пуста</h2>
@@ -114,7 +114,7 @@ export default function CartPage() {
       ) : (
         <>
           {/* Cart Items */}
-          <div className="px-6 py-6 space-y-4">
+          <div className="px-4 space-y-4">
             {validItems.map((item) => (
               <div
                 key={item.id}
@@ -198,7 +198,7 @@ export default function CartPage() {
 
           {/* Fixed Bottom Bar with Totals and Checkout */}
           <div className="fixed bottom-0 left-0 right-0 bg-white/60 dark:bg-white/10 backdrop-blur-md border-t border-white/30 dark:border-white/10 shadow-lg z-50">
-            <div className="px-6 py-4 space-y-3">
+            <div className="px-4 py-4 space-y-3">
               {/* Subtotal */}
               <div className="flex justify-between items-center">
                 <span className="text-sm font-light text-gray-600 dark:text-gray-300">Товары:</span>
