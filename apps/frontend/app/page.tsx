@@ -317,7 +317,7 @@ export default function Home() {
           </div>
 
           {/* Products Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
             {isLoadingAll
               ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : visibleProducts.map((product, index) => (
