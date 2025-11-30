@@ -82,6 +82,7 @@ interface CreatePromotionBody {
   description?: string;
   discountPercent?: number;
   discountAmount?: number;
+  previewImage?: string;
   image: string;
   link?: string;
   order?: number;

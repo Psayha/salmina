@@ -222,9 +222,9 @@ export default function Home() {
                       >
                         <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-lg cursor-pointer active:scale-95 transition-transform bg-white dark:bg-gray-900">
                           <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-                          {promotion.image && (
+                          {(promotion.previewImage || promotion.image) && (
                             <Image
-                              src={promotion.image}
+                              src={promotion.previewImage || promotion.image || ''}
                               alt={promotion.title}
                               fill
                               className="object-cover relative z-10"

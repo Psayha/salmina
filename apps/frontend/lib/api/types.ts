@@ -145,7 +145,8 @@ export interface Promotion {
   description?: string;
   discountPercent?: number;
   discountAmount?: number;
-  image?: string;
+  previewImage?: string; // Small image for carousel thumbnail
+  image?: string; // Main content image for story view
   link?: string;
   order: number;
   isActive: boolean;

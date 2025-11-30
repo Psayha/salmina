@@ -151,7 +151,8 @@ model Promotion {
   description     String?   @db.Text
   discountPercent Int?
   discountAmount  Decimal?  @db.Decimal(10, 2)
-  image           String
+  previewImage    String?   // Small image for carousel thumbnail
+  image           String    // Main content image for story view
   link            String?
   order           Int       @default(0)
   isActive        Boolean   @default(true)
