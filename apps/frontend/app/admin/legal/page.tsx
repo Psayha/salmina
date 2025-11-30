@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FileText, Edit, ChevronRight } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
 
@@ -96,21 +96,17 @@ export default function LegalDocumentsPage() {
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                {document && (
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      document.isActive
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
-                    }`}
-                  >
-                    {document.isActive ? 'Активен' : 'Неактивен'}
-                  </span>
-                )}
-                <Edit className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors" />
-                <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:translate-x-1 transition-transform" />
-              </div>
+              {document && (
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    document.isActive
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
+                  }`}
+                >
+                  {document.isActive ? 'Активен' : 'Неактивен'}
+                </span>
+              )}
             </div>
           </button>
         ))}
