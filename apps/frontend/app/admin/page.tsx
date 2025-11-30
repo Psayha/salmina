@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket, Activity, ImageIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
@@ -116,14 +115,11 @@ export default function AdminDashboard() {
 
       {/* Модули */}
       <div className="grid grid-cols-2 gap-4">
-        {modules.map((module, index) => {
+        {modules.map((module) => {
           const Icon = module.icon;
           return (
-            <motion.button
+            <button
               key={module.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
               onClick={() => handleModuleClick(module.href)}
               className={`relative overflow-hidden rounded-2xl p-4 text-left transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl group bg-gradient-to-br ${module.gradient} dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 border border-white/50 dark:border-white/10 shadow-lg`}
             >
@@ -154,7 +150,7 @@ export default function AdminDashboard() {
               <div className="absolute -right-6 -bottom-6 w-24 h-24 opacity-5">
                 <Icon className="w-full h-full" />
               </div>
-            </motion.button>
+            </button>
           );
         })}
       </div>
