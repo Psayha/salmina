@@ -290,24 +290,21 @@ export default function ProductPage() {
           </CollapsibleSection>
         )}
 
-        {/* Application - placeholder for future field */}
-        {(product as Product & { application?: string }).application && (
+        {product.application && (
           <CollapsibleSection title="Применение">
-            {(product as Product & { application?: string }).application}
+            {product.application}
           </CollapsibleSection>
         )}
 
-        {/* Composition - placeholder for future field */}
-        {(product as Product & { composition?: string }).composition && (
+        {product.composition && (
           <CollapsibleSection title="Состав">
-            {(product as Product & { composition?: string }).composition}
+            {product.composition}
           </CollapsibleSection>
         )}
 
-        {/* Characteristics - placeholder for future field */}
-        {(product as Product & { characteristics?: string }).characteristics && (
+        {product.characteristics && (
           <CollapsibleSection title="Характеристики">
-            {(product as Product & { characteristics?: string }).characteristics}
+            {product.characteristics}
           </CollapsibleSection>
         )}
 
