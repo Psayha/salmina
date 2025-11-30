@@ -36,7 +36,8 @@ export default function LegalDocumentEditPage() {
   useEffect(() => {
     async function fetchDocument() {
       try {
-        const doc = await legalApi.getDocument(type);
+        // Use admin endpoint to get document regardless of active status
+        const doc = await legalApi.getDocumentForAdmin(type);
         if (doc) {
           setDocument(doc);
           setTitle(doc.title);
@@ -50,6 +51,9 @@ export default function LegalDocumentEditPage() {
         }
       } catch (error) {
         console.error('Failed to fetch document:', error);
+        // Set defaults if error (document doesn't exist)
+        setTitle(documentLabels[params.type as string] || '');
+        setVersion('1.0');
       } finally {
         setIsLoading(false);
       }
