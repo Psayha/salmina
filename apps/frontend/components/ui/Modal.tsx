@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle } from 'lucide-react';
 
@@ -133,9 +133,4 @@ export function useModal() {
     openModal,
     closeModal,
   };
-}
-
-function useState<T>(initialValue: T): [T, (value: T) => void] {
-  // This is a placeholder - in real usage, import from 'react'
-  return [initialValue, () => {}];
 }
