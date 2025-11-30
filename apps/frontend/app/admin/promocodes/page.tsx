@@ -320,7 +320,7 @@ export default function PromocodesPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-hidden"
             onClick={() => setEditModal({ isOpen: false, promocode: null, isNew: false })}
           >
             <motion.div
@@ -329,11 +329,11 @@ export default function PromocodesPage() {
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl max-h-[90vh] overflow-y-auto"
+              className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl max-h-[85vh] flex flex-col"
               style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
               {/* Header */}
-              <div className="sticky top-0 bg-white dark:bg-gray-900 px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <div className="flex-shrink-0 px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                   {editModal.isNew ? 'Новый промокод' : 'Редактирование'}
                 </h2>
@@ -356,7 +356,7 @@ export default function PromocodesPage() {
               </div>
 
               {/* Form */}
-              <div className="p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {/* Code */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
