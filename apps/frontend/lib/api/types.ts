@@ -25,6 +25,9 @@ export interface Product {
   name: string;
   slug: string;
   description?: string;
+  application?: string;
+  composition?: string;
+  characteristics?: string;
   article?: string;
   weight: number;
   price: number;
