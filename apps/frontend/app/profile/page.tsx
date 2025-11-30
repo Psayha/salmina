@@ -4,13 +4,14 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, FileText, ChevronRight } from 'lucide-react';
+import { X, FileText, ChevronRight, CheckCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { Button } from '@/components/ui';
 import { UserIcon } from '@/components/ui/icons';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
+import { getConsentDate } from '@/components/LegalConsentModal';
 
 const documentLabels: Record<string, string> = {
   [LegalDocumentType.TERMS]: 'Пользовательское соглашение',
@@ -26,6 +27,13 @@ export default function ProfilePage() {
   const haptic = useTelegramHaptic();
   const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
+  const [consentDate, setConsentDate] = useState<string | null>(null);
+
+  // Check consent status on mount
+  useEffect(() => {
+    const date = getConsentDate();
+    setConsentDate(date);
+  }, []);
 
   useTelegramBackButton(() => {
     if (selectedDocument) {
@@ -202,6 +210,28 @@ export default function ProfilePage() {
           <div className="px-4 py-3 border-b border-white/20 dark:border-white/5">
             <p className="text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-400">Документы</p>
           </div>
+
+          {/* Consent Status */}
+          {consentDate && (
+            <div className="px-4 py-3 bg-green-50/50 dark:bg-green-500/10 border-b border-white/20 dark:border-white/5 flex items-center gap-3">
+              <CheckCircle className="w-4 h-4 text-green-500" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-700 dark:text-green-400">
+                  Соглашение принято
+                </p>
+                <p className="text-xs text-green-600/70 dark:text-green-500/70">
+                  {new Date(consentDate).toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="divide-y divide-white/20 dark:divide-white/5">
             {legalDocuments.length > 0 ? (
               legalDocuments.map((doc) => (

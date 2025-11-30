@@ -6,7 +6,22 @@ import { FileText, ChevronRight, Check } from 'lucide-react';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
-const CONSENT_STORAGE_KEY = 'legal_consent_accepted';
+export const CONSENT_STORAGE_KEY = 'legal_consent_accepted';
+
+// Helper functions for consent management
+export function getConsentDate(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(CONSENT_STORAGE_KEY);
+}
+
+export function hasAcceptedConsent(): boolean {
+  return !!getConsentDate();
+}
+
+export function revokeConsent(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(CONSENT_STORAGE_KEY);
+}
 
 const documentLabels: Record<string, string> = {
   [LegalDocumentType.TERMS]: 'Пользовательское соглашение',
