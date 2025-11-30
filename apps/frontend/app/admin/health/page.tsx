@@ -1,13 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Trash2, Plus, RotateCcw, Shield, Ban } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Activity, Database, HardDrive, RefreshCw, CheckCircle, XCircle, AlertCircle, Clock, Package, Archive, Trash2, Plus, RotateCcw, Shield, Ban, ChevronDown } from 'lucide-react';
 import { healthApi, HealthCheckResponse } from '@/lib/api/endpoints/health';
 import { backupApi, BackupStatus } from '@/lib/api/endpoints/backup';
 import { securityApi, SecurityStatus } from '@/lib/api/endpoints/security';
-import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 export default function HealthPage() {
+  const router = useRouter();
   const [health, setHealth] = useState<HealthCheckResponse | null>(null);
   const [backups, setBackups] = useState<BackupStatus | null>(null);
   const [security, setSecurity] = useState<SecurityStatus | null>(null);
@@ -18,7 +20,13 @@ export default function HealthPage() {
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [showAllIPs, setShowAllIPs] = useState(false);
   const haptic = useTelegramHaptic();
+
+  // Back button to admin
+  useTelegramBackButton(() => {
+    router.push('/admin');
+  });
 
   const fetchHealth = async () => {
     try {
@@ -132,12 +140,10 @@ export default function HealthPage() {
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
 
-    if (days > 0) return `${days}д ${hours}ч ${minutes}м`;
-    if (hours > 0) return `${hours}ч ${minutes}м ${secs}с`;
-    if (minutes > 0) return `${minutes}м ${secs}с`;
-    return `${secs}с`;
+    if (days > 0) return `${days}д ${hours}ч`;
+    if (hours > 0) return `${hours}ч ${minutes}м`;
+    return `${minutes}м`;
   };
 
   const getStatusColor = (status: string) => {
@@ -156,417 +162,280 @@ export default function HealthPage() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'ok':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'error':
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <XCircle className="w-4 h-4 text-red-500" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
+        return <AlertCircle className="w-4 h-4 text-yellow-500" />;
     }
   };
 
+  // Banned IPs to display (max 3 unless expanded)
+  const displayedIPs = security?.fail2ban?.bannedIPs
+    ? showAllIPs
+      ? security.fail2ban.bannedIPs
+      : security.fail2ban.bannedIPs.slice(0, 3)
+    : [];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <Activity className="w-8 h-8" />
-              System Health
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Мониторинг состояния системы и бэкапов
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setAutoRefresh(!autoRefresh);
-                haptic?.impactOccurred('medium');
-              }}
-              className={`px-4 py-2 rounded-xl font-medium transition-all ${
-                autoRefresh
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-              }`}
-            >
-              {autoRefresh ? 'Auto ✓' : 'Manual'}
-            </button>
-
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className="p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all disabled:opacity-50"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-light text-gray-900 dark:text-white flex items-center gap-2">
+            <Activity className="w-6 h-6" />
+            Мониторинг
+          </h1>
+          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1 flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {lastUpdate.toLocaleTimeString('ru-RU')}
+          </p>
         </div>
 
-        <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-          <Clock className="w-4 h-4" />
-          Последнее обновление: {lastUpdate.toLocaleTimeString('ru-RU')}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setAutoRefresh(!autoRefresh);
+              haptic?.impactOccurred('medium');
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              autoRefresh
+                ? 'bg-blue-500 text-white'
+                : 'bg-white/60 dark:bg-white/10 text-gray-700 dark:text-gray-300'
+            }`}
+          >
+            {autoRefresh ? 'Auto' : 'Manual'}
+          </button>
+
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="p-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
         </div>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
+        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
         </div>
       )}
 
       {health && (
         <>
-          {/* Overall Status */}
-          <div className="mb-6">
-            <div
-              className={`p-6 rounded-2xl border-2 ${
-                health.status === 'ok'
-                  ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
-                  : health.status === 'degraded'
-                  ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20'
-                  : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  {getStatusIcon(health.status)}
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {health.status === 'ok'
-                        ? 'Система работает нормально'
-                        : health.status === 'degraded'
-                        ? 'Система работает с ограничениями'
-                        : 'Система недоступна'}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
-                      Статус: <span className="font-semibold uppercase">{health.status}</span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Uptime</div>
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {formatUptime(health.uptime)}
-                  </div>
-                </div>
+          {/* Overall Status - Compact */}
+          <div
+            className={`p-3 rounded-xl border ${
+              health.status === 'ok'
+                ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
+                : health.status === 'degraded'
+                ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20'
+                : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(health.status)}
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {health.status === 'ok' ? 'Система OK' : health.status === 'degraded' ? 'Ограничения' : 'Ошибка'}
+                </span>
               </div>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Uptime: {formatUptime(health.uptime)}
+              </span>
             </div>
           </div>
 
-          {/* Services Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Database Status */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl ${getStatusColor(health.checks.database)}`}>
-                    <Database className="w-6 h-6" />
+          {/* Database & Redis - Side by Side */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* PostgreSQL */}
+            <div className="bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/30 dark:border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`p-1.5 rounded-lg ${getStatusColor(health.checks.database)}`}>
+                    <Database className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">PostgreSQL</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">База данных</p>
-                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">PostgreSQL</span>
                 </div>
                 {getStatusIcon(health.checks.database)}
               </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Статус</span>
-                  <span
-                    className={`font-semibold uppercase ${
-                      health.checks.database === 'ok'
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {health.checks.database}
-                  </span>
-                </div>
-              </div>
             </div>
 
-            {/* Redis Status */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-xl ${getStatusColor(health.checks.redis)}`}>
-                    <HardDrive className="w-6 h-6" />
+            {/* Redis */}
+            <div className="bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/30 dark:border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`p-1.5 rounded-lg ${getStatusColor(health.checks.redis)}`}>
+                    <HardDrive className="w-4 h-4" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">Redis</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Кэш и сессии</p>
-                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">Redis</span>
                 </div>
                 {getStatusIcon(health.checks.redis)}
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Статус</span>
-                  <span
-                    className={`font-semibold uppercase ${
-                      health.checks.redis === 'ok'
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {health.checks.redis}
-                  </span>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Backups Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Archive className="w-5 h-5" />
-                Бэкапы базы данных
+          {/* Backups Section - Compact */}
+          <div className="bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/30 dark:border-white/10">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                <Archive className="w-4 h-4" />
+                Бэкапы
               </h3>
-
               <button
                 onClick={handleCreateBackup}
                 disabled={creatingBackup}
-                className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all disabled:opacity-50"
+                className="flex items-center gap-1 px-2 py-1 bg-green-500 text-white rounded-lg text-xs disabled:opacity-50"
               >
-                {creatingBackup ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4" />
-                )}
-                {creatingBackup ? 'Создание...' : 'Создать бэкап'}
+                {creatingBackup ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                {creatingBackup ? '...' : 'Создать'}
               </button>
             </div>
 
             {backups && (
               <>
-                {/* Backup Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Всего бэкапов</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{backups.backupCount}</div>
+                {/* Stats - 2x2 grid */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Всего</div>
+                    <div className="text-lg font-bold text-gray-900 dark:text-white">{backups.backupCount}</div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Общий размер</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">{backups.totalSize}</div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Последний бэкап</div>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {backups.lastBackup
-                        ? new Date(backups.lastBackup).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' })
-                        : 'Нет'}
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Следующий бэкап</div>
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {backups.nextBackup
-                        ? new Date(backups.nextBackup).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-                        : '-'}
-                    </div>
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Размер</div>
+                    <div className="text-lg font-bold text-gray-900 dark:text-white">{backups.totalSize}</div>
                   </div>
                 </div>
 
                 {/* Backup List */}
                 {backups.backups.length > 0 ? (
-                  <div className="space-y-3">
-                    {backups.backups.map((backup) => (
+                  <div className="space-y-2">
+                    {backups.backups.slice(0, 3).map((backup) => (
                       <div
                         key={backup.filename}
-                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl"
+                        className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
                       >
-                        <div className="flex items-center gap-4">
-                          <Archive className="w-5 h-5 text-blue-500" />
-                          <div>
-                            <div className="font-medium text-gray-900 dark:text-white text-sm">
-                              {backup.filename}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Archive className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <div className="text-xs font-medium text-gray-900 dark:text-white truncate">
+                              {backup.filename.replace('backup_', '').replace('.sql', '')}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                              {backup.sizeFormatted} • {backup.age}
+                            <div className="text-[10px] text-gray-500 dark:text-gray-400">
+                              {backup.sizeFormatted}
                             </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleRestoreBackup(backup.filename)}
-                            className="p-2 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-all"
-                            title="Восстановить"
+                            className="p-1 text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded"
                           >
-                            <RotateCcw className="w-4 h-4" />
+                            <RotateCcw className="w-3 h-3" />
                           </button>
                           <button
                             onClick={() => handleDeleteBackup(backup.filename)}
-                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
-                            title="Удалить"
+                            className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <Archive className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                    <p>Нет бэкапов</p>
-                    <p className="text-sm">Создайте первый бэкап кнопкой выше</p>
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400 text-xs">
+                    Нет бэкапов
                   </div>
                 )}
               </>
             )}
 
             {backupLoading && !backups && (
-              <div className="text-center py-8">
-                <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-500" />
-                <p className="mt-2 text-gray-500">Загрузка бэкапов...</p>
+              <div className="text-center py-4">
+                <RefreshCw className="w-5 h-5 mx-auto animate-spin text-blue-500" />
               </div>
             )}
           </div>
 
-          {/* Security Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                Безопасность
-              </h3>
-            </div>
+          {/* Security Section - Compact */}
+          <div className="bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/30 dark:border-white/10">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+              <Shield className="w-4 h-4" />
+              Безопасность
+            </h3>
 
             {security && (
               <>
-                {/* Security Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Fail2ban</div>
-                    <div className={`text-lg font-bold ${security.fail2ban.available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {security.fail2ban.available ? 'Активен' : 'Не активен'}
+                {/* Stats - 2x2 grid */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Fail2ban</div>
+                    <div className={`text-sm font-bold ${security.fail2ban.available ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {security.fail2ban.available ? 'Активен' : 'Выкл'}
                     </div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Заблокировано IP</div>
-                    <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-2">
+                    <div className="text-[10px] text-gray-500 dark:text-gray-400">Заблокировано</div>
+                    <div className="text-lg font-bold text-red-600 dark:text-red-400">
                       {security.fail2ban.totalBanned}
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Jails активных</div>
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {security.fail2ban.jails.length}
-                    </div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Firewall</div>
-                    <div className={`text-lg font-bold ${security.firewall.enabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {security.firewall.enabled ? 'Активен' : 'Не активен'}
                     </div>
                   </div>
                 </div>
 
-                {/* Banned IPs List */}
-                {security.fail2ban.bannedIPs.length > 0 ? (
+                {/* Banned IPs - Show 3 with expand */}
+                {security.fail2ban.bannedIPs.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Заблокированные IP адреса
-                    </h4>
-                    <div className="space-y-2">
-                      {security.fail2ban.bannedIPs.map((item, index) => (
+                    <div className="space-y-1">
+                      {displayedIPs.map((item, index) => (
                         <div
                           key={`${item.ip}-${index}`}
-                          className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-xl"
+                          className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-900/20 rounded-lg"
                         >
-                          <div className="flex items-center gap-3">
-                            <Ban className="w-4 h-4 text-red-500" />
-                            <span className="font-mono text-sm text-gray-900 dark:text-white">
+                          <div className="flex items-center gap-2">
+                            <Ban className="w-3 h-3 text-red-500" />
+                            <span className="font-mono text-xs text-gray-900 dark:text-white">
                               {item.ip}
                             </span>
                           </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                          <span className="text-[10px] text-gray-500 dark:text-gray-400">
                             {item.jail}
                           </span>
                         </div>
                       ))}
                     </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-6 text-gray-500 dark:text-gray-400">
-                    <Shield className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Нет заблокированных IP</p>
-                  </div>
-                )}
-
-                {/* Active Jails */}
-                {security.fail2ban.jails.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Активные Jails
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {security.fail2ban.jails.map((jail) => (
-                        <span
-                          key={jail}
-                          className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm"
-                        >
-                          {jail}
-                        </span>
-                      ))}
-                    </div>
+                    {security.fail2ban.bannedIPs.length > 3 && (
+                      <button
+                        onClick={() => setShowAllIPs(!showAllIPs)}
+                        className="w-full mt-2 flex items-center justify-center gap-1 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg"
+                      >
+                        {showAllIPs ? 'Свернуть' : `Ещё ${security.fail2ban.bannedIPs.length - 3}`}
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showAllIPs ? 'rotate-180' : ''}`} />
+                      </button>
+                    )}
                   </div>
                 )}
               </>
             )}
 
             {securityLoading && !security && (
-              <div className="text-center py-8">
-                <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-500" />
-                <p className="mt-2 text-gray-500">Загрузка статуса безопасности...</p>
+              <div className="text-center py-4">
+                <RefreshCw className="w-5 h-5 mx-auto animate-spin text-blue-500" />
               </div>
             )}
           </div>
 
-          {/* System Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <Package className="w-5 h-5" />
-              Информация о системе
+          {/* System Info - Compact */}
+          <div className="bg-white/60 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/30 dark:border-white/10">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+              <Package className="w-4 h-4" />
+              Система
             </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">Версия</div>
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {health.version || '1.2.0'}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">Последняя проверка</div>
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {new Date(health.timestamp).toLocaleTimeString('ru-RU')}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">Время работы</div>
-                <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {formatUptime(health.uptime)}
-                </div>
-              </div>
+            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+              <span>Версия: {health.version || '1.2.0'}</span>
+              <span>Uptime: {formatUptime(health.uptime)}</span>
             </div>
-          </div>
-
-          {/* Info */}
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-            <p className="text-sm text-blue-600 dark:text-blue-400">
-              💡 <strong>Совет:</strong> Бэкапы создаются автоматически каждый день в 3:00.
-              Хранится последние 7 бэкапов. Вы можете создать бэкап вручную в любое время.
-            </p>
           </div>
         </>
       )}
