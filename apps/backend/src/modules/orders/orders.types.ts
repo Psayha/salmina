@@ -62,7 +62,7 @@ export interface OrderItem {
   orderId: string;
   productId: string;
   productName: string;
-  productArticle: string;
+  productArticle: string | null;
   productImage: string;
   basePrice: Decimal;
   appliedPrice: Decimal;
@@ -105,7 +105,7 @@ export interface OrderDTO {
 export interface OrderItemDTO {
   id: string;
   productName: string;
-  productArticle: string;
+  productArticle: string | null;
   productImage: string;
   basePrice: number;
   appliedPrice: number;

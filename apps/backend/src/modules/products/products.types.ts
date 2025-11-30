@@ -19,8 +19,8 @@ export interface Product {
   price: Decimal;
   promotionPrice: Decimal | null;
   discountPrice: Decimal | null;
-  article: string;
-  sku: string;
+  article: string | null;
+  sku: string | null;
   weight: Decimal;
   dimensions: string | null;
   quantity: number;
@@ -81,8 +81,8 @@ export interface ProductListItem {
   discountPrice: number | null;
   finalPrice: number;
   discountPercent: number | null;
-  article: string;
-  sku: string;
+  article: string | null;
+  sku: string | null;
   weight: number;
   dimensions: string | null;
   quantity: number;
@@ -172,8 +172,8 @@ export interface CreateProductDTO {
   price: number;
   promotionPrice?: number | null;
   discountPrice?: number | null;
-  article: string;
-  sku: string;
+  article?: string | null;
+  sku?: string | null;
   weight: number;
   dimensions?: string | null;
   quantity: number;
