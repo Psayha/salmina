@@ -6,7 +6,7 @@ import { updateProduct, getProductBySlug } from '@/lib/api/endpoints/products';
 import { getCategories } from '@/lib/api/endpoints/categories';
 import { Category, Product } from '@/lib/api/types';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
-import { ArrowLeft, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function EditProductPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -22,6 +22,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
     name: '',
     slug: '',
     description: '',
+    application: '',
+    composition: '',
+    characteristics: '',
     weight: '',
     price: '',
     discountPrice: '',
@@ -50,6 +53,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
           name: productData.name,
           slug: productData.slug,
           description: productData.description || '',
+          application: productData.application || '',
+          composition: productData.composition || '',
+          characteristics: typeof productData.characteristics === 'string' ? productData.characteristics : '',
           weight: productData.weight.toString(),
           price: productData.price.toString(),
           discountPrice: productData.discountPrice?.toString() || '',
@@ -106,6 +112,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
+        application: formData.application || undefined,
+        composition: formData.composition || undefined,
+        characteristics: formData.characteristics || undefined,
         weight: parseFloat(formData.weight) || 0,
         price: parseFloat(formData.price) || 0,
         discountPrice: formData.hasPromotion && formData.discountPrice ? parseFloat(formData.discountPrice) : undefined,
@@ -139,17 +148,9 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => router.push('/admin/products')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">Редактировать товар</h1>
-          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">{product?.name}</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-light text-gray-900 dark:text-white">Редактировать товар</h1>
+        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">{product?.name}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -196,6 +197,45 @@ export default function EditProductPage({ params }: { params: Promise<{ slug: st
               placeholder="Введите описание товара"
               rows={4}
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+              Применение
+            </label>
+            <textarea
+              value={formData.application}
+              onChange={(e) => setFormData({ ...formData, application: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              placeholder="Способ применения товара"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+              Состав
+            </label>
+            <textarea
+              value={formData.composition}
+              onChange={(e) => setFormData({ ...formData, composition: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              placeholder="Состав товара"
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+              Характеристики
+            </label>
+            <textarea
+              value={formData.characteristics}
+              onChange={(e) => setFormData({ ...formData, characteristics: e.target.value })}
+              className="w-full px-4 py-2.5 bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 font-light text-gray-900 dark:text-white"
+              placeholder="Характеристики товара"
+              rows={3}
             />
           </div>
 
