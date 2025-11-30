@@ -19,6 +19,7 @@ export default function NewPromotionPage() {
     description: '',
     discountPercent: '',
     discountAmount: '',
+    previewImage: '',
     image: '',
     link: '',
     order: '0',
@@ -36,7 +37,7 @@ export default function NewPromotionPage() {
     e.preventDefault();
 
     if (!formData.title || !formData.image) {
-      alert('Заполните обязательные поля (Название, Изображение)');
+      alert('Заполните обязательные поля (Название, Контент)');
       haptic?.notificationOccurred('error');
       return;
     }
@@ -50,6 +51,7 @@ export default function NewPromotionPage() {
         description: formData.description,
         discountPercent: formData.discountPercent ? parseInt(formData.discountPercent) : undefined,
         discountAmount: formData.discountAmount ? parseFloat(formData.discountAmount) : undefined,
+        previewImage: formData.previewImage || undefined,
         image: formData.image,
         link: formData.link,
         order: parseInt(formData.order),
@@ -163,23 +165,37 @@ export default function NewPromotionPage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
-              Изображение <span className="text-red-500">*</span>
-            </label>
-            <ImageUpload
-              value={formData.image ? [formData.image] : []}
-              onChange={(urls) => setFormData({ ...formData, image: urls[0] || '' })}
-              maxFiles={1}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+                Превью <span className="text-gray-400 text-xs">(для карусели)</span>
+              </label>
+              <ImageUpload
+                value={formData.previewImage ? [formData.previewImage] : []}
+                onChange={(urls) => setFormData({ ...formData, previewImage: urls[0] || '' })}
+                maxFiles={1}
+                allowVideo={false}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">
+                Контент <span className="text-red-500">*</span> <span className="text-gray-400 text-xs">(полноэкранный)</span>
+              </label>
+              <ImageUpload
+                value={formData.image ? [formData.image] : []}
+                onChange={(urls) => setFormData({ ...formData, image: urls[0] || '' })}
+                maxFiles={1}
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Товары в акции</label>
+            <label className="block text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Товар в акции</label>
             <ProductSelector
               selectedIds={formData.productIds}
-              onChange={(ids) => setFormData({ ...formData, productIds: ids })}
+              onChange={(ids) => setFormData({ ...formData, productIds: ids.slice(0, 1) })}
             />
+            <p className="text-xs text-gray-400 mt-1">Можно выбрать только один товар</p>
           </div>
 
           <div className="flex items-center gap-4">
