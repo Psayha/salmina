@@ -103,7 +103,12 @@ export function ImageUpload({
         }
       }
 
-      onChange([...value, ...uploadedUrls]);
+      // If maxFiles is 1, replace instead of append
+      if (maxFiles === 1) {
+        onChange(uploadedUrls.slice(0, 1));
+      } else {
+        onChange([...value, ...uploadedUrls]);
+      }
     } catch (error) {
       console.error('Upload error:', error);
       alert('Ошибка загрузки файлов');
