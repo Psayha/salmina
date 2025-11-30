@@ -82,23 +82,9 @@ export default function CartPage() {
     );
   }
 
-  // Filter out items with missing product data
-  const validItems = cart?.items.filter((item) => item.product) || [];
-  const isEmpty = !cart || validItems.length === 0;
-
-  // Debug logging
-  console.log('Cart debug:', {
-    hasCart: !!cart,
-    itemsCount: cart?.totals?.itemsCount,
-    rawItemsLength: cart?.items?.length,
-    validItemsLength: validItems.length,
-    items: cart?.items?.map(item => ({
-      id: item.id,
-      productId: item.productId,
-      hasProduct: !!item.product,
-      productName: item.product?.name
-    }))
-  });
+  // Filter out items that are out of stock
+  const validItems = cart?.items?.filter((item) => item.inStock) || [];
+  const isEmpty = !cart || cart.items.length === 0;
 
   return (
     <div className="min-h-screen relative z-10 pb-36">
@@ -137,10 +123,10 @@ export default function CartPage() {
                 <div className="flex gap-4">
                   {/* Product Image */}
                   <div className="relative w-24 h-24 bg-white/30 dark:bg-white/10 rounded-xl overflow-hidden flex-shrink-0">
-                    {item.product?.images && item.product.images.length > 0 ? (
+                    {item.productImage ? (
                       <Image
-                        src={item.product.images[0]}
-                        alt={item.product?.name || 'Товар'}
+                        src={item.productImage.startsWith('http') ? item.productImage : `https://app.salminashop.ru${item.productImage}`}
+                        alt={item.productName || 'Товар'}
                         fill
                         className="object-cover"
                       />
@@ -154,10 +140,10 @@ export default function CartPage() {
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-base font-light text-gray-900 dark:text-white mb-1 line-clamp-2">
-                      {item.product?.name || 'Товар'}
+                      {item.productName || 'Товар'}
                     </h3>
                     <p className="text-lg font-light text-gray-900 dark:text-white">
-                      {item.price.toLocaleString('ru-RU')} ₽
+                      {item.appliedPrice.toLocaleString('ru-RU')} ₽
                     </p>
 
                     {/* Quantity Controls */}
@@ -195,7 +181,7 @@ export default function CartPage() {
                 <div className="mt-3 pt-3 border-t border-white/30 dark:border-white/10 flex justify-between items-center">
                   <span className="text-sm font-light text-gray-600 dark:text-gray-300">Итого за товар:</span>
                   <span className="text-lg font-light text-gray-900 dark:text-white">
-                    {item.total.toLocaleString('ru-RU')} ₽
+                    {item.subtotal.toLocaleString('ru-RU')} ₽
                   </span>
                 </div>
               </div>
