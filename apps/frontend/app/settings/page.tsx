@@ -1,26 +1,63 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
+
+const SETTINGS_STORAGE_KEY = 'app-settings';
+
+interface Settings {
+  orderNotifications: boolean;
+  promotionNotifications: boolean;
+  emailNotifications: boolean;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
+}
+
+const defaultSettings: Settings = {
+  orderNotifications: true,
+  promotionNotifications: true,
+  emailNotifications: false,
+  soundEnabled: true,
+  vibrationEnabled: true,
+};
 
 export default function SettingsPage() {
   const router = useRouter();
   const haptic = useTelegramHaptic();
 
-  const [settings, setSettings] = useState({
-    orderNotifications: true,
-    promotionNotifications: true,
-    emailNotifications: false,
-    soundEnabled: true,
-    vibrationEnabled: true,
-  });
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useTelegramBackButton(() => {
     router.back();
   });
 
-  const handleToggle = (key: keyof typeof settings) => {
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (saved) {
+        setSettings({ ...defaultSettings, ...JSON.parse(saved) });
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save settings to localStorage on change
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+      } catch (error) {
+        console.error('Failed to save settings:', error);
+      }
+    }
+  }, [settings, isLoaded]);
+
+  const handleToggle = (key: keyof Settings) => {
     haptic?.impactOccurred('light');
     setSettings((prev) => ({
       ...prev,
@@ -112,41 +149,9 @@ export default function SettingsPage() {
           </div>
         ))}
 
-        {/* Additional Settings */}
-        <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
-          <h2 className="text-sm font-light uppercase tracking-widest text-gray-700 dark:text-gray-300 mb-4">
-            Дополнительно
-          </h2>
-
-          <div className="space-y-3">
-            <button
-              onClick={() => {
-                haptic?.impactOccurred('medium');
-                // Clear cache functionality can be implemented here
-                alert('Кэш очищен');
-              }}
-              className="w-full text-left p-4 bg-white/30 dark:bg-white/5 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300"
-            >
-              <p className="text-base font-light text-gray-900 dark:text-white mb-1">Очистить кэш</p>
-              <p className="text-xs font-light text-gray-600 dark:text-gray-400">Удалить временные файлы</p>
-            </button>
-
-            <button
-              onClick={() => {
-                haptic?.impactOccurred('light');
-                router.push('/legal');
-              }}
-              className="w-full text-left p-4 bg-white/30 dark:bg-white/5 backdrop-blur-md rounded-xl border border-white/30 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-300"
-            >
-              <p className="text-base font-light text-gray-900 dark:text-white mb-1">Юридические документы</p>
-              <p className="text-xs font-light text-gray-600 dark:text-gray-400">Политика и условия</p>
-            </button>
-          </div>
-        </div>
-
         {/* App Info */}
         <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg text-center">
-          <p className="text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Telegram Shop</p>
+          <p className="text-sm font-light text-gray-700 dark:text-gray-300 mb-2">Salmina</p>
           <p className="text-xs font-light text-gray-500 dark:text-gray-400">Версия 1.1.0</p>
         </div>
       </div>

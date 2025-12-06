@@ -10,6 +10,8 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { ThemeProvider } from './ThemeProvider';
 import { LoadingScreen } from './LoadingScreen';
 import { TelegramOnlyGuard } from './TelegramOnlyGuard';
+import { UserBlockedGuard } from './UserBlockedGuard';
+import { SafeAreaProvider } from './SafeAreaProvider';
 
 // Global flag to track if app has been initialized
 let hasInitialized = false;
@@ -35,17 +37,19 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <ThemeProvider>
-            <TelegramOnlyGuard>
-              <AppInitializer>{children}</AppInitializer>
-            </TelegramOnlyGuard>
-          </ThemeProvider>
-        </ToastProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <ToastProvider>
+            <ThemeProvider>
+              <TelegramOnlyGuard>
+                <AppInitializer>{children}</AppInitializer>
+              </TelegramOnlyGuard>
+            </ThemeProvider>
+          </ToastProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
 
@@ -122,5 +126,5 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
   }
 
-  return <>{children}</>;
+  return <UserBlockedGuard>{children}</UserBlockedGuard>;
 }
