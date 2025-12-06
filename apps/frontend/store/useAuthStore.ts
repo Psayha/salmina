@@ -68,7 +68,11 @@ export const useAuthStore = create<AuthState>()(
           const isBlocked = message.includes('disabled') || message.includes('заблокирован');
 
           if (isBlocked) {
-            // Only clear user data and set blocked flag when explicitly blocked
+            // Clear persisted auth state to prevent rehydration from overwriting
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('auth-storage');
+            }
+            // Set blocked flag
             set({
               error: message,
               isLoading: false,
@@ -120,6 +124,10 @@ export const useAuthStore = create<AuthState>()(
             message.includes('заблокирован');
 
           if (isBlocked) {
+            // Clear persisted auth state to prevent rehydration from overwriting
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem('auth-storage');
+            }
             // User is blocked - set flag so UserBlockedGuard shows blocking screen
             set({
               error: message,
