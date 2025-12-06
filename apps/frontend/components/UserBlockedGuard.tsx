@@ -2,18 +2,17 @@
 
 import { useEffect } from 'react';
 import { Ban } from 'lucide-react';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore, isUserBlockedByServer } from '@/store/useAuthStore';
 
 /**
- * Check if user is blocked based on user state, error message, and server flag
+ * Check if user is blocked based on global flag, user state, and error message
  */
 function checkIsBlocked(
   user: { isActive?: boolean } | null,
-  error: string | null,
-  isBlockedByServer: boolean
+  error: string | null
 ): boolean {
-  // Server explicitly blocked the user (most reliable - not affected by zustand rehydration)
-  if (isBlockedByServer) return true;
+  // Check global flag FIRST - completely outside zustand, cannot be affected by rehydration
+  if (isUserBlockedByServer()) return true;
 
   // User object exists with isActive === false
   const userBlocked = user && user.isActive === false;
@@ -28,10 +27,10 @@ function checkIsBlocked(
 }
 
 export function UserBlockedGuard({ children }: { children: React.ReactNode }) {
-  const { user, error, _isBlockedByServer } = useAuthStore();
+  const { user, error } = useAuthStore();
 
   // Check synchronously on every render - no useState to avoid race condition
-  const isBlocked = checkIsBlocked(user, error, _isBlockedByServer);
+  const isBlocked = checkIsBlocked(user, error);
 
   useEffect(() => {
     // Manage body scroll based on blocked state
