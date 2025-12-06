@@ -109,7 +109,16 @@ export function validateTelegramInitData(initData: string, botToken: string): bo
     // Calculate hash
     const calculatedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
 
-    return calculatedHash === hash;
+    // Use timing-safe comparison to prevent timing attacks
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(calculatedHash, 'hex'),
+        Buffer.from(hash, 'hex')
+      );
+    } catch {
+      // If buffers have different lengths, they're not equal
+      return false;
+    }
   } catch (error) {
     return false;
   }

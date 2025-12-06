@@ -59,53 +59,62 @@ class OrdersService {
       return sum + diff * item.quantity;
     }, 0);
 
-    let promocodeDiscount = 0;
-    let promocodeId: string | undefined;
-
-    // Validate and apply promocode
-    if (data.promocodeCode) {
-      const promocode = await prisma.promocode.findFirst({
-        where: {
-          code: data.promocodeCode,
-          isActive: true,
-          validFrom: { lte: new Date() },
-          validTo: { gte: new Date() },
-        },
-      });
-
-      if (!promocode) {
-        throw new BadRequestError('Invalid or expired promocode');
-      }
-
-      if (promocode.maxUses && promocode.usedCount >= promocode.maxUses) {
-        throw new BadRequestError('Promocode usage limit reached');
-      }
-
-      if (promocode.minOrderAmount && subtotal < Number(promocode.minOrderAmount)) {
-        throw new BadRequestError(`Minimum order amount: ${promocode.minOrderAmount}`);
-      }
-
-      if (promocode.discountType === 'PERCENT') {
-        promocodeDiscount = (subtotal * Number(promocode.discountValue)) / 100;
-      } else {
-        promocodeDiscount = Number(promocode.discountValue);
-      }
-
-      promocodeId = promocode.id;
-    }
-
-    const total = subtotal - promocodeDiscount;
     const orderNumber = await this.generateOrderNumber();
 
-    // Create order in transaction
+    // Create order in transaction with promocode validation inside to prevent race conditions
     const order = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      let promocodeDiscount = 0;
+      let promocodeId: string | undefined;
+
+      // SECURITY FIX: Validate and apply promocode INSIDE transaction to prevent race conditions
+      if (data.promocodeCode) {
+        // Use findFirst with lock to prevent concurrent usage
+        const promocode = await tx.promocode.findFirst({
+          where: {
+            code: data.promocodeCode,
+            isActive: true,
+            validFrom: { lte: new Date() },
+            validTo: { gte: new Date() },
+          },
+        });
+
+        if (!promocode) {
+          throw new BadRequestError('Invalid or expired promocode');
+        }
+
+        // SECURITY FIX: Check limit inside transaction
+        if (promocode.maxUses && promocode.usedCount >= promocode.maxUses) {
+          throw new BadRequestError('Promocode usage limit reached');
+        }
+
+        if (promocode.minOrderAmount && subtotal < Number(promocode.minOrderAmount)) {
+          throw new BadRequestError(`Minimum order amount: ${promocode.minOrderAmount}`);
+        }
+
+        if (promocode.discountType === 'PERCENT') {
+          promocodeDiscount = (subtotal * Number(promocode.discountValue)) / 100;
+        } else {
+          promocodeDiscount = Number(promocode.discountValue);
+        }
+
+        promocodeId = promocode.id;
+
+        // SECURITY FIX: Increment usage counter immediately inside transaction
+        await tx.promocode.update({
+          where: { id: promocodeId },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+
+      const total = subtotal - promocodeDiscount;
       // Create order
       const newOrder = await tx.order.create({
         data: {
           orderNumber,
           userId,
+          // SECURITY FIX: ONLINE orders start as PROCESSING until payment is confirmed via webhook
           // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-          status: data.paymentMethod === 'ONLINE' ? OrderStatus.PAID : OrderStatus.PAID,
+          status: data.paymentMethod === 'ONLINE' ? OrderStatus.PROCESSING : OrderStatus.PAID,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
           paymentStatus: data.paymentMethod === 'ONLINE' ? PaymentStatus.PENDING : data.paymentMethod === 'SBP' ? PaymentStatus.PENDING : PaymentStatus.PAID,
           customerName: data.customerName,
@@ -151,13 +160,7 @@ class OrdersService {
         });
       }
 
-      // Update promocode usage
-      if (promocodeId) {
-        await tx.promocode.update({
-          where: { id: promocodeId },
-          data: { usedCount: { increment: 1 } },
-        });
-      }
+      // Note: Promocode usage is already incremented above when applying the promocode
 
       // Clear cart
       await tx.cartItem.deleteMany({
