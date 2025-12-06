@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { Save, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
+import { HtmlEditor } from '@/components/admin/HtmlEditor';
 
 const documentLabels: Record<string, string> = {
   terms: 'Пользовательское соглашение',
@@ -215,15 +216,13 @@ export default function LegalDocumentEditPage() {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Содержание документа
           </label>
-          <textarea
+          <HtmlEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={20}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-slate-500 font-mono text-sm"
-            placeholder="Введите текст документа. Поддерживается Markdown форматирование."
+            onChange={setContent}
+            placeholder="Введите текст документа..."
           />
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            Можно использовать Markdown: **жирный**, *курсив*, # заголовок, - списки
+            Используйте кнопки на панели для форматирования текста
           </p>
         </div>
 

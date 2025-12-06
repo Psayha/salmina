@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket, Activity, ImageIcon, Trash2, Truck } from 'lucide-react';
+import { BarChart3, Package, ShoppingCart, Users, ChevronRight, FolderTree, Megaphone, Scale, Ticket, Activity, ImageIcon, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTelegramBackButton, useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
@@ -101,14 +101,6 @@ export default function AdminDashboard() {
       href: '/admin/trash',
       color: 'from-red-500 to-rose-600',
       gradient: 'from-red-50 to-rose-50',
-    },
-    {
-      title: 'Доставка и оплата',
-      description: 'Информация о доставке и способах оплаты',
-      icon: Truck,
-      href: '/admin/legal/delivery_payment',
-      color: 'from-teal-500 to-cyan-600',
-      gradient: 'from-teal-50 to-cyan-50',
     },
   ];
 

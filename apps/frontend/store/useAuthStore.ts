@@ -62,9 +62,16 @@ export const useAuthStore = create<AuthState>()(
         } catch (error: any) {
           const message = error instanceof Error ? error.message : 'Ошибка авторизации';
           console.error('Auto login failed:', error);
+
+          // Check if user is blocked (backend returns "User account is disabled")
+          const isBlocked = message.includes('disabled') || message.includes('заблокирован');
+
           set({
             error: message,
             isLoading: false,
+            // Clear user data on auth failure to prevent cached data from being used
+            user: isBlocked ? { isActive: false } as any : null,
+            isAuthenticated: false,
           });
         }
       },
