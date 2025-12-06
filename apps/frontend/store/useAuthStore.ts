@@ -3,15 +3,22 @@ import { persist } from 'zustand/middleware';
 import { User } from '@/lib/api/types';
 import { authApi, getErrorMessage } from '@/lib/api';
 
-// Module-level flag - completely outside zustand, cannot be affected by persist/rehydration
-let _globalBlockedFlag = false;
+// Use window object for truly global state - cannot be affected by module bundling
+declare global {
+  interface Window {
+    __userBlockedByServer?: boolean;
+  }
+}
 
 export function isUserBlockedByServer(): boolean {
-  return _globalBlockedFlag;
+  if (typeof window === 'undefined') return false;
+  return window.__userBlockedByServer === true;
 }
 
 export function setUserBlockedByServer(blocked: boolean): void {
-  _globalBlockedFlag = blocked;
+  if (typeof window !== 'undefined') {
+    window.__userBlockedByServer = blocked;
+  }
 }
 
 interface AuthState {
