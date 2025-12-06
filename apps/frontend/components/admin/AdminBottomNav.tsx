@@ -2,15 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Users, ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Trash2, MoreHorizontal } from 'lucide-react';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Обзор', href: '/admin' },
   { icon: Package, label: 'Товары', href: '/admin/products' },
   { icon: ShoppingCart, label: 'Заказы', href: '/admin/orders' },
-  { icon: ImageIcon, label: 'Фото', href: '/admin/uploads' },
-  { icon: Users, label: 'Юзеры', href: '/admin/users' },
+  { icon: Trash2, label: 'Корзина', href: '/admin/trash' },
+  { icon: MoreHorizontal, label: 'Ещё', href: '/admin/users' },
 ];
 
 export const AdminBottomNav = () => {

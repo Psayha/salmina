@@ -9,6 +9,7 @@ import { ToastProvider } from './Toast';
 import { ErrorBoundary } from './ErrorBoundary';
 import { ThemeProvider } from './ThemeProvider';
 import { LoadingScreen } from './LoadingScreen';
+import { TelegramOnlyGuard } from './TelegramOnlyGuard';
 
 // Global flag to track if app has been initialized
 let hasInitialized = false;
@@ -38,7 +39,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
           <ThemeProvider>
-            <AppInitializer>{children}</AppInitializer>
+            <TelegramOnlyGuard>
+              <AppInitializer>{children}</AppInitializer>
+            </TelegramOnlyGuard>
           </ThemeProvider>
         </ToastProvider>
       </QueryClientProvider>

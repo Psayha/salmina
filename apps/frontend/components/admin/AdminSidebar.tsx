@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Package, Tags, ShoppingCart, Users, LogOut, ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Package, Tags, ShoppingCart, Users, LogOut, ImageIcon, Trash2 } from 'lucide-react';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Обзор', href: '/admin' },
@@ -12,6 +12,7 @@ const menuItems = [
   { icon: ShoppingCart, label: 'Заказы', href: '/admin/orders' },
   { icon: Users, label: 'Пользователи', href: '/admin/users' },
   { icon: ImageIcon, label: 'Загрузки', href: '/admin/uploads' },
+  { icon: Trash2, label: 'Корзина', href: '/admin/trash' },
 ];
 
 export const AdminSidebar = () => {
