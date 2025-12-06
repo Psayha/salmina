@@ -1,37 +1,43 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Ban } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
+/**
+ * Check if user is blocked based on user state and error message
+ */
+function checkIsBlocked(user: { isActive?: boolean } | null, error: string | null): boolean {
+  // User object exists with isActive === false
+  const userBlocked = user && user.isActive === false;
+  // Auth error contains blocking-related messages from backend
+  const authErrorBlocked =
+    error &&
+    (error.includes('disabled') ||
+      error.includes('deactivated') ||
+      error.includes('заблокирован'));
+
+  return !!(userBlocked || authErrorBlocked);
+}
+
 export function UserBlockedGuard({ children }: { children: React.ReactNode }) {
   const { user, error } = useAuthStore();
-  const [isBlocked, setIsBlocked] = useState(false);
+
+  // Check synchronously on every render - no useState to avoid race condition
+  const isBlocked = checkIsBlocked(user, error);
 
   useEffect(() => {
-    // Check if user is blocked:
-    // 1. User object exists with isActive === false
-    // 2. Auth error contains blocking-related messages from backend
-    const userBlocked = user && user.isActive === false;
-    const authErrorBlocked =
-      error &&
-      (error.includes('disabled') ||
-        error.includes('deactivated') ||
-        error.includes('заблокирован'));
-
-    if (userBlocked || authErrorBlocked) {
-      setIsBlocked(true);
-      // Block background scroll
+    // Manage body scroll based on blocked state
+    if (isBlocked) {
       document.body.style.overflow = 'hidden';
     } else {
-      setIsBlocked(false);
       document.body.style.overflow = '';
     }
 
     return () => {
       document.body.style.overflow = '';
     };
-  }, [user, error]);
+  }, [isBlocked]);
 
   const handleClose = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
