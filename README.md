@@ -2,8 +2,9 @@
 
 Интернет-магазин косметики в формате Telegram Mini App с современным glassmorphism дизайном.
 
-**Версия:** 1.1.0
+**Версия:** 1.1.1
 **Статус:** Production
+**Последний аудит безопасности:** 2025-12-06
 
 ## Production URLs
 
@@ -231,15 +232,22 @@ const { favoriteIds, toggleFavorite, isFavorite } = useFavoritesStore();
 
 ## Безопасность
 
-Реализованные защиты:
-- Rate Limiting (защита от DDoS)
-- XSS Protection (санитизация входных данных)
-- JWT аутентификация с refresh tokens
-- CORS whitelist
-- Helmet (security headers)
-- Zod validation
-- RBAC (role-based access control)
-- Prisma ORM (защита от SQL injection)
+Полный отчет: [AUDIT_REPORT.md](AUDIT_REPORT.md)
+
+### Реализованные защиты
+- **Rate Limiting** - на всех endpoints (cart, upload, webhooks, auth, orders)
+- **XSS Protection** - DOMPurify + sanitizeBody middleware
+- **Timing-safe HMAC** - crypto.timingSafeEqual() для Telegram verification
+- **File Upload Security** - magic bytes validation, MIME-based extensions
+- **Race Condition Prevention** - Prisma transactions для промокодов
+- **Price Manipulation Prevention** - проверка цен при создании заказа
+- **Per-user Promocode Limits** - защита от злоупотребления
+- **JWT Authentication** - с refresh tokens
+- **CORS Whitelist** - только доверенные origins
+- **Helmet** - security headers
+- **Zod Validation** - на всех endpoints
+- **RBAC** - USER/ADMIN roles
+- **Prisma ORM** - защита от SQL injection
 
 ## Тестирование
 

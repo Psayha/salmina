@@ -17,6 +17,9 @@ describe('OrdersService', () => {
     name: 'Test Product',
     article: 'TEST-001',
     price: 1000,
+    promotionPrice: 900,
+    hasPromotion: true,
+    isActive: true,
     quantity: 10,
     images: ['https://example.com/image.jpg'],
     orderCount: 0,
@@ -49,6 +52,7 @@ describe('OrdersService', () => {
     validTo: new Date('2025-12-31'),
     usedCount: 0,
     maxUses: 100,
+    maxUsesPerUser: 1,
     minOrderAmount: null,
   };
 
@@ -88,6 +92,10 @@ describe('OrdersService', () => {
       promocode: {
         findFirst: jest.fn(),
         update: jest.fn(),
+      },
+      promocodeUsage: {
+        count: jest.fn().mockResolvedValue(0),
+        create: jest.fn(),
       },
       order: {
         findUnique: jest.fn(),

@@ -45,14 +45,37 @@ class OrdersService {
       throw new BadRequestError('Cart is empty');
     }
 
-    // Validate stock
+    // Validate stock AND revalidate prices from database
+    // SECURITY FIX: Prevent price manipulation by recalculating from current DB values
     for (const item of cart.items) {
       if (item.product.quantity < item.quantity) {
         throw new BadRequestError(`Insufficient stock for ${item.product.name}`);
       }
+
+      // Check if product is still active
+      if (!item.product.isActive) {
+        throw new BadRequestError(`Product ${item.product.name} is no longer available`);
+      }
+
+      // SECURITY: Revalidate that cart price matches current product price
+      const currentPrice = item.product.hasPromotion && item.product.promotionPrice
+        ? Number(item.product.promotionPrice)
+        : Number(item.product.price);
+
+      const cartAppliedPrice = Number(item.appliedPrice);
+
+      // Allow small rounding difference (0.01), but flag major discrepancies
+      if (Math.abs(currentPrice - cartAppliedPrice) > 0.01) {
+        logger.warn(`Price mismatch detected for product ${item.product.name}`, {
+          cartPrice: cartAppliedPrice,
+          currentPrice: currentPrice,
+          productId: item.productId,
+        });
+        throw new BadRequestError(`Price has changed for ${item.product.name}. Please refresh your cart.`);
+      }
     }
 
-    // Calculate totals
+    // Calculate totals using validated prices
     const subtotal = cart.items.reduce((sum: number, item: CartItemWithProduct) => sum + Number(item.appliedPrice) * item.quantity, 0);
     const discount = cart.items.reduce((sum: number, item: CartItemWithProduct) => {
       const diff = Number(item.price) - Number(item.appliedPrice);
@@ -85,6 +108,20 @@ class OrdersService {
         // SECURITY FIX: Check limit inside transaction
         if (promocode.maxUses && promocode.usedCount >= promocode.maxUses) {
           throw new BadRequestError('Promocode usage limit reached');
+        }
+
+        // SECURITY FIX: Check per-user usage limit
+        if (promocode.maxUsesPerUser) {
+          const userUsageCount = await tx.promocodeUsage.count({
+            where: {
+              userId,
+              promocodeId: promocode.id,
+            },
+          });
+
+          if (userUsageCount >= promocode.maxUsesPerUser) {
+            throw new BadRequestError('You have already used this promocode');
+          }
         }
 
         if (promocode.minOrderAmount && subtotal < Number(promocode.minOrderAmount)) {
@@ -160,7 +197,16 @@ class OrdersService {
         });
       }
 
-      // Note: Promocode usage is already incremented above when applying the promocode
+      // SECURITY FIX: Record per-user promocode usage
+      if (promocodeId) {
+        await tx.promocodeUsage.create({
+          data: {
+            userId,
+            promocodeId,
+            orderId: newOrder.id,
+          },
+        });
+      }
 
       // Clear cart
       await tx.cartItem.deleteMany({

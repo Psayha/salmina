@@ -211,6 +211,7 @@ model Promocode {
   discountValue Decimal      @db.Decimal(10, 2)
   minOrderAmount Decimal?    @db.Decimal(10, 2)
   maxUses      Int?
+  maxUsesPerUser Int?        @default(1) // SECURITY: Limit per-user usage
   usedCount    Int          @default(0)
   isActive     Boolean      @default(true)
   validFrom    DateTime
@@ -219,10 +220,26 @@ model Promocode {
   updatedAt    DateTime     @updatedAt
 
   orders       Order[]
+  usages       PromocodeUsage[]
 
   @@index([code])
   @@index([isActive, validFrom, validTo])
   @@map("promocodes")
+}
+
+// SECURITY: Track per-user promocode usage to prevent abuse
+model PromocodeUsage {
+  id          String    @id @default(uuid())
+  userId      String
+  promocodeId String
+  orderId     String
+  usedAt      DateTime  @default(now())
+
+  promocode   Promocode @relation(fields: [promocodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, promocodeId, orderId])
+  @@index([userId, promocodeId])
+  @@map("promocode_usages")
 }
 
 model Order {
