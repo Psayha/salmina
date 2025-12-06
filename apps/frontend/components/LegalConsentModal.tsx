@@ -7,6 +7,7 @@ import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/
 import { usersApi } from '@/lib/api/endpoints/users';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { useAuthStore } from '@/store/useAuthStore';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 const documentLabels: Record<string, string> = {
   [LegalDocumentType.TERMS]: 'Пользовательское соглашение',
@@ -208,9 +209,10 @@ export function LegalConsentModal() {
                   </div>
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 min-h-0">
+                    {/* SECURITY FIX: Sanitize HTML to prevent XSS */}
                     <div
                       className="text-sm text-gray-700 dark:text-gray-300 font-light leading-relaxed prose prose-sm dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: selectedDocument.content }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedDocument.content) }}
                     />
                     <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <p className="text-xs text-gray-400 dark:text-gray-500">

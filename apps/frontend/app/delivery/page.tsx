@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Truck } from 'lucide-react';
 import { useTelegramBackButton } from '@/lib/telegram/useTelegram';
 import { legalApi, LegalDocument, LegalDocumentType } from '@/lib/api/endpoints/legal';
+import { sanitizeHtml } from '@/lib/utils/sanitize';
 
 export default function DeliveryPage() {
   const router = useRouter();
@@ -50,9 +51,10 @@ export default function DeliveryPage() {
       <div className="px-4">
         {document ? (
           <div className="bg-white/40 dark:bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/30 dark:border-white/10 shadow-lg">
+            {/* SECURITY FIX: Sanitize HTML to prevent XSS */}
             <div
               className="text-sm text-gray-700 dark:text-gray-300 font-light leading-relaxed prose prose-sm dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: document.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(document.content) }}
             />
             <div className="mt-6 pt-4 border-t border-white/20 dark:border-white/10">
               <p className="text-xs text-gray-500 dark:text-gray-400">

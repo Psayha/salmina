@@ -136,9 +136,10 @@ app.get('/api', (_req, res) => {
 
 // Mount module routes with specific rate limits and sanitization
 
-// Auth routes with strict rate limiting
-app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/users', userRoutes);
+// Auth routes with strict rate limiting and input sanitization
+// SECURITY FIX: Added sanitizeBody to prevent XSS in auth data
+app.use('/api/auth', authLimiter, sanitizeBody, authRoutes);
+app.use('/api/users', sanitizeBody, userRoutes);
 app.use('/api/products', sanitizeBody, productsRoutes);
 app.use('/api/categories', sanitizeBody, categoriesRoutes);
 app.use('/api/cart', cartRoutes);
