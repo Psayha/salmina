@@ -19,6 +19,7 @@ import {
   toUserDTOList,
 } from './users.types.js';
 import { logger } from '../../utils/logger.js';
+import { authService } from '../auth/auth.service.js';
 
 /**
  * User Service
@@ -270,7 +271,10 @@ export class UserService {
       },
     });
 
-    logger.info(`User deactivated: ${userId}`);
+    // SECURITY FIX: Revoke all tokens immediately so user can't continue using the app
+    await authService.revokeAllTokens(userId);
+
+    logger.info(`User deactivated and tokens revoked: ${userId}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return toUserDTO(updatedUser as unknown as any);
   }

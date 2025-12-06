@@ -9,6 +9,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError, ForbiddenError } from '../errors/AppError.js';
 import { verifyAccessToken, JWTPayload } from '../utils/crypto.js';
 import { UserRole } from '../../modules/auth/auth.types.js';
+import { prisma } from '../../database/prisma.service.js';
 
 /**
  * Extended Request interface with user data
@@ -19,8 +20,9 @@ export interface AuthRequest extends Request {
 
 /**
  * Authenticate user via JWT token
+ * SECURITY: Also checks if user is still active in database
  */
-export const authenticate = (req: AuthRequest, __res: Response, next: NextFunction): void => {
+export const authenticate = async (req: AuthRequest, __res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -41,11 +43,26 @@ export const authenticate = (req: AuthRequest, __res: Response, next: NextFuncti
     }
 
     const payload = verifyAccessToken(token);
+
+    // SECURITY FIX: Check if user is still active in database
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { isActive: true },
+    });
+
+    if (!user) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    if (!user.isActive) {
+      throw new ForbiddenError('Your account has been deactivated');
+    }
+
     req.user = payload;
 
     next();
   } catch (error) {
-    if (error instanceof UnauthorizedError) {
+    if (error instanceof UnauthorizedError || error instanceof ForbiddenError) {
       next(error);
     } else {
       next(new UnauthorizedError('Invalid or expired token'));
@@ -55,8 +72,9 @@ export const authenticate = (req: AuthRequest, __res: Response, next: NextFuncti
 
 /**
  * Optional authentication (user data if token provided)
+ * SECURITY: Also checks if user is still active
  */
-export const optionalAuth = (req: AuthRequest, _res: Response, next: NextFunction): void => {
+export const optionalAuth = async (req: AuthRequest, _res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -67,7 +85,17 @@ export const optionalAuth = (req: AuthRequest, _res: Response, next: NextFunctio
         const token = parts[1];
         if (token) {
           const payload = verifyAccessToken(token);
-          req.user = payload;
+
+          // SECURITY FIX: Check if user is still active
+          const user = await prisma.user.findUnique({
+            where: { id: payload.userId },
+            select: { isActive: true },
+          });
+
+          // Only set user if exists and active
+          if (user?.isActive) {
+            req.user = payload;
+          }
         }
       }
     }
