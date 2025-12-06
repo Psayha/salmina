@@ -59,13 +59,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 function AppInitializer({ children }: { children: React.ReactNode }) {
   const { webApp, isReady } = useTelegram();
   const autoLoginWithTelegram = useAuthStore((state) => state.autoLoginWithTelegram);
-  const user = useAuthStore((state) => state.user);
   const fetchCurrentUser = useAuthStore((state) => state.fetchCurrentUser);
   const fetchCart = useCartStore((state) => state.fetchCart);
 
   // Show loading only on first app load, not on navigation
   const [showLoading, setShowLoading] = useState(!hasInitialized);
   const [initComplete, setInitComplete] = useState(hasInitialized);
+  const [animationComplete, setAnimationComplete] = useState(hasInitialized);
   const initStarted = useRef(false);
 
   useEffect(() => {
@@ -125,31 +125,22 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, webApp]);
 
+  // Called when loading animation completes (~2 sec)
   const handleLoadingComplete = () => {
-    // Only hide loading screen after both animation AND initialization are complete
-    if (initComplete) {
+    setAnimationComplete(true);
+  };
+
+  // Hide loading screen only when BOTH animation AND init are complete
+  useEffect(() => {
+    if (animationComplete && initComplete && showLoading) {
       hasInitialized = true;
       setShowLoading(false);
     }
-  };
+  }, [animationComplete, initComplete, showLoading]);
 
-  // Check if user is blocked immediately after init
-  const isUserBlocked = user && user.isActive === false;
-
-  // Show blocking screen immediately if user is blocked, even during loading
-  if (isUserBlocked) {
-    hasInitialized = true;
-    return <UserBlockedGuard>{children}</UserBlockedGuard>;
-  }
-
-  if (showLoading && !initComplete) {
+  // Show loading screen while animation or init is in progress
+  if (showLoading) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
-  }
-
-  // If loading animation finished but init not complete, keep showing loading
-  if (showLoading && initComplete) {
-    hasInitialized = true;
-    setShowLoading(false);
   }
 
   return <UserBlockedGuard>{children}</UserBlockedGuard>;
