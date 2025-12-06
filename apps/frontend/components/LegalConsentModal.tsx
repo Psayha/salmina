@@ -208,9 +208,10 @@ export function LegalConsentModal() {
                   </div>
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 min-h-0">
-                    <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-light leading-relaxed">
-                      {selectedDocument.content}
-                    </div>
+                    <div
+                      className="text-sm text-gray-700 dark:text-gray-300 font-light leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: selectedDocument.content }}
+                    />
                     <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <p className="text-xs text-gray-400 dark:text-gray-500">
                         Версия {selectedDocument.version}

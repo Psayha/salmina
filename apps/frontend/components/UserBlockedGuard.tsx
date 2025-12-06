@@ -5,12 +5,17 @@ import { Ban } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
 export function UserBlockedGuard({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, error } = useAuthStore();
   const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated but blocked (isActive === false)
-    if (isAuthenticated && user && user.isActive === false) {
+    // Check if user is blocked:
+    // 1. User object exists with isActive === false
+    // 2. Auth error contains "disabled" (backend blocked user message)
+    const userBlocked = user && user.isActive === false;
+    const authErrorBlocked = error && (error.includes('disabled') || error.includes('заблокирован'));
+
+    if (userBlocked || authErrorBlocked) {
       setIsBlocked(true);
       // Block background scroll
       document.body.style.overflow = 'hidden';
@@ -22,7 +27,7 @@ export function UserBlockedGuard({ children }: { children: React.ReactNode }) {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [user, isAuthenticated]);
+  }, [user, error]);
 
   const handleClose = () => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
