@@ -110,13 +110,32 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : 'Ошибка загрузки пользователя';
-          set({
-            error: message,
-            isLoading: false,
-            user: null,
-            isAuthenticated: false,
-          });
+          // Use getErrorMessage to extract API error message properly
+          const message = getErrorMessage(error);
+
+          // Check if user is blocked (backend returns "deactivated" or similar)
+          const isBlocked =
+            message.includes('disabled') ||
+            message.includes('deactivated') ||
+            message.includes('заблокирован');
+
+          if (isBlocked) {
+            // User is blocked - set flag so UserBlockedGuard shows blocking screen
+            set({
+              error: message,
+              isLoading: false,
+              user: { isActive: false } as User,
+              isAuthenticated: false,
+            });
+          } else {
+            // Other errors (network, server, etc.)
+            set({
+              error: message,
+              isLoading: false,
+              user: null,
+              isAuthenticated: false,
+            });
+          }
         }
       },
 

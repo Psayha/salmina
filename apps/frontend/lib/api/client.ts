@@ -80,6 +80,19 @@ let isReloginInProgress = false;
 let reloginPromise: Promise<boolean> | null = null;
 
 /**
+ * Check if error message indicates user is blocked
+ */
+function isBlockedUserError(error: AxiosError): boolean {
+  const apiError = error.response?.data as ApiError | undefined;
+  const message = apiError?.message || '';
+  return (
+    message.includes('disabled') ||
+    message.includes('deactivated') ||
+    message.includes('заблокирован')
+  );
+}
+
+/**
  * Response interceptor - handle errors globally
  */
 apiClient.interceptors.response.use(
@@ -89,6 +102,12 @@ apiClient.interceptors.response.use(
 
     // Skip re-login for auth endpoints to avoid infinite loops
     if (originalRequest?.url?.includes('/auth/')) {
+      return Promise.reject(error);
+    }
+
+    // Don't retry for blocked users (403) - let the error propagate to show blocking screen
+    if (error.response?.status === 403 && isBlockedUserError(error)) {
+      clearAuth();
       return Promise.reject(error);
     }
 
