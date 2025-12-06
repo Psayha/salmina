@@ -35,35 +35,36 @@ export const Header = ({
       }}
     >
       {/* px-14 (56px) на каждую сторону чтобы не заезжать на системные кнопки Telegram */}
-      <div className="max-w-md mx-auto px-14 py-2 flex items-center justify-center gap-2">
+      {/* Уменьшенные кнопки чтобы соответствовать высоте системных кнопок (~28px) */}
+      <div className="max-w-md mx-auto px-14 py-1.5 flex items-center justify-center gap-1.5">
         {/* Menu Button */}
         <button
           onClick={onMenuClick}
-          className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95"
+          className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full shadow-md hover:shadow-lg transition-all duration-300 active:scale-95"
         >
-          <span className="text-xs font-medium text-gray-800 tracking-wide">MENU</span>
+          <span className="text-[10px] font-medium text-gray-800 tracking-wide">MENU</span>
         </button>
 
         {/* Search Button */}
         <button
           onClick={onSearchClick}
-          className={`p-2 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 ${
+          className={`p-1.5 backdrop-blur-md rounded-full shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 ${
             isSearchActive ? 'bg-pink-500' : 'bg-white/90'
           }`}
         >
-          <Search className={`w-5 h-5 ${isSearchActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
+          <Search className={`w-4 h-4 ${isSearchActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
         </button>
 
         {/* Favorites Button */}
         <button
           onClick={onFavoritesClick}
-          className={`relative p-2 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 ${
+          className={`relative p-1.5 backdrop-blur-md rounded-full shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 ${
             isFavoritesActive ? 'bg-pink-500' : 'bg-white/90'
           }`}
         >
-          <Heart className={`w-5 h-5 ${isFavoritesActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
+          <Heart className={`w-4 h-4 ${isFavoritesActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
           {favoritesCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-white text-[9px] font-bold shadow-md border-2 border-white">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-white text-[8px] font-bold shadow-sm border border-white">
               {favoritesCount > 9 ? '9+' : favoritesCount}
             </span>
           )}
@@ -72,13 +73,13 @@ export const Header = ({
         {/* Cart Button */}
         <button
           onClick={onCartClick}
-          className={`relative p-2 backdrop-blur-md rounded-full shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 ${
+          className={`relative p-1.5 backdrop-blur-md rounded-full shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 ${
             isCartActive ? 'bg-pink-500' : 'bg-white/90'
           }`}
         >
-          <ShoppingBag className={`w-5 h-5 ${isCartActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
+          <ShoppingBag className={`w-4 h-4 ${isCartActive ? 'text-white' : 'text-gray-800'}`} strokeWidth={2} />
           {cartItemsCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-white text-[9px] font-bold shadow-md border-2 border-white">
+            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-white text-[8px] font-bold shadow-sm border border-white">
               {cartItemsCount > 9 ? '9+' : cartItemsCount}
             </span>
           )}
