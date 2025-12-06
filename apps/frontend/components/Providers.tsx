@@ -10,6 +10,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { ThemeProvider } from './ThemeProvider';
 import { LoadingScreen } from './LoadingScreen';
 import { TelegramOnlyGuard } from './TelegramOnlyGuard';
+import { UserBlockedGuard } from './UserBlockedGuard';
 
 // Global flag to track if app has been initialized
 let hasInitialized = false;
@@ -122,5 +123,5 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
   }
 
-  return <>{children}</>;
+  return <UserBlockedGuard>{children}</UserBlockedGuard>;
 }
