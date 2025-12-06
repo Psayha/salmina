@@ -109,13 +109,20 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
           }
         }
 
-        // Check if user was blocked - check error state directly from zustand
-        const authError = useAuthStore.getState().error;
-        if (authError && (
+        // Check if user was blocked - check both error and user state
+        const authState = useAuthStore.getState();
+        const authError = authState.error;
+        const user = authState.user;
+
+        // Check if blocked by error message OR by user.isActive flag
+        const isBlockedByError = authError && (
           authError.includes('disabled') ||
           authError.includes('deactivated') ||
           authError.includes('заблокирован')
-        )) {
+        );
+        const isBlockedByUser = user && user.isActive === false;
+
+        if (isBlockedByError || isBlockedByUser) {
           blocked = true;
           wasBlockedDuringInit = true;
           setIsBlocked(true);
