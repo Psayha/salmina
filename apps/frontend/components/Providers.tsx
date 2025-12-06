@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAuthStore, isUserBlockedByServer } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegram } from '@/lib/telegram/useTelegram';
 import { ToastProvider } from './Toast';
@@ -108,17 +108,8 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
       }
 
       // Fetch cart only if user is not blocked
-      // Check _isBlockedByServer flag (most reliable - not affected by zustand rehydration)
-      const currentState = useAuthStore.getState();
-      const isBlocked = currentState._isBlockedByServer ||
-        (currentState.user && currentState.user.isActive === false) ||
-        (currentState.error && (
-          currentState.error.includes('disabled') ||
-          currentState.error.includes('deactivated') ||
-          currentState.error.includes('заблокирован')
-        ));
-
-      if (!isBlocked) {
+      // Check global flag FIRST (most reliable - completely outside zustand)
+      if (!isUserBlockedByServer()) {
         try {
           await fetchCart();
         } catch (error) {

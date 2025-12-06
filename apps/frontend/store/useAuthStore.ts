@@ -3,6 +3,17 @@ import { persist } from 'zustand/middleware';
 import { User } from '@/lib/api/types';
 import { authApi, getErrorMessage } from '@/lib/api';
 
+// Module-level flag - completely outside zustand, cannot be affected by persist/rehydration
+let _globalBlockedFlag = false;
+
+export function isUserBlockedByServer(): boolean {
+  return _globalBlockedFlag;
+}
+
+export function setUserBlockedByServer(blocked: boolean): void {
+  _globalBlockedFlag = blocked;
+}
+
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -71,11 +82,13 @@ export const useAuthStore = create<AuthState>()(
           const isBlocked = message.includes('disabled') || message.includes('заблокирован');
 
           if (isBlocked) {
+            // Set global flag FIRST - this is outside zustand and cannot be affected by rehydration
+            setUserBlockedByServer(true);
             // Clear persisted auth state to prevent rehydration from overwriting
             if (typeof window !== 'undefined') {
               localStorage.removeItem('auth-storage');
             }
-            // Set blocked flag - _isBlockedByServer is NOT persisted, so it cannot be overwritten by rehydration
+            // Set blocked flag in store as well
             set({
               error: message,
               isLoading: false,
@@ -128,12 +141,13 @@ export const useAuthStore = create<AuthState>()(
             message.includes('заблокирован');
 
           if (isBlocked) {
+            // Set global flag FIRST - this is outside zustand and cannot be affected by rehydration
+            setUserBlockedByServer(true);
             // Clear persisted auth state to prevent rehydration from overwriting
             if (typeof window !== 'undefined') {
               localStorage.removeItem('auth-storage');
             }
             // User is blocked - set flag so UserBlockedGuard shows blocking screen
-            // _isBlockedByServer is NOT persisted, so it cannot be overwritten by rehydration
             set({
               error: message,
               isLoading: false,
