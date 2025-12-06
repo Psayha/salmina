@@ -11,9 +11,13 @@ export function UserBlockedGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check if user is blocked:
     // 1. User object exists with isActive === false
-    // 2. Auth error contains "disabled" (backend blocked user message)
+    // 2. Auth error contains blocking-related messages from backend
     const userBlocked = user && user.isActive === false;
-    const authErrorBlocked = error && (error.includes('disabled') || error.includes('заблокирован'));
+    const authErrorBlocked =
+      error &&
+      (error.includes('disabled') ||
+        error.includes('deactivated') ||
+        error.includes('заблокирован'));
 
     if (userBlocked || authErrorBlocked) {
       setIsBlocked(true);
