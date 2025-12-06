@@ -9,8 +9,30 @@ import { authenticate, requireAdmin } from '../../common/middleware/auth.middlew
 import { asyncHandler, TypedRequest } from '../../types/express.js';
 import { NotFoundError } from '../../common/errors/AppError.js';
 import { logger } from '../../utils/logger.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 const router: Router = Router();
+
+// Upload directory for file deletion
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
+
+/**
+ * Delete a file from uploads directory
+ */
+async function deleteUploadedFile(fileUrl: string): Promise<void> {
+  try {
+    // Extract filename from URL (e.g., /uploads/abc123.jpg -> abc123.jpg)
+    const filename = path.basename(fileUrl);
+    const filePath = path.join(UPLOAD_DIR, filename);
+
+    await fs.unlink(filePath);
+    logger.info(`Deleted file: ${filename}`);
+  } catch (error) {
+    // Ignore errors if file doesn't exist
+    logger.warn(`Could not delete file: ${fileUrl}`, error);
+  }
+}
 
 // All routes require admin authentication
 router.use(authenticate, requireAdmin);
@@ -162,6 +184,12 @@ router.delete('/product/:id', asyncHandler(async (req: TypedRequest<never, { id:
     prisma.product.delete({ where: { id } }),
   ]);
 
+  // Delete associated images/videos from filesystem
+  if (product.images && product.images.length > 0) {
+    logger.info(`Deleting ${product.images.length} files for product: ${id}`);
+    await Promise.all(product.images.map(deleteUploadedFile));
+  }
+
   logger.info(`Product permanently deleted: ${id}`);
   res.json({ success: true, message: 'Product permanently deleted' });
 }));
@@ -215,10 +243,10 @@ router.delete('/category/:id', asyncHandler(async (req: TypedRequest<never, { id
 router.delete('/empty', asyncHandler(async (_req: TypedRequest, res) => {
   logger.info('Emptying trash');
 
-  // Get all deleted items
+  // Get all deleted products with their images
   const deletedProducts = await prisma.product.findMany({
     where: { isActive: false },
-    select: { id: true },
+    select: { id: true, images: true },
   });
 
   const deletedCategories = await prisma.category.findMany({
@@ -237,6 +265,14 @@ router.delete('/empty', asyncHandler(async (_req: TypedRequest, res) => {
   const productIds = deletedProducts.map(p => p.id);
   const categoryIds = safeToDeleteCategories.map(c => c.id);
 
+  // Collect all images/videos to delete
+  const allFiles: string[] = [];
+  deletedProducts.forEach(p => {
+    if (p.images && p.images.length > 0) {
+      allFiles.push(...p.images);
+    }
+  });
+
   // Delete in transaction
   await prisma.$transaction([
     prisma.cartItem.deleteMany({ where: { productId: { in: productIds } } }),
@@ -244,6 +280,12 @@ router.delete('/empty', asyncHandler(async (_req: TypedRequest, res) => {
     prisma.product.deleteMany({ where: { id: { in: productIds } } }),
     prisma.category.deleteMany({ where: { id: { in: categoryIds } } }),
   ]);
+
+  // Delete files from filesystem
+  if (allFiles.length > 0) {
+    logger.info(`Deleting ${allFiles.length} files from trash`);
+    await Promise.all(allFiles.map(deleteUploadedFile));
+  }
 
   logger.info(`Trash emptied: ${productIds.length} products, ${categoryIds.length} categories`);
   res.json({
