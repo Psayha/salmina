@@ -34,7 +34,8 @@ export const Header = ({
         paddingTop: 'var(--safe-top, 0px)',
       }}
     >
-      <div className="max-w-md mx-auto px-4 py-2 flex items-center justify-center gap-2">
+      {/* px-14 (56px) на каждую сторону чтобы не заезжать на системные кнопки Telegram */}
+      <div className="max-w-md mx-auto px-14 py-2 flex items-center justify-center gap-2">
         {/* Menu Button */}
         <button
           onClick={onMenuClick}
