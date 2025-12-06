@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion';
-import { X, Package, HelpCircle, Settings, User, LayoutGrid } from 'lucide-react';
+import { X, Package, HelpCircle, Settings, User, LayoutGrid, Truck } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
 import { useRef } from 'react';
@@ -41,7 +41,7 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
     { icon: LayoutGrid, label: 'Каталог', path: '/' },
     { icon: User, label: 'Профиль', path: '/profile' },
     { icon: Package, label: 'Мои заказы', path: '/orders' },
-    { icon: null, label: 'Доставка и оплата', path: '/delivery' },
+    { icon: Truck, label: 'Доставка и оплата', path: '/delivery' },
     { icon: HelpCircle, label: 'Поддержка', path: '/support' },
   ];
 
@@ -103,11 +103,7 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
                     onClick={() => handleNavigate(item.path)}
                     className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
-                    {Icon ? (
-                      <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                    ) : (
-                      <div className="w-5 h-5" /> /* Spacer for alignment */
-                    )}
+                    <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     <span className="text-base font-light text-gray-700 dark:text-gray-300">
                       {item.label}
                     </span>
