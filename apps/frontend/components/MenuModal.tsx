@@ -1,10 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls, PanInfo } from 'framer-motion';
 import { X, Package, HelpCircle, Settings, User, LayoutGrid } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTelegramHaptic } from '@/lib/telegram/useTelegram';
+import { useRef } from 'react';
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const haptic = useTelegramHaptic();
+  const dragControls = useDragControls();
+  const constraintsRef = useRef(null);
 
   const isAdmin = user?.telegramId === String(ADMIN_USER_ID);
 
@@ -26,10 +29,19 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
     onClose();
   };
 
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    // Close if dragged down more than 100px or with enough velocity
+    if (info.offset.y > 100 || info.velocity.y > 500) {
+      haptic?.impactOccurred('light');
+      onClose();
+    }
+  };
+
   const menuItems = [
     { icon: LayoutGrid, label: 'Каталог', path: '/' },
     { icon: User, label: 'Профиль', path: '/profile' },
     { icon: Package, label: 'Мои заказы', path: '/orders' },
+    { icon: null, label: 'Доставка и оплата', path: '/delivery' },
     { icon: HelpCircle, label: 'Поддержка', path: '/support' },
   ];
 
@@ -39,6 +51,7 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
         <>
           {/* Backdrop with blur */}
           <motion.div
+            ref={constraintsRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -53,11 +66,19 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[101] bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl"
+            drag="y"
+            dragControls={dragControls}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.7 }}
+            onDragEnd={handleDragEnd}
+            className="fixed bottom-0 left-0 right-0 z-[101] bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl touch-none"
             style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
+            {/* Handle - drag area */}
+            <div
+              className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
               <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
             </div>
 
@@ -82,7 +103,11 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
                     onClick={() => handleNavigate(item.path)}
                     className="w-full flex items-center gap-4 px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
-                    <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    {Icon ? (
+                      <Icon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    ) : (
+                      <div className="w-5 h-5" /> /* Spacer for alignment */
+                    )}
                     <span className="text-base font-light text-gray-700 dark:text-gray-300">
                       {item.label}
                     </span>
