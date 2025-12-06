@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
-import { useAuthStore, isUserBlockedByServer } from '@/store/useAuthStore';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useCartStore } from '@/store/useCartStore';
 import { useTelegram } from '@/lib/telegram/useTelegram';
 import { ToastProvider } from './Toast';
@@ -10,11 +10,13 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { ThemeProvider } from './ThemeProvider';
 import { LoadingScreen } from './LoadingScreen';
 import { TelegramOnlyGuard } from './TelegramOnlyGuard';
-import { UserBlockedGuard } from './UserBlockedGuard';
+import { BlockedScreen } from './BlockedScreen';
 import { SafeAreaProvider } from './SafeAreaProvider';
 
 // Global flag to track if app has been initialized
 let hasInitialized = false;
+// Global flag to track if user was blocked during init
+let wasBlockedDuringInit = false;
 
 /**
  * App providers with React Query and initialization
@@ -66,6 +68,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   const [showLoading, setShowLoading] = useState(!hasInitialized);
   const [initComplete, setInitComplete] = useState(hasInitialized);
   const [animationComplete, setAnimationComplete] = useState(hasInitialized);
+  const [isBlocked, setIsBlocked] = useState(wasBlockedDuringInit);
   const initStarted = useRef(false);
 
   useEffect(() => {
@@ -81,6 +84,8 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     initStarted.current = true;
 
     async function initialize() {
+      let blocked = false;
+
       try {
         const initData = webApp?.initData;
 
@@ -103,13 +108,24 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
             await fetchCurrentUser();
           }
         }
+
+        // Check if user was blocked - check error state directly from zustand
+        const authError = useAuthStore.getState().error;
+        if (authError && (
+          authError.includes('disabled') ||
+          authError.includes('deactivated') ||
+          authError.includes('заблокирован')
+        )) {
+          blocked = true;
+          wasBlockedDuringInit = true;
+          setIsBlocked(true);
+        }
       } catch (error) {
         console.error('[Providers] Initialization error:', error);
       }
 
       // Fetch cart only if user is not blocked
-      // Check global flag FIRST (most reliable - completely outside zustand)
-      if (!isUserBlockedByServer()) {
+      if (!blocked) {
         try {
           await fetchCart();
         } catch (error) {
@@ -143,5 +159,10 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
   }
 
-  return <UserBlockedGuard>{children}</UserBlockedGuard>;
+  // Show blocked screen if user was blocked during init
+  if (isBlocked) {
+    return <BlockedScreen />;
+  }
+
+  return <>{children}</>;
 }
