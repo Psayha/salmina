@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User } from '@/lib/api/types';
-import { authApi } from '@/lib/api';
+import { authApi, getErrorMessage } from '@/lib/api';
 
 interface AuthState {
   user: User | null;
@@ -59,9 +59,10 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           });
-        } catch (error: any) {
-          const message = error instanceof Error ? error.message : 'Ошибка авторизации';
-          console.error('Auto login failed:', error);
+        } catch (error: unknown) {
+          // Use getErrorMessage to extract API error message properly
+          const message = getErrorMessage(error);
+          console.error('Auto login failed:', message, error);
 
           // Check if user is blocked (backend returns "User account is disabled")
           const isBlocked = message.includes('disabled') || message.includes('заблокирован');
@@ -69,8 +70,8 @@ export const useAuthStore = create<AuthState>()(
           set({
             error: message,
             isLoading: false,
-            // Clear user data on auth failure to prevent cached data from being used
-            user: isBlocked ? { isActive: false } as any : null,
+            // Set user with isActive: false when blocked to trigger UserBlockedGuard
+            user: isBlocked ? ({ isActive: false } as User) : null,
             isAuthenticated: false,
           });
         }
