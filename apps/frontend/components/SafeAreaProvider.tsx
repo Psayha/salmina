@@ -14,7 +14,8 @@ export function SafeAreaProvider({ children }: { children: React.ReactNode }) {
       const root = document.documentElement;
 
       // Get Telegram WebApp safe area if available
-      const tgWebApp = window.Telegram?.WebApp;
+      // Use 'any' type as some properties are not in the type definition yet
+      const tgWebApp = window.Telegram?.WebApp as any;
 
       if (tgWebApp?.safeAreaInset) {
         // Use Telegram's safe area values
@@ -56,7 +57,7 @@ export function SafeAreaProvider({ children }: { children: React.ReactNode }) {
     updateSafeArea();
 
     // Listen for Telegram WebApp events
-    const tgWebApp = window.Telegram?.WebApp;
+    const tgWebApp = window.Telegram?.WebApp as any;
     if (tgWebApp) {
       tgWebApp.onEvent?.('viewportChanged', updateSafeArea);
       tgWebApp.onEvent?.('safeAreaChanged', updateSafeArea);
