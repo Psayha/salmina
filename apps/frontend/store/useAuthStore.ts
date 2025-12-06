@@ -67,13 +67,22 @@ export const useAuthStore = create<AuthState>()(
           // Check if user is blocked (backend returns "User account is disabled")
           const isBlocked = message.includes('disabled') || message.includes('заблокирован');
 
-          set({
-            error: message,
-            isLoading: false,
-            // Set user with isActive: false when blocked to trigger UserBlockedGuard
-            user: isBlocked ? ({ isActive: false } as User) : null,
-            isAuthenticated: false,
-          });
+          if (isBlocked) {
+            // Only clear user data and set blocked flag when explicitly blocked
+            set({
+              error: message,
+              isLoading: false,
+              user: { isActive: false } as User,
+              isAuthenticated: false,
+            });
+          } else {
+            // For other errors (network, server, etc.) - keep existing user data
+            // Just set error and stop loading
+            set({
+              error: message,
+              isLoading: false,
+            });
+          }
         }
       },
 

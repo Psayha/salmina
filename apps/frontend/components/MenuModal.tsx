@@ -12,8 +12,6 @@ interface MenuModalProps {
   onClose: () => void;
 }
 
-const ADMIN_USER_ID = 887567962;
-
 export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
@@ -21,7 +19,8 @@ export const MenuModal = ({ isOpen, onClose }: MenuModalProps) => {
   const dragControls = useDragControls();
   const constraintsRef = useRef(null);
 
-  const isAdmin = user?.telegramId === String(ADMIN_USER_ID);
+  // Check admin by role, not by hardcoded ID
+  const isAdmin = user?.role === 'ADMIN';
 
   const handleNavigate = (path: string) => {
     haptic?.impactOccurred('light');
