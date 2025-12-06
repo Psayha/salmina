@@ -266,8 +266,8 @@ export enum HttpStatusCode {
  * Response headers for file downloads
  */
 export interface DownloadFileResponse {
-  /** File content as buffer/stream */
-  content: Buffer | NodeJS.ReadableStream;
+  /** File content as buffer/blob */
+  content: ArrayBuffer | Uint8Array | Blob;
   /** File name */
   fileName: string;
   /** MIME type */
