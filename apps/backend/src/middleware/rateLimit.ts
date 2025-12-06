@@ -69,3 +69,48 @@ export const orderLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+/**
+ * Cart operations rate limiter
+ * Prevents cart manipulation abuse
+ */
+export const cartLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 60, // 60 cart operations per 15 minutes
+  message: {
+    success: false,
+    message: 'Too many cart operations, please slow down.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * File upload rate limiter
+ * Prevents upload spam and storage abuse
+ */
+export const uploadLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 50, // 50 uploads per hour
+  message: {
+    success: false,
+    message: 'Too many file uploads, please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * Webhook rate limiter
+ * Protects webhook endpoints from abuse
+ */
+export const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // 30 requests per minute
+  message: {
+    success: false,
+    message: 'Too many webhook requests.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
