@@ -3,31 +3,11 @@ import { persist } from 'zustand/middleware';
 import { User } from '@/lib/api/types';
 import { authApi, getErrorMessage } from '@/lib/api';
 
-// Use window object for truly global state - cannot be affected by module bundling
-declare global {
-  interface Window {
-    __userBlockedByServer?: boolean;
-  }
-}
-
-export function isUserBlockedByServer(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.__userBlockedByServer === true;
-}
-
-export function setUserBlockedByServer(blocked: boolean): void {
-  if (typeof window !== 'undefined') {
-    window.__userBlockedByServer = blocked;
-  }
-}
-
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  // Flag set when server explicitly blocks user - NOT persisted, immune to rehydration race conditions
-  _isBlockedByServer: boolean;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -45,7 +25,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
-      _isBlockedByServer: false,
 
       setUser: (user) =>
         set({
@@ -89,23 +68,18 @@ export const useAuthStore = create<AuthState>()(
           const isBlocked = message.includes('disabled') || message.includes('заблокирован');
 
           if (isBlocked) {
-            // Set global flag FIRST - this is outside zustand and cannot be affected by rehydration
-            setUserBlockedByServer(true);
-            // Clear persisted auth state to prevent rehydration from overwriting
+            // Clear persisted auth state
             if (typeof window !== 'undefined') {
               localStorage.removeItem('auth-storage');
             }
-            // Set blocked flag in store as well
             set({
               error: message,
               isLoading: false,
               user: { isActive: false } as User,
               isAuthenticated: false,
-              _isBlockedByServer: true,
             });
           } else {
             // For other errors (network, server, etc.) - keep existing user data
-            // Just set error and stop loading
             set({
               error: message,
               isLoading: false,
@@ -148,19 +122,15 @@ export const useAuthStore = create<AuthState>()(
             message.includes('заблокирован');
 
           if (isBlocked) {
-            // Set global flag FIRST - this is outside zustand and cannot be affected by rehydration
-            setUserBlockedByServer(true);
-            // Clear persisted auth state to prevent rehydration from overwriting
+            // Clear persisted auth state
             if (typeof window !== 'undefined') {
               localStorage.removeItem('auth-storage');
             }
-            // User is blocked - set flag so UserBlockedGuard shows blocking screen
             set({
               error: message,
               isLoading: false,
               user: { isActive: false } as User,
               isAuthenticated: false,
-              _isBlockedByServer: true,
             });
           } else {
             // Other errors (network, server, etc.)

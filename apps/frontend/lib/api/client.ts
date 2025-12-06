@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { setUserBlockedByServer } from '@/store/useAuthStore';
 
 // Production API URL - hardcoded to ensure correct value
 const PRODUCTION_API_URL = 'https://app.salminashop.ru/api';
@@ -103,16 +102,11 @@ apiClient.interceptors.response.use(
 
     // Skip re-login for auth endpoints to avoid infinite loops
     if (originalRequest?.url?.includes('/auth/')) {
-      // Check if this is a blocked user error and set global flag
-      if (isBlockedUserError(error)) {
-        setUserBlockedByServer(true);
-      }
       return Promise.reject(error);
     }
 
-    // Don't retry for blocked users (401/403) - let the error propagate to show blocking screen
+    // Don't retry for blocked users (401/403) - let the error propagate
     if ((error.response?.status === 401 || error.response?.status === 403) && isBlockedUserError(error)) {
-      setUserBlockedByServer(true);
       clearAuth();
       return Promise.reject(error);
     }
