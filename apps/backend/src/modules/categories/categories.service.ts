@@ -260,16 +260,15 @@ class CategoriesService {
   }
 
   /**
-   * Delete category (admin only)
+   * Delete category (admin only) - soft delete
    */
   async deleteCategory(id: string): Promise<void> {
-    logger.info(`Deleting category: ${id}`);
+    logger.info(`Deleting category (soft): ${id}`);
 
     const category = await prisma.category.findUnique({
       where: { id },
       include: {
-        children: true,
-        products: true,
+        children: { where: { isActive: true } },
       },
     });
 
@@ -277,21 +276,18 @@ class CategoriesService {
       throw new NotFoundError('Category', id);
     }
 
-    // Check if has children
+    // Check if has active children
     if (category.children.length > 0) {
-      throw new BadRequestError('Cannot delete category with child categories');
+      throw new BadRequestError('Cannot delete category with active child categories. Delete children first.');
     }
 
-    // Check if has products
-    if (category.products.length > 0) {
-      throw new BadRequestError('Cannot delete category with products');
-    }
-
-    await prisma.category.delete({
+    // Soft delete - set isActive to false
+    await prisma.category.update({
       where: { id },
+      data: { isActive: false, updatedAt: new Date() },
     });
 
-    logger.info(`Category deleted: ${id}`);
+    logger.info(`Category soft deleted: ${id}`);
   }
 }
 
