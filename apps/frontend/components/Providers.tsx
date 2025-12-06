@@ -108,8 +108,17 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
       }
 
       // Fetch cart only if user is not blocked
-      const currentUser = useAuthStore.getState().user;
-      if (!currentUser || currentUser.isActive !== false) {
+      // Check _isBlockedByServer flag (most reliable - not affected by zustand rehydration)
+      const currentState = useAuthStore.getState();
+      const isBlocked = currentState._isBlockedByServer ||
+        (currentState.user && currentState.user.isActive === false) ||
+        (currentState.error && (
+          currentState.error.includes('disabled') ||
+          currentState.error.includes('deactivated') ||
+          currentState.error.includes('заблокирован')
+        ));
+
+      if (!isBlocked) {
         try {
           await fetchCart();
         } catch (error) {
