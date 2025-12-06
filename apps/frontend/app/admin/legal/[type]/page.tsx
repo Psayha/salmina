@@ -124,34 +124,34 @@ export default function LegalDocumentEditPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-light text-gray-900 dark:text-white">
-            {documentLabels[params.type as string]}
-          </h1>
-          <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
-            {document ? 'Редактирование документа' : 'Создание нового документа'}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {document && (
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl hover:shadow-lg transition-all"
-            >
-              <Trash2 className="w-5 h-5" />
-              <span>Удалить</span>
-            </button>
-          )}
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-light text-gray-900 dark:text-white">
+          {documentLabels[params.type as string]}
+        </h1>
+        <p className="text-sm font-light text-gray-600 dark:text-gray-300 mt-1">
+          {document ? 'Редактирование документа' : 'Создание нового документа'}
+        </p>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={handleSave}
+          disabled={isSaving || !title || !content}
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-slate-500 to-gray-600 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save className="w-5 h-5" />
+          <span>{isSaving ? 'Сохранение...' : 'Сохранить'}</span>
+        </button>
+        {document && (
           <button
-            onClick={handleSave}
-            disabled={isSaving || !title || !content}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-500 to-gray-600 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleDelete}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl hover:shadow-lg transition-all"
           >
-            <Save className="w-5 h-5" />
-            <span>{isSaving ? 'Сохранение...' : 'Сохранить'}</span>
+            <Trash2 className="w-5 h-5" />
           </button>
-        </div>
+        )}
       </div>
 
       <div className="space-y-4">
