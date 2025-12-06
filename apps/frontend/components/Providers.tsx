@@ -59,11 +59,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
 function AppInitializer({ children }: { children: React.ReactNode }) {
   const { webApp, isReady } = useTelegram();
   const autoLoginWithTelegram = useAuthStore((state) => state.autoLoginWithTelegram);
+  const user = useAuthStore((state) => state.user);
   const fetchCurrentUser = useAuthStore((state) => state.fetchCurrentUser);
   const fetchCart = useCartStore((state) => state.fetchCart);
 
   // Show loading only on first app load, not on navigation
   const [showLoading, setShowLoading] = useState(!hasInitialized);
+  const [initComplete, setInitComplete] = useState(hasInitialized);
   const initStarted = useRef(false);
 
   useEffect(() => {
@@ -105,12 +107,18 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
         console.error('[Providers] Initialization error:', error);
       }
 
-      // Fetch cart
-      try {
-        await fetchCart();
-      } catch (error) {
-        console.error('[Providers] Cart fetch error:', error);
+      // Fetch cart only if user is not blocked
+      const currentUser = useAuthStore.getState().user;
+      if (!currentUser || currentUser.isActive !== false) {
+        try {
+          await fetchCart();
+        } catch (error) {
+          console.error('[Providers] Cart fetch error:', error);
+        }
       }
+
+      // Mark initialization as complete
+      setInitComplete(true);
     }
 
     initialize();
@@ -118,12 +126,30 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
   }, [isReady, webApp]);
 
   const handleLoadingComplete = () => {
-    hasInitialized = true;
-    setShowLoading(false);
+    // Only hide loading screen after both animation AND initialization are complete
+    if (initComplete) {
+      hasInitialized = true;
+      setShowLoading(false);
+    }
   };
 
-  if (showLoading) {
+  // Check if user is blocked immediately after init
+  const isUserBlocked = user && user.isActive === false;
+
+  // Show blocking screen immediately if user is blocked, even during loading
+  if (isUserBlocked) {
+    hasInitialized = true;
+    return <UserBlockedGuard>{children}</UserBlockedGuard>;
+  }
+
+  if (showLoading && !initComplete) {
     return <LoadingScreen onComplete={handleLoadingComplete} />;
+  }
+
+  // If loading animation finished but init not complete, keep showing loading
+  if (showLoading && initComplete) {
+    hasInitialized = true;
+    setShowLoading(false);
   }
 
   return <UserBlockedGuard>{children}</UserBlockedGuard>;
